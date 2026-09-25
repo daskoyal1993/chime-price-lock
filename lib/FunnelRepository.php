@@ -3,6 +3,8 @@
  * Loads the funnel definition from the API (or the local sample) and normalizes it
  * into the shape the front end and FunnelRules expect.
  */
+require_once __DIR__ . '/EncodeDecodeHelper.php';
+
 final class FunnelRepository
 {
     /** @var array */
@@ -25,7 +27,7 @@ final class FunnelRepository
             throw new RuntimeException('Funnel API returned no data.');
         }
 
-        return self::normalize($response['data'], $this->config['questionnaire_slug'] ?? null);
+        return self::normalize($response['data'], $this->config['questionnaire_slug'] ?? null, (string) ($this->config['tenant_secret_key'] ?? ''));
     }
 
     private function readSample(): array
@@ -121,7 +123,7 @@ final class FunnelRepository
      * Steps are sorted by step number, questions by position, and duplicate conditions
      * (the API repeats each condition once per option) are removed.
      */
-    public static function normalize(array $data, ?string $questionnaireSlug = null): array
+    public static function normalize(array $data, ?string $questionnaireSlug = null, string $secretKey = ''): array
     {
         $sets = $data['questionnaire_sets'] ?? [];
         $set  = null;
@@ -186,7 +188,32 @@ final class FunnelRepository
                 'prepaid_crm_campaign_id' => $data['membership_campaign_set']['prepaid_campaign']['crm_campaign_id'] ?? null,
             ],
             'membership_products' => $memberProducts,
+            // Signed credentials from the tenant (lib/EncodeDecodeHelper.php), server side only — index.php removes them
+            // before output. Empty when the signature doesn't match config.php → tenant_secret_key.
+            'ghl'     => self::credentials($data['tenant']['ghl']['credentials'] ?? '', $secretKey, ['api_key' => 'token', 'location_id' => 'location_id']),
+            'vouched' => self::credentials($data['tenant']['vouched'] ?? '', $secretKey, ['app_secret' => 'api_key', 'app_id' => 'app_id']),
         ];
+    }
+
+    /**
+     * Decode one signed token ({"api_key", "location_id"} for GHL, {"app_id", "app_secret"} for Vouched)
+     * and rename its fields with $names. Only the values that are present are returned.
+     */
+    private static function credentials($token, string $secretKey, array $names): array
+    {
+        $data = is_string($token) ? EncodeDecodeHelper::decodeWithToken($token, $secretKey) : false;
+        if ($data === false) {
+            if (is_string($token) && $token !== '') {
+                error_log('Funnel credentials ignored: ' . ($secretKey === '' ? 'FUNNEL_TENANT_SECRET_KEY is not set' : 'signature does not match FUNNEL_TENANT_SECRET_KEY'));
+            }
+            return [];
+        }
+        $out = [];
+        foreach ($names as $from => $to) {
+            $value = trim((string) ($data[$from] ?? ''));
+            if ($value !== '') $out[$to] = $value;
+        }
+        return $out;
     }
 
     /** Products with their offer (CRM price) for one campaign. */
@@ -266,8 +293,9 @@ final class FunnelRepository
             'options'     => $options,
             'conditions'  => array_values($conditions),
             // GoHighLevel custom field for this answer (server side only; index.php removes it before output).
-            'ghl'         => !empty($q['ghl']['ghl_custom_id'])
-                ? ['id' => (string) $q['ghl']['ghl_custom_id'], 'key' => (string) ($q['ghl']['ghl_field_key'] ?? '')]
+            // A field key without an id is looked up in GHL when the contact is saved (lib/LeadFlow.php).
+            'ghl'         => !empty($q['ghl']['ghl_custom_id']) || !empty($q['ghl']['ghl_field_key'])
+                ? ['id' => (string) ($q['ghl']['ghl_custom_id'] ?? ''), 'key' => (string) ($q['ghl']['ghl_field_key'] ?? '')]
                 : null,
         ];
     }

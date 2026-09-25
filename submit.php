@@ -291,7 +291,7 @@ if ($action === 'checkout') {
         . ' campaign ' . $record['product']['crm_campaign_id'] . ' (driver ' . $config['payment_driver'] . '): ' . ($result['log'] ?? $result['message']));
     // DB row + GHL contact get the shipping address, purchased and the order id (like demo/db_update.php).
     try {
-        LeadFlow::checkout($config, $record, $shipping + ['email' => $email, 'phone' => $phone], $result);
+        LeadFlow::checkout($config, $funnel, $record, $shipping + ['email' => $email, 'phone' => $phone], $result);
     } catch (Throwable $e) {
         error_log('[lead-flow] checkout update failed: ' . $e->getMessage());
     }
@@ -308,7 +308,53 @@ if ($action === 'checkout') {
         'placed_at'=> gmdate('c'),
     ];
 
-    funnel_json_response(['success' => true, 'redirect' => $config['thank_you_url']]);
+    // Vouched identity check (like demo/identity_verify.php): verified → verified_url, otherwise → the ID check page.
+    try {
+        $verified = LeadFlow::identity($config, $funnel, $record, [
+            'first_name' => $shipping['first_name'],
+            'last_name'  => $shipping['last_name'],
+            'email'      => $email,
+            'phone'      => $phone,
+            'dob'        => (string) ($record['answers']['dob'] ?? ''),
+            'address1'   => trim($shipping['address1'] . ' ' . $shipping['address2']),
+            'city'       => $shipping['city'],
+            'state'      => $shipping['state'],
+            'zip'        => $shipping['zip'],
+            'ip'         => (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+        ]);
+    } catch (Throwable $e) {
+        error_log('[lead-flow] identity check failed: ' . $e->getMessage());
+        $verified = false;
+    }
+    $record['identity_verified'] = $verified;
+
+    funnel_json_response(['success' => true, 'redirect' => $verified ? $config['verified_url'] : $config['idcheck_url']]);
+}
+
+if ($action === 'idcheck') {
+    // ID check result from idcheck.php (like demo/idcheck-update.php), saved on this visitor's row.
+    // Vouched's own callback (idcheck-callback.php) confirms the result for the job id.
+    if (empty($record['order'])) {
+        funnel_json_response(['success' => false, 'message' => 'Please complete checkout first.'], 409);
+    }
+    $jobId   = mb_substr(trim((string) ($input['job_id'] ?? '')), 0, 255);
+    $success = isset($input['success']) ? filter_var($input['success'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : null;
+    if ($jobId === '') {
+        funnel_json_response(['success' => false, 'message' => 'Missing job id.'], 422);
+    }
+    $repo = new LeadRepository($config['db'] ?? []);
+    if ($repo->enabled() && !empty($record['lead_id'])) {
+        try {
+            $repo->saveIdcheck((int) $record['lead_id'], $jobId, $success);
+            LeadFlow::log($config, 'IDCHECK', $success, 'row #' . $record['lead_id'] . ' job ' . $jobId . ' → ' . ($success === null ? 'submitted' : ($success ? 'true' : 'false')));
+        } catch (Throwable $e) {
+            LeadFlow::log($config, 'DB', false, $e->getMessage());
+        }
+    }
+    if ($success === true) {
+        $record['identity_verified'] = true;
+    }
+    funnel_json_response(['success' => true, 'redirect' => $success === true ? $config['verified_url'] : null]);
 }
 
 funnel_json_response(['success' => false, 'message' => 'Unknown action.'], 400);

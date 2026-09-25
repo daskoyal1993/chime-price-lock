@@ -33,6 +33,9 @@ return [
     'product_url'      => 'product.php',
     'checkout_url'     => 'checkout.php',
     'thank_you_url'    => 'thank-you.php',
+    // After the card is authorized: Vouched verified → verified_url (the demo's process.php), not verified → idcheck_url.
+    'verified_url'     => 'thank-you.php',
+    'idcheck_url'      => 'idcheck.php',
     'disqualified_url' => '',   // empty = show the built-in disqualified screen
 
     // Lead storage (lib/LeadRepository.php, table from database/001_create_dynamic_remedy.sql).
@@ -95,6 +98,8 @@ return [
         'source'      => 'chime-dynamic API',
         'tags'        => ['lead'],   // added when the contact is created
         'timeout'     => 30,
+        // "<question>@date" / "<question>@time" = when that consent was ticked. An entry can be a list (one answer → several
+        // fields) and may leave out the id: it is then looked up in GHL by key (GhlClient::fieldIds(), cached one day).
         'field_map'   => [
             'female_health_status' => ['id' => 'hcjkAqqtuXuWO1TVugNL', 'key' => 'contact.currently_breastfeeding_or_pregnant'],
             'heart_arrhythmia'     => ['id' => 'NS4aC2IJOSoSgM2jVmJL', 'key' => 'contact.do_you_now_or_have_you_ever_had_any_heart_arrhythmia_or_irregular_heartbeat'],
@@ -102,6 +107,22 @@ return [
             'elderly_consent@time' => ['id' => 'LEq5MGZDXLdB6dPaAJ5q', 'key' => 'contact.time_of_elderly_consent'],
             'sms_consent@date'     => ['id' => '6OLaeQuj06NPmgUadWOc', 'key' => 'contact.date_of_sms_consent'],
             'sms_consent@time'     => ['id' => '22jxJGSEV0VLvqdwPOCC', 'key' => 'contact.time_of_sms_consent'],
+            // GLP consent: the date field comes from the funnel API, the time field from here.
+            'glp_consent@time'     => ['key' => 'contact.time_of_glp_consent'],
+            // BMI consent ("I acknowledge that with this BMI …").
+            'metabolic_consent@date' => ['key' => 'contact.date_of_bmi_consent'],
+            'metabolic_consent@time' => ['key' => 'contact.time_of_bmi_consent'],
+            // "I agree to the Truthfulness Consent, Telehealth Consent & Informed Treatment Consent" — one tick, three consents.
+            'contact_agree@date' => [
+                ['key' => 'contact.date_of_truthfulness_consent'],
+                ['key' => 'contact.date_of_telehealth_consent'],
+                ['key' => 'contact.date_of_informed_consent'],
+            ],
+            'contact_agree@time' => [
+                ['key' => 'contact.time_of_truthfulness_consent'],
+                ['key' => 'contact.time_of_telehealth_consent'],
+                ['key' => 'contact.time_of_informed_consent'],
+            ],
         ],
         // Consent checkboxes whose first "ticked" server time is recorded (quiz JSON → consent_timestamps).
         'consent_questions' => ['elderly_consent', 'metabolic_consent', 'glp_consent', 'contact_agree', 'sms_consent'],
@@ -115,6 +136,20 @@ return [
     'google_maps' => [
         'api_key' => Env::get('FUNNEL_GOOGLE_MAPS_KEY', 'AIzaSyDxhi_ZmKg9x2XekssUSIt3--cDj-eI0H0'),
         'country' => 'us',   // suggestions limited to this country
+    ],
+
+    // Portal → Site Settings → Secret Key. Checks the signature of the credentials in the funnel JSON
+    // (tenant.ghl.credentials, tenant.vouched — lib/EncodeDecodeHelper.php). Empty = those credentials are not used.
+    'tenant_secret_key' => Env::get('FUNNEL_TENANT_SECRET_KEY', ''),
+
+    // Vouched identity check after payment (lib/VouchedClient.php, like demo/identity_verify.php) and the ID check page
+    // (idcheck.php). api_key / app_id come from the funnel JSON (tenant.vouched) when it has them, else from here.
+    'vouched' => [
+        'api_url'        => Env::get('FUNNEL_VOUCHED_API_URL', 'https://verify.vouched.id/api'),
+        'api_key'        => Env::get('FUNNEL_VOUCHED_API_KEY', ''),   // private key (prv.…), server side only
+        'app_id'         => Env::get('FUNNEL_VOUCHED_APP_ID', ''),    // public key (pub.…) for the ID check plugin
+        'min_confidence' => 80,                                       // crosscheck % needed (with a DOB match)
+        'timeout'        => 30,
     ],
 
     // Payment processing for checkout.php (see lib/Payment.php).

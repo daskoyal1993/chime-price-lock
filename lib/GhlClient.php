@@ -59,6 +59,34 @@ final class GhlClient
         throw new RuntimeException('create HTTP ' . $status . ': ' . Http::message($body, $raw));
     }
 
+    /**
+     * The location's custom field ids by field key ("contact.date_of_bmi_consent" => "Xs6j…"), like demo/check-custom-field.php:
+     *   GET /locations/{location_id}/customFields
+     * Cached in $cacheFile for $ttl seconds; an old cache is used when GHL can't be reached.
+     *
+     * @throws RuntimeException when GHL fails and there is no cache
+     */
+    public function fieldIds(string $cacheFile, int $ttl = 86400): array
+    {
+        if (is_file($cacheFile) && filemtime($cacheFile) + $ttl > time()) {
+            $cached = json_decode((string) file_get_contents($cacheFile), true);
+            if (is_array($cached)) return $cached;
+        }
+        [$status, $body, $raw, $error] = $this->request('GET', '/locations/' . rawurlencode((string) $this->cfg['location_id']) . '/customFields', null);
+        if ($error === '' && $status === 200 && is_array($body['customFields'] ?? null)) {
+            $ids = [];
+            foreach ($body['customFields'] as $field) {
+                if (!empty($field['fieldKey']) && !empty($field['id'])) $ids[(string) $field['fieldKey']] = (string) $field['id'];
+            }
+            if (!is_dir(dirname($cacheFile))) @mkdir(dirname($cacheFile), 0775, true);
+            @file_put_contents($cacheFile, json_encode($ids), LOCK_EX);
+            return $ids;
+        }
+        $cached = is_file($cacheFile) ? json_decode((string) file_get_contents($cacheFile), true) : null;
+        if (is_array($cached)) return $cached;
+        throw new RuntimeException('custom fields HTTP ' . $status . ': ' . ($error !== '' ? $error : Http::message($body, $raw)));
+    }
+
     private function update(string $id, array $contact): void
     {
         unset($contact['locationId'], $contact['tags']);
@@ -71,7 +99,7 @@ final class GhlClient
         }
     }
 
-    private function request(string $method, string $path, array $payload): array
+    private function request(string $method, string $path, ?array $payload): array
     {
         return Http::json($method, rtrim((string) $this->cfg['api_url'], '/') . $path, [
             'Authorization: Bearer ' . $this->cfg['token'],

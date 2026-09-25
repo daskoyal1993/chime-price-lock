@@ -248,6 +248,62 @@ final class LeadRepository
         return $this->pdo;
     }
 
+    /**
+     * True when an earlier row for this email already passed Vouched (same rule as demo/identity_verify.php):
+     * ID check job + status 'true', crosscheck ≥ $minConfidence and a DOB match. Then Vouched isn't called again.
+     */
+    public function verifiedBefore(string $email, float $minConfidence = 80): bool
+    {
+        try {
+            $st = $this->pdo()->prepare("SELECT `id` FROM {$this->table()} WHERE `email` = ?"
+                . " AND `idcheck_vouched_job_id` IS NOT NULL AND `idcheck_vouched_job_id` <> '' AND `idcheck_vouched_status` = 'true'"
+                . " AND CAST(`vouched_crosscheck_persent` AS DECIMAL(6,2)) >= ?"
+                . " AND `vouched_dob_status` IS NOT NULL AND `vouched_dob_status` NOT IN ('', '0') ORDER BY `id` DESC LIMIT 1");
+            $st->execute([strtolower(trim($email)), $minConfidence]);
+            return (bool) $st->fetch();
+        } catch (PDOException $e) {
+            throw new RuntimeException('Reading the Vouched status failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /** Crosscheck + DOB results on the row (columns as in demo/identity_verify.php). */
+    public function saveIdentity(int $id, array $result): void
+    {
+        try {
+            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `info_vouched_job_id` = ?, `info_vouched_status` = ?, `info_vouched_dob_id` = ?,"
+                . " `vouched_crosscheck_persent` = ?, `vouched_dob_status` = ?, `updated_at` = ? WHERE `id` = ?");
+            $st->execute([
+                $result['identity_job_id'], $result['verified'] ? 'success' : 'failed', $result['dob_job_id'],
+                (string) $result['confidence'], $result['dob_match'] ? '1' : '0', gmdate('Y-m-d H:i:s'), $id,
+            ]);
+        } catch (PDOException $e) {
+            throw new RuntimeException('Saving the Vouched result failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /** ID check (idcheck.php) job id and, when known, its result 'true' / 'false' — like demo/idcheck-update.php. */
+    public function saveIdcheck(int $id, string $jobId, ?bool $success): void
+    {
+        try {
+            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `idcheck_vouched_job_id` = ?, `idcheck_vouched_status` = COALESCE(?, `idcheck_vouched_status`), `updated_at` = ? WHERE `id` = ?");
+            $st->execute([mb_substr($jobId, 0, 255), $success === null ? null : ($success ? 'true' : 'false'), gmdate('Y-m-d H:i:s'), $id]);
+        } catch (PDOException $e) {
+            throw new RuntimeException('Saving the ID check failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /** Vouched's own callback (idcheck-callback.php): the result for a job id. Returns the number of rows updated. */
+    public function saveIdcheckResult(string $jobId, bool $success): int
+    {
+        try {
+            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `idcheck_vouched_status` = ?, `updated_at` = ? WHERE `idcheck_vouched_job_id` = ?");
+            $st->execute([$success ? 'true' : 'false', gmdate('Y-m-d H:i:s'), $jobId]);
+            return $st->rowCount();
+        } catch (PDOException $e) {
+            throw new RuntimeException('Saving the ID check result failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
     /** `table` from config, quoted. Only letters, digits, _ and - are allowed. */
     private function table(): string
     {

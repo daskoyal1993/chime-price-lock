@@ -71,7 +71,7 @@ final class LeadFlow
      * @param array $shipping first_name, last_name, address1, address2, city, state, zip, email, phone
      * @param array $payment  Payment::charge() result
      */
-    public static function checkout(array $config, array &$record, array $shipping, array $payment): void
+    public static function checkout(array $config, array $funnel, array &$record, array $shipping, array $payment): void
     {
         $purchased = !empty($payment['success']);
         $orderId   = $purchased ? (string) $payment['order_id'] : null;
@@ -90,7 +90,7 @@ final class LeadFlow
             }
         }
 
-        $cfg    = $config['ghl'] ?? [];
+        $cfg    = self::ghlConfig($config, $funnel);
         $client = new GhlClient($cfg);
         if ($missing = $client->missing()) {
             self::log($config, 'GHL', null, 'checkout skipped: set ' . implode(', ', $missing));
@@ -116,6 +116,54 @@ final class LeadFlow
         } catch (Throwable $e) {
             self::log($config, 'GHL', false, 'checkout: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Vouched identity check after the card is authorized (like demo/identity_verify.php).
+     * Returns true when the visitor is verified (crosscheck ≥ 80 and DOB match, or verified on an earlier order),
+     * false when they must do the ID check on idcheck.php (also when Vouched fails).
+     * Not configured → logged as SKIP and treated as verified, so a missing key never blocks an order.
+     *
+     * @param array $person first_name, last_name, email, phone, dob, address1, city, state, zip, ip
+     */
+    public static function identity(array $config, array $funnel, array &$record, array $person): bool
+    {
+        $cfg    = array_merge($config['vouched'] ?? [], $funnel['vouched'] ?? []);
+        $client = new VouchedClient($cfg);
+        if ($missing = $client->missing()) {
+            self::log($config, 'VOUCHED', null, 'skipped: set ' . implode(', ', $missing));
+            return true;
+        }
+
+        $repo = new LeadRepository($config['db'] ?? []);
+        $min  = (float) ($cfg['min_confidence'] ?? 80);
+        if ($repo->enabled()) {
+            try {
+                if ($repo->verifiedBefore($person['email'], $min)) {
+                    self::log($config, 'VOUCHED', true, $person['email'] . ' already verified on an earlier order — no new check');
+                    return true;
+                }
+            } catch (Throwable $e) {
+                self::log($config, 'DB', false, $e->getMessage());
+            }
+        }
+
+        try {
+            $result = $client->verify($person);
+        } catch (Throwable $e) {
+            self::log($config, 'VOUCHED', false, $person['email'] . ' ' . $e->getMessage() . ' → ID check');
+            return false;
+        }
+        self::log($config, 'VOUCHED', $result['verified'], $person['email'] . ' ' . $result['log'] . ($result['verified'] ? ' → verified' : ' → ID check'));
+
+        if ($repo->enabled() && !empty($record['lead_id'])) {
+            try {
+                $repo->saveIdentity((int) $record['lead_id'], $result);
+            } catch (Throwable $e) {
+                self::log($config, 'DB', false, $e->getMessage());
+            }
+        }
+        return $result['verified'];
     }
 
     private static function membership(array $config, array &$record, string $email): void
@@ -193,7 +241,7 @@ final class LeadFlow
 
     private static function ghl(array $config, array $funnel, array &$record, array $answers, string $email, string $phone): ?bool
     {
-        $cfg    = $config['ghl'] ?? [];
+        $cfg    = self::ghlConfig($config, $funnel);
         $client = new GhlClient($cfg);
         if ($missing = $client->missing()) {
             self::log($config, 'GHL', null, 'skipped: set ' . implode(', ', $missing));
@@ -213,7 +261,7 @@ final class LeadFlow
             'state'       => (string) ($answers['shipping_state'] ?? ''),
         ], static function ($v) { return $v !== ''; });
         $contact['tags']         = array_values($cfg['tags'] ?? []);
-        $contact['customFields'] = self::customFields($cfg, $funnel, $answers);
+        $contact['customFields'] = self::customFields($config, $cfg, $funnel, $answers, $client);
 
         try {
             [$id, $action] = $client->save($record['ghl_contact_id'] ?? null, $contact);
@@ -226,32 +274,57 @@ final class LeadFlow
         }
     }
 
-    /**
-     * GHL custom fields: the field id from the funnel API (question → ghl.ghl_custom_id), or config.php → ghl.field_map
-     * for questions the API has no id for. Only answered fields are sent, so an update never clears a field.
-     */
-    private static function customFields(array $cfg, array $funnel, array $answers): array
+    /** config.php → ghl, with the token + location from the funnel JSON (tenant.ghl.credentials) when it has them. */
+    private static function ghlConfig(array $config, array $funnel): array
     {
-        $map = [];
+        return array_merge($config['ghl'] ?? [], $funnel['ghl'] ?? []);
+    }
+
+    /**
+     * GHL custom fields: the field from the funnel API (question → ghl), or config.php → ghl.field_map for questions
+     * the API has no field for (one answer can fill several fields). A field with a key but no id gets its id from
+     * GHL (GhlClient::fieldIds()). Only answered fields are sent, so an update never clears a field.
+     */
+    private static function customFields(array $config, array $cfg, array $funnel, array $answers, GhlClient $client): array
+    {
+        $map = [];   // answer key => list of [id, key]
         foreach ($funnel['steps'] as $step) {
             foreach ($step['questions'] as $q) {
-                if (!empty($q['ghl']['id'])) {
+                if (!empty($q['ghl']['id']) || !empty($q['ghl']['key'])) {
                     // A consent question mapped to a "date_of_…" / "time_of_…" field gets the time it was given, not its text.
                     $suffix = preg_match('/\.date_of_/', $q['ghl']['key']) ? '@date' : (preg_match('/\.time_of_/', $q['ghl']['key']) ? '@time' : '');
-                    $map[$q['key'] . $suffix] = ['id' => $q['ghl']['id'], 'key' => $q['ghl']['key']];
+                    $map[$q['key'] . $suffix] = [$q['ghl']];
                 }
             }
         }
         foreach ($cfg['field_map'] ?? [] as $key => $field) {
-            if (!isset($map[$key])) $map[$key] = $field;
+            if (!isset($map[$key])) $map[$key] = isset($field['id']) || isset($field['key']) ? [$field] : array_values($field);
         }
 
-        $fields = [];
-        foreach ($map as $key => $field) {
+        $ids = null;   // GHL's field ids by key, fetched only when a field has no id
+        $fields = $unknown = [];
+        foreach ($map as $key => $list) {
             $value = self::fieldValue($key, $answers);
-            if ($value !== '') {
-                $fields[] = ['id' => $field['id'], 'key' => $field['key'], 'fieldValue' => $value];
+            if ($value === '') continue;
+            foreach ($list as $field) {
+                $id = (string) ($field['id'] ?? '');
+                if ($id === '' && !empty($field['key'])) {
+                    if ($ids === null) {
+                        try {
+                            $ids = $client->fieldIds(rtrim((string) $config['storage_dir'], '/\\') . '/cache/ghl-fields-' . md5((string) $cfg['location_id']) . '.json');
+                        } catch (Throwable $e) {
+                            $ids = [];
+                            self::log($config, 'GHL', false, 'custom field lookup: ' . $e->getMessage());
+                        }
+                    }
+                    $id = $ids[$field['key']] ?? '';
+                    if ($id === '') $unknown[] = $field['key'];
+                }
+                if ($id !== '') $fields[] = ['id' => $id, 'key' => (string) ($field['key'] ?? ''), 'fieldValue' => $value];
             }
+        }
+        if ($unknown) {
+            self::log($config, 'GHL', false, 'not sent, no such custom field in GHL: ' . implode(', ', array_unique($unknown)));
         }
         return $fields;
     }

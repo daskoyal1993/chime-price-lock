@@ -10,6 +10,7 @@ $page   = Page::load('index');
 
 // The browser gets the questions without the server-side GHL field mapping.
 $public = $funnel;
+unset($public['ghl'], $public['vouched']);   // GHL / Vouched credentials stay on the server
 foreach ($public['steps'] as &$step) {
     foreach ($step['questions'] as &$q) {
         unset($q['ghl']);

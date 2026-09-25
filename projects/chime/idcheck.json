@@ -1,0 +1,20 @@
+{
+  "_help": "ID check page (idcheck.php): shown after payment when the automatic Vouched check (crosscheck + DOB) didn't verify the visitor. The Vouched plugin is mounted in the page; assets/idcheck.js sends the result to submit.php?action=idcheck.",
+
+  "title": "Verify your identity",
+  "body_class": "page-checkout",
+  "styles": ["assets/css/checkout.css"],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-shop", "show_phone": true },
+  "main_class": "ty",
+
+  "text": {
+    "badge": "One last step",
+    "heading": "Please verify your identity",
+    "intro": "Your order is placed. To finish, we need a quick photo of your ID and a selfie, so your clinician can confirm it's you.",
+    "failed_heading": "We couldn't verify your identity",
+    "failed_text": "Please try again with a clear photo of a valid government ID, or contact support and we'll help you finish.",
+    "retry": "Try again",
+    "unavailable": "Identity verification is not available right now. Please contact support to complete your order."
+  }
+}

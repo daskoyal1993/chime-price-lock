@@ -8,6 +8,7 @@ require __DIR__ . '/lib/VrioClient.php';
 require __DIR__ . '/lib/GhlClient.php';
 require __DIR__ . '/lib/Membership.php';
 require __DIR__ . '/lib/XverifyClient.php';
+require __DIR__ . '/lib/VouchedClient.php';
 require __DIR__ . '/lib/Payment.php';
 require __DIR__ . '/lib/LeadFlow.php';
 require __DIR__ . '/lib/view.php';

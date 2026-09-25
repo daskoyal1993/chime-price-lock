@@ -3306,9 +3306,9 @@
                                 "campaign_id": 21,
                                 "type": "main",
                                 "crm_campaign_product_id": "1536",
-                                "crm_offer_id": "135",
+                                "crm_offer_id": "160",
                                 "crm_item_id": "156",
-                                "price": 299
+                                "price": 129
                             }
                         ]
                     },
@@ -3323,9 +3323,9 @@
                                 "campaign_id": 21,
                                 "type": "main",
                                 "crm_campaign_product_id": "1537",
-                                "crm_offer_id": "136",
+                                "crm_offer_id": "161",
                                 "crm_item_id": "157",
-                                "price": 627
+                                "price": 357
                             }
                         ]
                     },
@@ -3340,9 +3340,26 @@
                                 "campaign_id": 21,
                                 "type": "main",
                                 "crm_campaign_product_id": "1538",
-                                "crm_offer_id": "138",
+                                "crm_offer_id": "162",
                                 "crm_item_id": "159",
-                                "price": 1194
+                                "price": 654
+                            }
+                        ]
+                    },
+                    {
+                        "id": 35,
+                        "name": "Semaglutide - 12M",
+                        "display_price": "2148.00",
+                        "form": "Injectable",
+                        "typical_duration": 336,
+                        "crm_campaigns": [
+                            {
+                                "campaign_id": 21,
+                                "type": "main",
+                                "crm_campaign_product_id": "1553",
+                                "crm_offer_id": "163",
+                                "crm_item_id": "196",
+                                "price": 1188
                             }
                         ]
                     }
@@ -3364,9 +3381,9 @@
                                 "campaign_id": 21,
                                 "type": "main",
                                 "crm_campaign_product_id": "1539",
-                                "crm_offer_id": "139",
+                                "crm_offer_id": "164",
                                 "crm_item_id": "160",
-                                "price": 359
+                                "price": 149
                             }
                         ]
                     },
@@ -3381,9 +3398,9 @@
                                 "campaign_id": 21,
                                 "type": "main",
                                 "crm_campaign_product_id": "1540",
-                                "crm_offer_id": "140",
+                                "crm_offer_id": "165",
                                 "crm_item_id": "161",
-                                "price": 948
+                                "price": 417
                             }
                         ]
                     },
@@ -3398,9 +3415,26 @@
                                 "campaign_id": 21,
                                 "type": "main",
                                 "crm_campaign_product_id": "1541",
-                                "crm_offer_id": "142",
+                                "crm_offer_id": "166",
                                 "crm_item_id": "163",
-                                "price": 1794
+                                "price": 774
+                            }
+                        ]
+                    },
+                    {
+                        "id": 36,
+                        "name": "Tirzepatide - 12M",
+                        "display_price": "2988.00",
+                        "form": "Injectable",
+                        "typical_duration": 336,
+                        "crm_campaigns": [
+                            {
+                                "campaign_id": 21,
+                                "type": "main",
+                                "crm_campaign_product_id": "1557",
+                                "crm_offer_id": "167",
+                                "crm_item_id": "195",
+                                "price": 1428
                             }
                         ]
                     }

@@ -4,6 +4,7 @@
 # Local archives / runtime files
 *.zip
 storage/logs/*
+storage/cache/
 !storage/logs/.gitkeep
 
 # OS / editor
@@ -11,3 +12,10 @@ storage/logs/*
 Thumbs.db
 .vscode/
 .idea/
+
+# Demo scripts with hardcoded tokens / keys
+demo/check-custom-field.php
+demo/identity_verify.php
+demo/idcheck.php
+demo/idcheck-callback.php
+demo/idcheck-update.php
