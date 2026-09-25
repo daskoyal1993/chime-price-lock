@@ -78,8 +78,8 @@ return [
     'vrio' => [
         'api_url'       => Env::get('FUNNEL_VRIO_API_URL', 'https://api.vrio.app/orders'),
         'api_key'       => Env::get('FUNNEL_VRIO_API_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6ImFkbWluIiwib3JnYW5pemF0aW9uIjoibWVkYXhpcy52cmlvIiwiaWQiOiIyNDQyNjNkMy1hNGI3LTQwOWQtYjBjOS1mMDhjMDMzYTVkNWQiLCJpYXQiOjE3ODIxNTIyNjgsImF1ZCI6InVybjp2cmlvOmFwaTp1c2VyIiwiaXNzIjoidXJuOnZyaW86YXBpOmF1dGhlbnRpY2F0b3IiLCJzdWIiOiJ1cm46dnJpbzphcGk6OSJ9.6NOCMu57KO64ry5Y8WftOmVQknfUOh0jpauuj8G4fBE'),         // ← your Vrio API key (sent as the X-Api-Key header)
-        'connection_id' => Env::get('FUNNEL_VRIO_CONNECTION_ID', ''),
-        'shipping_profile_id' => Env::get('FUNNEL_VRIO_SHIPPING_PROFILE_ID', ''),   // ← VRIO_SHIPPING_PROFILE_ID in the demo's vrio-config.php (pre-auth at checkout)   // ← your Vrio connection id
+        'connection_id' => Env::get('FUNNEL_VRIO_CONNECTION_ID', '1'),
+        'shipping_profile_id' => Env::get('FUNNEL_VRIO_SHIPPING_PROFILE_ID', '1'),   // ← VRIO_SHIPPING_PROFILE_ID in the demo's vrio-config.php (pre-auth at checkout)   // ← your Vrio connection id
         'timeout'       => 30,
     ],
 

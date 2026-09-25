@@ -62,7 +62,7 @@
                 "form_type": "step_form",
                 "steps": [
                     {
-                        "id": 19,
+                        "id": 43,
                         "name": "",
                         "step": "1",
                         "questions": [
@@ -105,7 +105,7 @@
                         ]
                     },
                     {
-                        "id": 20,
+                        "id": 44,
                         "name": "Start",
                         "step": "2",
                         "questions": [
@@ -622,6 +622,22 @@
                                 }
                             },
                             {
+                                "id": 73,
+                                "label": "What is your target weight?",
+                                "description": "Your target helps set your medication, dose & timeline.",
+                                "key": "target_weight",
+                                "type": "weight",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "",
+                                "default_params": "target_weight",
+                                "position": 14,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
                                 "id": 15,
                                 "label": "Your BMI",
                                 "description": null,
@@ -631,7 +647,7 @@
                                 "is_required": "yes",
                                 "is_readonly": "no",
                                 "default_params": "bmi",
-                                "position": 14,
+                                "position": 15,
                                 "ghl": {
                                     "ghl_custom_id": "4emnLaNgsxk06KGM5ALK",
                                     "ghl_field_key": "contact.body_mass_index_bmi"
@@ -647,7 +663,7 @@
                                 "is_required": "no",
                                 "is_readonly": "no",
                                 "default_params": "bmi_rating",
-                                "position": 15,
+                                "position": 16,
                                 "ghl": {
                                     "ghl_custom_id": "",
                                     "ghl_field_key": ""
@@ -663,7 +679,7 @@
                                 "is_required": "no",
                                 "is_readonly": "no",
                                 "default_params": "age",
-                                "position": 16,
+                                "position": 17,
                                 "ghl": {
                                     "ghl_custom_id": "",
                                     "ghl_field_key": ""
@@ -679,7 +695,7 @@
                                 "is_required": "yes",
                                 "is_readonly": "no",
                                 "default_params": "female_health_status",
-                                "position": 17,
+                                "position": 18,
                                 "ghl": {
                                     "ghl_custom_id": "",
                                     "ghl_field_key": ""
@@ -768,7 +784,7 @@
                                 "is_required": "yes",
                                 "is_readonly": "no",
                                 "default_params": "elderly_consent",
-                                "position": 18,
+                                "position": 19,
                                 "ghl": {
                                     "ghl_custom_id": "",
                                     "ghl_field_key": ""
@@ -884,7 +900,7 @@
                                 "is_required": "yes",
                                 "is_readonly": "no",
                                 "default_params": "metabolic_consent",
-                                "position": 19,
+                                "position": 20,
                                 "ghl": {
                                     "ghl_custom_id": "",
                                     "ghl_field_key": ""
@@ -944,15 +960,6 @@
                                         "value": "18"
                                     },
                                     {
-                                        "dependent_question_id": 17,
-                                        "dependent_question_key": "age",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "65"
-                                    },
-                                    {
                                         "dependent_question_id": 15,
                                         "dependent_question_key": "bmi",
                                         "dependent_option_id": null,
@@ -960,15 +967,6 @@
                                         "visibility": "show",
                                         "operator": "equal_to_greater_than",
                                         "value": "20"
-                                    },
-                                    {
-                                        "dependent_question_id": 15,
-                                        "dependent_question_key": "bmi",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "23"
                                     },
                                     {
                                         "dependent_question_id": 17,
@@ -980,15 +978,6 @@
                                         "value": "18"
                                     },
                                     {
-                                        "dependent_question_id": 17,
-                                        "dependent_question_key": "age",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "65"
-                                    },
-                                    {
                                         "dependent_question_id": 15,
                                         "dependent_question_key": "bmi",
                                         "dependent_option_id": null,
@@ -996,15 +985,6 @@
                                         "visibility": "show",
                                         "operator": "equal_to_greater_than",
                                         "value": "20"
-                                    },
-                                    {
-                                        "dependent_question_id": 15,
-                                        "dependent_question_key": "bmi",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "23"
                                     },
                                     {
                                         "dependent_question_id": 17,
@@ -1016,15 +996,6 @@
                                         "value": "18"
                                     },
                                     {
-                                        "dependent_question_id": 17,
-                                        "dependent_question_key": "age",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "65"
-                                    },
-                                    {
                                         "dependent_question_id": 15,
                                         "dependent_question_key": "bmi",
                                         "dependent_option_id": null,
@@ -1032,15 +1003,6 @@
                                         "visibility": "show",
                                         "operator": "equal_to_greater_than",
                                         "value": "20"
-                                    },
-                                    {
-                                        "dependent_question_id": 15,
-                                        "dependent_question_key": "bmi",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "23"
                                     },
                                     {
                                         "dependent_question_id": 17,
@@ -1065,7 +1027,7 @@
                         ]
                     },
                     {
-                        "id": 21,
+                        "id": 45,
                         "name": "Preliminary",
                         "step": "3",
                         "questions": [
@@ -1354,7 +1316,7 @@
                         ]
                     },
                     {
-                        "id": 22,
+                        "id": 46,
                         "name": "Health",
                         "step": "4",
                         "questions": [
@@ -1889,7 +1851,7 @@
                         ]
                     },
                     {
-                        "id": 23,
+                        "id": 47,
                         "name": "Details",
                         "step": "5",
                         "questions": [
@@ -3270,7 +3232,7 @@
                         ]
                     },
                     {
-                        "id": 24,
+                        "id": 48,
                         "name": "Eligibility",
                         "step": "6",
                         "questions": [
