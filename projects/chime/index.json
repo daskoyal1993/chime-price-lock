@@ -15,8 +15,12 @@
   "auto_continue_options": ["None of these", "None of the above", "None of the below", "None", "No"],
   "auto_continue_patterns": ["^none\\b", "^no\\b", "^i['’]?m not\\b", "^i am not\\b"],
 
-  "_questions_help": "Display settings per API question key. prechecked: checkbox starts ticked (the visitor can untick it). compact: only the checkbox line, no title. text: shown instead of the API option text (the saved answer stays the API option). required_message: error when a required checkbox is left unticked.",
+  "_questions_help": "Display settings per API question key. prechecked: checkbox starts ticked (the visitor can untick it). compact: only the checkbox line, no title. text: shown instead of the API option text (the saved answer stays the API option). required_message: error when a required checkbox is left unticked. placeholder: weight field placeholder. hint: small note under a text/weight field.",
   "questions": {
+    "target_weight": {
+      "placeholder": "Goal weight (lbs)",
+      "hint": "You can always adjust later."
+    },
     "sms_consent": {
       "prechecked": true,
       "required_message": "Please agree to receive clinician and delivery texts to continue."
@@ -30,6 +34,7 @@
   "screens": [
     { "keys": ["product_pick"], "badge": "Get started" },
     { "keys": ["height", "weight", "bmi"], "heading": "Your dose depends on your body.", "text": "These help your clinician calculate the safest, most effective dose.", "doctor": true },
+    { "keys": ["target_weight"], "badge": "Your goal" },
     { "keys": ["gender", "dob", "shipping_state", "elderly_consent", "metabolic_consent"], "heading": "Almost there — your clinician just needs a few quick details.", "doctor": true },
     { "keys": ["female_health_status"], "text": "*Select all that apply & click \"Continue\" below" },
     { "keys": ["health_conditions"], "text": "*Select all that apply & click \"Continue\" below", "badge": "Health check" },

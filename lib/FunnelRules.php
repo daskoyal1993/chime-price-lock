@@ -172,6 +172,9 @@ final class FunnelRules
 
                 $value = $answers[$key] ?? null;
                 $error = self::validateValue($q, $value, $config);
+                if ($error === null && $key === 'target_weight' && !self::isEmpty($value)) {
+                    $error = self::targetWeightError($value, $answers);
+                }
                 if ($error !== null) {
                     $errors[$key] = $error;
                     continue;
@@ -192,6 +195,20 @@ final class FunnelRules
         }
 
         return ['errors' => $errors, 'disqualified' => $disqualified, 'answers' => $clean, 'params' => $params];
+    }
+
+    /** Goal weight: below the current weight and not under a healthy BMI of 18.5 (same rules as assets/funnel.js). */
+    private static function targetWeightError($goal, array $answers): ?string
+    {
+        $current = $answers['weight'] ?? null;
+        if (is_numeric($current) && (float) $goal >= (float) $current) {
+            return 'Goal weight must be less than your current weight (' . round((float) $current) . ' lbs).';
+        }
+        $bmi = self::bmi($answers['height'] ?? null, $goal);
+        if ($bmi !== null && $bmi < 18.5) {
+            return 'Goal weight must result in a healthy BMI of at least 18.5.';
+        }
+        return null;
     }
 
     private static function validateValue(array $q, $value, array $config): ?string

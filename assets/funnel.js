@@ -207,10 +207,20 @@
                 if (!isNumeric(value) || +value < cfg.weightMin || +value > cfg.weightMax) {
                     return 'Enter a weight between ' + cfg.weightMin + ' and ' + cfg.weightMax + ' lbs.';
                 }
+                if (q.key === 'target_weight') return targetWeightError(+value);
                 return null;
             default:
                 return null;
         }
+    }
+
+    // Goal weight: below the current weight and not under a healthy BMI of 18.5 (same rules as lib/FunnelRules.php).
+    function targetWeightError(goal) {
+        var current = state.answers.weight;
+        if (isNumeric(current) && goal >= +current) return 'Goal weight must be less than your current weight (' + Math.round(+current) + ' lbs).';
+        var bmi = calcBmi(state.answers.height, goal);
+        if (bmi !== null && bmi < 18.5) return 'Goal weight must result in a healthy BMI of at least 18.5.';
+        return null;
     }
 
     function requiredMessage(q) {
@@ -436,7 +446,15 @@
             var labelTag = q.type === 'height' || q.type === 'bmi' ? 'p' : 'label';
             if (q.type !== 'bmi') wrap.appendChild(label(labelTag, labelTag === 'label' ? { 'for': id } : { id: id + '-label' }));
             wrap.appendChild(control(q, id, errId, value));
-            if (q.description && q.type !== 'textarea') wrap.appendChild(el('p', { className: 'fq-hint', html: SVG.info }, [q.description]));
+            // Hint under the field; on a one-question screen the description is already the screen's helper text.
+            var hint = setting(q.key, 'hint') || (q.type !== 'textarea' && !isOnly ? q.description : null);
+            if (hint) wrap.appendChild(el('p', { className: 'fq-hint', html: SVG.info }, [hint]));
+            if (q.key === 'target_weight') {
+                wrap.appendChild(el('aside', { className: 'info-card', 'data-goal': '1', hidden: true, 'aria-live': 'polite' }, [
+                    el('span', { html: SVG.info, className: 'info-icon' }),
+                    el('div', {}, [el('h3', { 'data-goal-text': '1' }), el('p', { 'data-goal-note': '1' })])
+                ]));
+            }
         }
 
         wrap.appendChild(el('p', { className: 'fq-error', id: errId, hidden: true }));
@@ -496,7 +514,7 @@
                 if (q.type === 'email') { attrs.type = 'email'; attrs.autocomplete = 'email'; attrs.placeholder = T('placeholder_email', 'Email'); }
                 else if (q.type === 'phone') { attrs.type = 'tel'; attrs.autocomplete = 'tel-national'; attrs.placeholder = T('placeholder_phone', 'Phone number'); }
                 else if (q.type === 'date') { attrs.type = 'text'; attrs.inputmode = 'numeric'; attrs.placeholder = 'MM/DD/YYYY'; attrs.maxlength = 10; attrs.autocomplete = q.key === 'dob' ? 'bday' : null; }
-                else if (q.type === 'weight') { attrs.type = 'text'; attrs.inputmode = 'numeric'; attrs.maxlength = 3; attrs.placeholder = T('placeholder_weight', 'Weight (lbs)'); }
+                else if (q.type === 'weight') { attrs.type = 'text'; attrs.inputmode = 'numeric'; attrs.maxlength = 3; attrs.placeholder = setting(q.key, 'placeholder') || T('placeholder_weight', 'Weight (lbs)'); }
                 else if (q.type === 'number') { attrs.type = 'text'; attrs.inputmode = 'numeric'; if (q.key === 'zip') { attrs.maxlength = 5; attrs.autocomplete = 'postal-code'; attrs.placeholder = T('placeholder_zip', 'ZIP code'); } }
                 else { attrs.type = 'text'; attrs.autocomplete = autocompleteFor(q.key); }
                 input = el('input', attrs);
@@ -556,8 +574,24 @@
                 card.hidden = bmi == null;
                 if (bmi != null) wrap.querySelector('[data-bmi-text]').textContent = 'Your BMI is ' + bmi.toFixed(1) + ' (' + state.answers.bmi_rating + ')';
             }
+            if (q.key === 'target_weight') renderGoal(wrap);
         });
         updateChrome();
+    }
+
+    /** "That is 30 lbs, about 15% of your weight." under the goal weight, like the live site. */
+    function renderGoal(wrap) {
+        var card = wrap.querySelector('[data-goal]');
+        var goal = state.answers.target_weight, current = state.answers.weight;
+        card.hidden = !isNumeric(goal) || +goal <= 0 || !isNumeric(current) || +current <= 0;
+        if (card.hidden) return;
+        var toLose = +current - +goal;
+        wrap.querySelector('[data-goal-text]').textContent = toLose <= 0
+            ? T('goal_none', 'That is at or below your current weight.')
+            : T('goal_lose', 'That is {lbs} lbs, about {pct}% of your weight.').replace('{lbs}', Math.round(toLose)).replace('{pct}', Math.round(toLose / +current * 100));
+        wrap.querySelector('[data-goal-note]').textContent = toLose <= 0
+            ? T('goal_none_note', 'Your clinician can talk through maintenance options with you.')
+            : T('goal_note', "We'll help break it into achievable milestones.");
     }
 
     /** Progress bar, header back arrow and button label. */
