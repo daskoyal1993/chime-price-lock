@@ -62,6 +62,62 @@ final class LeadFlow
         return $status;
     }
 
+    /**
+     * After the checkout payment attempt (like demo/db_update.php):
+     *   1. DB   shipping address, purchased (when authorized) and the Vrio order id on the visitor's row
+     *   2. GHL  PUT the contact with the shipping address (and the checkout's email / phone)
+     * Each step is logged on its own and never changes the payment result.
+     *
+     * @param array $shipping first_name, last_name, address1, address2, city, state, zip, email, phone
+     * @param array $payment  Payment::charge() result
+     */
+    public static function checkout(array $config, array &$record, array $shipping, array $payment): void
+    {
+        $purchased = !empty($payment['success']);
+        $orderId   = $purchased ? (string) $payment['order_id'] : null;
+
+        $repo = new LeadRepository($config['db'] ?? []);
+        if (!$repo->enabled()) {
+            self::log($config, 'DB', null, 'checkout skipped: FUNNEL_DB_HOST / FUNNEL_DB_NAME not set');
+        } elseif (empty($record['lead_id'])) {
+            self::log($config, 'DB', null, 'checkout skipped: no saved lead in this session for ' . $shipping['email']);
+        } else {
+            try {
+                $repo->saveCheckout((int) $record['lead_id'], $shipping, $purchased, $orderId);
+                self::log($config, 'DB', true, 'row #' . $record['lead_id'] . ' checkout: address saved, purchased = ' . ($purchased ? 1 : 0) . ($orderId ? ', vrio_order_id = ' . $orderId : ''));
+            } catch (Throwable $e) {
+                self::log($config, 'DB', false, 'checkout: ' . $e->getMessage());
+            }
+        }
+
+        $cfg    = $config['ghl'] ?? [];
+        $client = new GhlClient($cfg);
+        if ($missing = $client->missing()) {
+            self::log($config, 'GHL', null, 'checkout skipped: set ' . implode(', ', $missing));
+            return;
+        }
+        $contact = array_filter([
+            'firstName'  => $shipping['first_name'],
+            'lastName'   => $shipping['last_name'],
+            'name'       => trim($shipping['first_name'] . ' ' . $shipping['last_name']),
+            'email'      => strtolower($shipping['email']),
+            'phone'      => $shipping['phone'],
+            'address1'   => trim($shipping['address1'] . ' ' . ($shipping['address2'] ?? '')),
+            'city'       => $shipping['city'],
+            'state'      => $shipping['state'],
+            'postalCode' => $shipping['zip'],
+            'country'    => 'US',
+            'source'     => (string) ($cfg['source'] ?? ''),
+        ], static function ($v) { return $v !== ''; });
+        try {
+            [$id, $action] = $client->save($record['ghl_contact_id'] ?? null, $contact);
+            $record['ghl_contact_id'] = $id;
+            self::log($config, 'GHL', true, 'contact ' . $id . ' ' . $action . ' at checkout (address' . ($purchased ? ', purchased' : '') . ') for ' . $contact['email']);
+        } catch (Throwable $e) {
+            self::log($config, 'GHL', false, 'checkout: ' . $e->getMessage());
+        }
+    }
+
     private static function membership(array $config, array &$record, string $email): void
     {
         if (isset($record['has_membership']) && ($record['membership_email'] ?? null) === $email) {

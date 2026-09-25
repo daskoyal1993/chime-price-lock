@@ -207,6 +207,7 @@ if ($action === 'product') {
 
 if ($action === 'checkout') {
     if (empty($record['product'])) {
+        LeadFlow::log($config, 'VRIO-PREAUTH', false, 'not sent: no plan chosen in this session (driver ' . $config['payment_driver'] . ')');
         funnel_json_response(['success' => false, 'message' => 'Please choose a plan first.'], 409);
     }
 
@@ -262,6 +263,8 @@ if ($action === 'checkout') {
     if (strlen($cvv) < 3 || strlen($cvv) > 4) $errors['card_cvv'] = 'Enter the 3 or 4 digit security code.';
 
     if ($errors) {
+        // Field names only — never the card data.
+        LeadFlow::log($config, 'VRIO-PREAUTH', false, $email . ' not sent: form errors in ' . implode(', ', array_keys($errors)) . ' (driver ' . $config['payment_driver'] . ')');
         funnel_json_response(['success' => false, 'errors' => $errors], 422);
     }
 
@@ -286,13 +289,11 @@ if ($action === 'checkout') {
     // One log line per attempt (never card data): storage/logs/lead-flow.log
     LeadFlow::log($config, 'VRIO-PREAUTH', $result['success'], $email . ' ' . $record['product']['name'] . ' $' . $record['product']['price']
         . ' campaign ' . $record['product']['crm_campaign_id'] . ' (driver ' . $config['payment_driver'] . '): ' . ($result['log'] ?? $result['message']));
-    if ($result['success'] && !empty($record['lead_id'])) {
-        try {
-            (new LeadRepository($config['db'] ?? []))->setOrderId((int) $record['lead_id'], (string) $result['order_id']);
-            LeadFlow::log($config, 'DB', true, 'row #' . $record['lead_id'] . ' vrio_order_id = ' . $result['order_id']);
-        } catch (Throwable $e) {
-            LeadFlow::log($config, 'DB', false, $e->getMessage());
-        }
+    // DB row + GHL contact get the shipping address, purchased and the order id (like demo/db_update.php).
+    try {
+        LeadFlow::checkout($config, $record, $shipping + ['email' => $email, 'phone' => $phone], $result);
+    } catch (Throwable $e) {
+        error_log('[lead-flow] checkout update failed: ' . $e->getMessage());
     }
 
     if (!$result['success']) {

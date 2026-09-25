@@ -169,17 +169,61 @@ final class LeadRepository
         }
     }
 
-    /** Store the Vrio order id from the checkout pre-authorization on the row. */
-    public function setOrderId(int $id, string $orderId): void
+    /**
+     * Checkout (like demo/db_update.php): the shipping address into its columns and the quiz JSON,
+     * `purchased` = 1 once the card is authorized, and the Vrio order id.
+     *
+     * @param array $shipping first_name, last_name, address1, address2, city, state, zip, email, phone
+     */
+    public function saveCheckout(int $id, array $shipping, bool $purchased, ?string $orderId): void
     {
-        if (!$this->enabled()) {
-            return;
-        }
+        $pdo   = $this->pdo();
+        $table = $this->table();
+        $address = trim($shipping['address1'] . ' ' . ($shipping['address2'] ?? ''));
         try {
-            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `vrio_order_id` = ?, `updated_at` = ? WHERE `id` = ?");
-            $st->execute([mb_substr($orderId, 0, 50), gmdate('Y-m-d H:i:s'), $id]);
+            $pdo->beginTransaction();
+            $st = $pdo->prepare("SELECT `quiz` FROM {$table} WHERE `id` = ? FOR UPDATE");
+            $st->execute([$id]);
+            $row = $st->fetch();
+            if (!$row) {
+                throw new RuntimeException('row #' . $id . ' not found');
+            }
+            // Same keys as the quiz's address questions, so the stored JSON reads the same as before.
+            $quiz = array_merge(self::decodeQuiz((string) $row['quiz'], $id), array_filter([
+                'address_line1'  => $shipping['address1'],
+                'address_line2'  => $shipping['address2'] ?? '',
+                'city'           => $shipping['city'],
+                'zip'            => $shipping['zip'],
+                'shipping_state' => $shipping['state'],
+            ], static function ($v) { return $v !== ''; }));
+            $json = json_encode($quiz, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            if ($json === false) {
+                throw new RuntimeException('Quiz answers could not be encoded as JSON: ' . json_last_error_msg());
+            }
+            $st = $pdo->prepare("UPDATE {$table} SET `quiz` = :quiz, `address1` = :address1, `postalCode` = :zip, `city` = :city, `state` = :state,"
+                . " `purchased` = GREATEST(COALESCE(`purchased`, 0), :purchased), `vrio_order_id` = COALESCE(:order_id, `vrio_order_id`), `updated_at` = :now WHERE `id` = :id");
+            $st->execute([
+                'quiz'      => $json,
+                'address1'  => mb_substr($address, 0, 100),
+                'zip'       => self::optional($shipping['zip']),
+                'city'      => self::optional($shipping['city']),
+                'state'     => self::optional($shipping['state']),
+                'purchased' => $purchased ? 1 : 0,
+                'order_id'  => $orderId !== null ? mb_substr($orderId, 0, 50) : null,
+                'now'       => gmdate('Y-m-d H:i:s'),
+                'id'        => $id,
+            ]);
+            $pdo->commit();
         } catch (PDOException $e) {
-            throw new RuntimeException('Saving the Vrio order id failed: ' . $e->getMessage(), 0, $e);
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw new RuntimeException('Saving the checkout failed: ' . $e->getMessage(), 0, $e);
+        } catch (RuntimeException $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
         }
     }
 
