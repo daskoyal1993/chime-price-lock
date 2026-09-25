@@ -1,0 +1,29 @@
+{
+  "_help": "Thank-you page (thank-you.php).",
+
+  "title": "Thank you",
+  "body_class": "page-checkout",
+  "styles": ["assets/css/checkout.css"],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-shop", "show_phone": true },
+  "main_class": "ty",
+
+  "sections": [
+    {
+      "component": "thank-you/confirmation",
+      "badge": "Order placed",
+      "title": "Thank you{name_part}! Your order is in.",
+      "name_part": ", {name}",
+      "text_html": "A licensed clinician will review your intake. If approved, your medication ships within 48 hours. We sent a confirmation to <strong>{email}</strong>.",
+      "product_name": "{product} - {months}M Plan",
+      "order_label": "Order {order_id}",
+      "steps_html": [
+        "<strong>Clinician review</strong> — usually within 24 hours.",
+        "<strong>Pharmacy prepares your order</strong> — shipped discreetly with tracking.",
+        "<strong>Start your plan</strong> — your care team is a message away."
+      ]
+    }
+  ],
+
+  "footer": true
+}

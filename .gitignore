@@ -1,0 +1,13 @@
+# Secrets - each server keeps its own .env
+.env
+
+# Local archives / runtime files
+*.zip
+storage/logs/*
+!storage/logs/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

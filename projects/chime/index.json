@@ -1,0 +1,86 @@
+{
+  "_help": "Quiz page (index.php). The questions come from the funnel API; this file groups them into screens and sets the on-screen text. The quiz itself is drawn by assets/funnel.js.",
+
+  "title": "Complete your intake today!",
+  "_title_help": "Used only when the API form has no name.",
+  "body_class": "page-quiz",
+  "styles": ["assets/css/quiz.css"],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-quiz" },
+  "footer": false,
+
+  "doctor_image": "assets/img/doctor-2@3x.png",
+
+  "_auto_continue_help": "Picking a matching answer submits the screen by itself — the same as pressing Continue — once every question on the screen is answered. auto_continue_options = exact answers (any case); auto_continue_patterns = regular expressions tested against the start of the answer (any case). Checkbox, radio and select questions only.",
+  "auto_continue_options": ["None of these", "None of the above", "None of the below", "None", "No"],
+  "auto_continue_patterns": ["^none\\b", "^no\\b", "^i['’]?m not\\b", "^i am not\\b"],
+
+  "_questions_help": "Display settings per API question key. prechecked: checkbox starts ticked (the visitor can untick it). compact: only the checkbox line, no title. text: shown instead of the API option text (the saved answer stays the API option). required_message: error when a required checkbox is left unticked.",
+  "questions": {
+    "sms_consent": {
+      "prechecked": true,
+      "required_message": "Please agree to receive clinician and delivery texts to continue."
+    }
+  },
+
+  "_screens_help": "One screen at a time. keys = API question keys. heading/text/badge/button are optional (a screen with one question uses its label as the heading); badge defaults to the API step name; badge_style: info | success; doctor: show the clinician photo. Keys not in the API are ignored; API questions not listed are added after these screens automatically. A screen whose questions are all hidden by conditions is skipped.",
+  "screens": [
+    { "keys": ["product_pick"], "badge": "Get started" },
+    { "keys": ["height", "weight", "bmi"], "heading": "Your dose depends on your body.", "text": "These help your clinician calculate the safest, most effective dose.", "doctor": true },
+    { "keys": ["gender", "dob", "shipping_state", "elderly_consent", "metabolic_consent"], "heading": "Almost there — your clinician just needs a few quick details.", "doctor": true },
+    { "keys": ["female_health_status"], "text": "*Select all that apply & click \"Continue\" below" },
+    { "keys": ["health_conditions"], "text": "*Select all that apply & click \"Continue\" below", "badge": "Health check" },
+    { "keys": ["health_conditions_additional"], "text": "*Select all that apply & click \"Continue\" below", "badge": "Health check" },
+    { "keys": ["more_health_conditions"], "text": "*Select all that apply & click \"Continue\" below", "badge": "Final health check", "button": "Continue health check" },
+    { "keys": ["taken_pain_medications_or_street_drugs", "taken_pain_medications_or_street_drugs_info"] },
+    { "keys": ["blood_pressure", "resting_heart_rate"], "heading": "Your vitals", "text": "Estimates are fine — your clinician will confirm." },
+    { "keys": ["last_medical_evaluation", "last_lab_tests"], "heading": "Your recent care" },
+    { "keys": ["offer_prescription_medications", "offer_prescription_medications_info"], "badge": "Medical history" },
+    { "keys": ["offer_medication_allergies", "offer_medication_allergies_info"], "badge": "Medical history" },
+    { "keys": ["glp1_allergies"] },
+    { "keys": ["current_glucose_medications"] },
+    { "keys": ["weight_loss_medications",
+      "previous_semaglutide_medication_last_dose", "previous_semaglutide_medication_last_dose_date", "previous_semaglutide_medication_experience",
+      "previous_tirzepatide_medication_last_dose", "previous_tirzepatide_medication_last_dose_date", "previous_tirzepatide_medication_experience"] },
+    { "keys": ["gastric_bypass_6_months", "heart_arrhythmia"], "heading": "A couple more safety questions" },
+    { "keys": ["glp_consent"] },
+    { "keys": ["additional_doc_information", "additional_doc_information_info"] },
+    { "keys": ["first_name", "last_name", "email", "phone", "sms_consent"], "heading": "Your plan is ready. Where should we send it?", "text": "Your clinician will use this to reach you about your treatment.", "badge": "Plan ready", "badge_style": "success" },
+    { "keys": ["address_line1", "address_line2", "city", "zip"], "heading": "Where should we ship your medication?", "text": "Delivered discreetly to your door.", "badge": "Shipping" },
+    { "keys": ["contact_agree"], "heading": "Last step — please confirm", "button": "See my plan" }
+  ],
+
+  "_text_help": "Text used by assets/funnel.js and the error page. Field validation messages stay in the script (they match the server's).",
+  "text": {
+    "noscript": "Please enable JavaScript to complete this form.",
+    "unavailable_title": "Unavailable",
+    "unavailable": "We could not load this page right now. Please try again in a few minutes.",
+    "continue": "Continue",
+    "last_button": "See my plan",
+    "select_all": "*Select all that apply & click \"Continue\" below",
+    "private": "Private & secure.",
+    "doctor_alt": "Clinician who will review your intake",
+    "select": "Select…",
+    "select_state": "Select your state",
+    "feet": "Feet",
+    "inches": "Inches",
+    "placeholder_email": "Email",
+    "placeholder_phone": "Phone number",
+    "placeholder_weight": "Weight (lbs)",
+    "placeholder_zip": "ZIP code",
+    "bmi_title": "Why BMI?",
+    "bmi_text": "Your height & weight calculate BMI — one of several factors your clinician uses to personalize your plan.",
+    "bmi_warn_text": "Even modest weight loss can improve health. Your plan is personalized beyond BMI.",
+    "checking": "Checking your answers…",
+    "verifying": "Checking your details…",
+    "xverify_email": "Please enter a valid email address.",
+    "xverify_phone": "Please enter a valid phone number.",
+    "review": "Please review the highlighted answers.",
+    "error": "Something went wrong. Please try again.",
+    "offline": "We could not reach the server. Check your connection and try again.",
+    "dq_badge": "Not eligible online",
+    "dq_title": "We can’t offer treatment online right now",
+    "dq_text": "Based on your answer, our clinicians aren’t able to safely prescribe this program through an online visit. Please talk to your healthcare provider about other options.",
+    "dq_back": "Go back and change my answer"
+  }
+}

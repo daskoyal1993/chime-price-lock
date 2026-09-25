@@ -1,0 +1,205 @@
+{
+  "_help": "Product page (product.php). Sections render top to bottom; set \"visible\": false to hide one, reorder to move it. Products, plans and prices come from the API; their names/images are in site.json → products.",
+
+  "title": "Your Plan",
+  "body_class": "page-product",
+  "styles": ["assets/css/product.css"],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-shop", "show_phone": false },
+
+  "sections": [
+    {
+      "component": "product/hero",
+      "visible": true,
+      "title_plain": "Congrats,",
+      "title_brand": "you qualify for the GLP-1 + NAD+ combo",
+      "subtitle_html": "<strong>America's #1 GLP-1 Weight Loss Program</strong> is ready for you. Our members hit their goals faster.",
+      "bonus_pill_html": "<span aria-hidden=\"true\">🎁</span> <strong>BONUS · FREE {bonus}</strong> <s>{value} value</s> {line}",
+      "figures": {
+        "female": { "start": "assets/img/female-start.webp", "end": "assets/img/female-end.png" },
+        "male": { "start": "assets/img/male-start.png", "end": "assets/img/male-end.png" }
+      },
+      "labels": {
+        "today": "Today",
+        "after": "With Chime",
+        "weight": "Weight",
+        "weight_unit": " Lbs",
+        "bmi": "BMI",
+        "cravings": "Cravings",
+        "cravings_before": "Uncontrolled",
+        "cravings_after": "Reduced"
+      },
+      "_projected_loss_pct_help": "\"With Chime\" column: projected weight/BMI after this % loss (the API has no goal weight).",
+      "projected_loss_pct": 15,
+      "stats": [
+        { "value": "2x", "unit": "", "text": "Faster weight loss than competing industry averages." },
+        { "value": "-14", "unit": "lbs", "text": "Average weight loss in your first 90 days." },
+        { "value": "94.8", "unit": "%", "text": "Chime members lose weight." }
+      ],
+      "treatments_title": "Select your treatment",
+      "price_from_html": "from <strong>{price}</strong>/mo",
+      "footnote": "Based on self-reported data from approximately 300,000 Chime Meds members on a personalized treatment plan, including compounded GLP-1 medications and consultations with medical professionals. Members reported their weight on their initial medical intake questionnaire and every 3-4 weeks thereafter."
+    },
+
+    {
+      "component": "product/plans",
+      "visible": true,
+      "id": "products",
+      "title_plain": "Ready to",
+      "title_brand": "achieve your Goal?",
+      "title_end": "We are!",
+      "text": "Pick your GLP-1 and plan length — every plan comes with NAD+ ($299 value) free. Both products, one low price, one shipment.",
+      "features": [
+        { "title": "GLP-1 does the heavy lifting", "text_html": "Curbs appetite and cravings so the weight comes off." },
+        { "title": "NAD+ keeps you going", "text_html": "Supports energy, focus and recovery while you lose." },
+        { "title": "Both, for one low price", "text_html": "The NAD+ is on us — <s>$299</s> <strong>FREE</strong> with every plan." }
+      ],
+      "empty_text": "No plans are available right now. Please check back soon.",
+      "card": {
+        "award_image": "assets/img/forbes-best-of-2026.webp",
+        "award_alt": "Forbes Health Best of 2026 #1 GLP-1",
+        "stock_label": "In-Stock",
+        "injectable_label": "Weekly Injectable",
+        "free_label": "FREE",
+        "bonus_bar_html": "<strong>BONUS: FREE {bonus}</strong> <s>{value} value</s> · both products, one low price",
+        "press": [
+          { "image": "assets/img/forbes.webp", "alt": "Forbes" },
+          { "image": "assets/img/usa-today.webp", "alt": "USA Today" }
+        ],
+        "sub_with_bonus": "Compounded GLP-1 + {bonus} · both in one plan",
+        "sub": "Compounded GLP-1 · {form}",
+        "rating_html": "<span class=\"stars\" aria-hidden=\"true\">★★★★★</span> {rating}<br>Over 200,000 Members",
+        "bonus_box": {
+          "kicker": "Bonus · included with every plan",
+          "name_html": "FREE {bonus} <s>{value} value</s>"
+        }
+      },
+      "plan": {
+        "legend": "Choose your plan length",
+        "monthly_name": "Monthly Plan",
+        "monthly_note": "No free month. Pause or cancel anytime.",
+        "kicker": "{months} Month Plan",
+        "per_month": "/mo",
+        "note_free": "with every {months}th month free, forever",
+        "note_billed": "billed every {months} months",
+        "due_html": "<strong>{price} due today · includes {months} months</strong><br>No mid-plan price increases.",
+        "banner_free_html": "Commit to {months_minus_1} Months &amp;<br><strong>Get EVERY {months}TH MONTH FREE</strong>",
+        "banner_save_html": "Best value ·<br><strong>Save {save}% vs monthly</strong>",
+        "banner_best_html": "Best value<br><strong>Lowest monthly price</strong>",
+        "button": "Choose a plan length"
+      },
+      "included": {
+        "visible": true,
+        "title": "Your plan, all in. One simple price — included:",
+        "bonus_line": "BONUS: {bonus} — both products, one price"
+      }
+    },
+
+    {
+      "component": "product/next-steps",
+      "visible": true,
+      "title_html": "Your <span class=\"brand\">next steps</span> to life-changing weight loss meds",
+      "steps": [
+        { "title": "Pick your medication", "image": "assets/img/pick-medication.jpg", "points": ["We recommend microdosing", "Clinician-verified for fast results"] },
+        { "title": "Get it delivered", "image": "assets/img/get-it-delivered.jpg", "points": ["Fast delivery—arrives in 48 hours", "Arrives discreetly at your door"] },
+        { "title": "Lose Weight", "image": "assets/img/lose-weight.jpg", "points": ["Results in as little as 30 days", "Lose 14 lb in 3 months"] }
+      ]
+    },
+
+    {
+      "component": "product/all-in-one",
+      "visible": true,
+      "title_html": "Your meds + complete support.<br><span class=\"brand\">All-in-one</span>.",
+      "image": "assets/img/all-in-one.png",
+      "image_alt": "Chime Health patient portal, medication and clinician video call",
+      "list_title": "Includes:",
+      "points": [
+        "Unlimited video calls with clinicians",
+        "Always on medical assistance via phone",
+        "100% U.S. based care agents",
+        "On-time refills guaranteed",
+        "Access the Chime member community",
+        "No hidden fees. Always transparent pricing."
+      ],
+      "stat": "Our Complete GLP-1 program delivers results 58% faster than medication alone.",
+      "footnote": "Based on self-reported data from approximately 300,000 Chime Meds members on a personalized treatment plan, including compounded GLP-1 medications and consultations with medical professionals. Members reported their weight on their initial medical intake questionnaire and every 3-4 weeks thereafter."
+    },
+
+    {
+      "component": "product/members",
+      "visible": true,
+      "title": "200,000+ Members",
+      "title2": "trust Chime.",
+      "avatars": ["assets/img/1.jpg", "assets/img/2.jpg", "assets/img/3.jpg", "assets/img/4.jpg", "assets/img/5.jpg"],
+      "rating_image": "assets/img/before-after-rating.png",
+      "rating_alt": "Trustpilot 10,000+ reviews 4.7 · Forbes rank #1 GLP-1 provider",
+      "lbs_unit": "lbs",
+      "story_tag": "Verified Chime Members",
+      "story_alt": "{name} before and after",
+      "stories": [
+        { "name": "Kala L.", "lbs": 40, "image": "assets/img/before-after-kala.jpg" },
+        { "name": "Morgan M.", "lbs": 36, "image": "assets/img/before-after-morgan.jpg" },
+        { "name": "Meghan B.", "lbs": 29, "image": "assets/img/before-after-meghan.jpg" },
+        { "name": "Chris C.", "lbs": 42, "image": "assets/img/before-after-chris.jpg" },
+        { "name": "Noelle D.", "lbs": 29, "image": "assets/img/before-after-noelle.jpg" },
+        { "name": "Susan S.", "lbs": 36, "image": "assets/img/before-after-susan.jpg" },
+        { "name": "Ashley H.", "lbs": 25, "image": "assets/img/before-after-ashley.jpg" },
+        { "name": "Michelle C.", "lbs": 30, "image": "assets/img/before-after-michelle.jpg" },
+        { "name": "Julie L.", "lbs": 16, "image": "assets/img/before-after-julie.jpg" },
+        { "name": "Scott H.", "lbs": 32, "image": "assets/img/before-after-scott.jpg" },
+        { "name": "Tim B.", "lbs": 40, "image": "assets/img/before-after-tim.jpg" },
+        { "name": "Jennifer P.", "lbs": 34, "image": "assets/img/before-after-jennifer.jpg" }
+      ]
+    },
+
+    {
+      "component": "product/delivery",
+      "visible": true,
+      "title_html": "48-hour delivery.<br><span class=\"brand\">Always free.</span>",
+      "image": "assets/img/free-delivery-chime.png",
+      "image_alt": "Always free delivery",
+      "disclaimer_html": "<strong>Chime Health offers compounded GLP-1s exclusively from U.S. pharmacies.</strong> Compounded medications are regulated and compounding pharmacies are licensed and inspected by Boards of Pharmacy, but the FDA has not evaluated the medications for safety, quality, or efficacy. GLP-1 medications are prescription drugs that should be taken and monitored under the supervision of a licensed health care professional. GLP-1 medications carry serious risks, including risks of thyroid C-cell tumors (which includes thyroid cancer) and medullary thyroid carcinoma (MTC). Talk to your clinician if you get a lump or swelling in your neck, hoarseness, trouble swallowing, or shortness of breath."
+    },
+
+    {
+      "component": "common/faq",
+      "visible": true,
+      "title": "Wondering About Side Effects, Safety, or Results?",
+      "text": "Prescription weight loss can feel overwhelming. We've answered the most common questions here so you can move forward with confidence. Our clinicians & care team are always a message or call away.",
+      "items": [
+        { "q": "What happens if I don't see results?", "a": "Chime offers a weight loss guarantee. If you follow your treatment plan and do not see qualifying results, contact the care team so they can review your progress and next steps." },
+        { "q": "What's included with Chime Health?", "a": "Your plan includes clinician review, a personalized prescription if approved, medication shipped to your door, free delivery, and ongoing access to support." },
+        { "q": "What treatments do you offer?", "a": "Chime offers GLP-1 treatment plans, including compounded semaglutide and compounded tirzepatide when clinically appropriate." },
+        { "q": "How does it work?", "a": "Start with the online assessment. A licensed clinician reviews your information, creates a plan if you qualify, and your medication is shipped directly to you." },
+        { "q": "What states do you serve?", "a": "Chime serves eligible members in supported U.S. states. Availability can depend on local telehealth and pharmacy rules." },
+        { "q": "What can I expect after I sign up?", "a": "After sign-up, your intake is reviewed, you receive next-step instructions, and, if approved, your treatment is prepared and shipped with tracking." },
+        { "q": "Do you require insurance?", "a": "No. Chime plans do not require insurance, and pricing is shown before checkout." },
+        { "q": "What is the cancellation and refund policy?", "a": "Plans are month to month. You can manage cancellation through support according to the plan terms and timing of your order." },
+        { "q": "I have a previous prescription from another weight-loss company, can I start at a higher dosage?", "a": "A clinician will review your current or previous prescription and medical history before deciding whether a higher starting dose is appropriate." },
+        { "q": "How do I know I'll get support if something goes wrong?", "a": "Members can contact the care team for treatment, shipping, refill, and account questions throughout the program." },
+        { "q": "This feels expensive. What makes Chime worth it?", "a": "The plan combines clinician oversight, medication if prescribed, support, and direct-to-door delivery in one program." },
+        { "q": "Is Chime as legitimate as seeing a local clinician?", "a": "Chime uses licensed clinicians and U.S. pharmacy partners to provide online care where telehealth is available." },
+        { "q": "How fast will I see results?", "a": "Results vary by person, but many members report progress within the first few months when following their treatment plan." },
+        { "q": "I'm nervous about injections. What should I expect?", "a": "The care team provides guidance for using your medication. If injections make you nervous, ask support for step-by-step help before your first dose." }
+      ]
+    }
+  ],
+
+  "after_main": [
+    { "component": "product/buy-bar", "visible": true, "button": "Buy Now" }
+  ],
+
+  "footer": true,
+
+  "_text_help": "Text used by assets/product.js. {plan} and {price} are filled in by the script.",
+  "text": {
+    "choose_plan": "Choose a plan length",
+    "continue": "Continue with {plan} — {price}",
+    "wait": "Please wait…",
+    "bar_plan": "{plan} · {price} today",
+    "bar_buy": "Buy Now",
+    "bar_choose": "Choose plan",
+    "error": "Something went wrong. Please try again.",
+    "offline": "We could not reach the server. Check your connection and try again."
+  }
+}

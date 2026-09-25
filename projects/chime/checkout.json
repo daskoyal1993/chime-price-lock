@@ -1,0 +1,129 @@
+{
+  "_help": "Checkout page (checkout.php). Two columns: checkout/form on the left, checkout/sidebar (with its own sections) on the right. Form field ids are fixed (checkout.js + submit.php use them); only their labels are set here.",
+
+  "title": "Checkout",
+  "body_class": "page-checkout",
+  "styles": ["assets/css/checkout.css"],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-shop", "show_phone": true },
+  "main_class": "co-layout",
+
+  "sections": [
+    {
+      "component": "checkout/form",
+      "headings": {
+        "shipping": "Shipping Information",
+        "billing": "Billing Information",
+        "payment": "Payment Method"
+      },
+      "labels": {
+        "shipping_first_name": "First Name",
+        "shipping_last_name": "Last Name",
+        "shipping_address1": "Address",
+        "shipping_address2": "Apartment, suite, unit (optional)",
+        "shipping_city": "City",
+        "shipping_zip": "Zip Code",
+        "shipping_phone": "Phone",
+        "shipping_email": "Email",
+        "billing_first_name": "Billing First Name",
+        "billing_last_name": "Billing Last Name",
+        "billing_address1": "Billing Address",
+        "billing_city": "Billing City",
+        "billing_zip": "Billing Zip Code",
+        "country": "Country",
+        "country_value": "United States",
+        "state": "State",
+        "state_placeholder": "Select State"
+      },
+      "billing": { "same_label": "Billing same as Shipping", "yes": "Yes", "no": "No" },
+      "card": {
+        "note": "All transactions are secure and encrypted.",
+        "number_label": "Card number",
+        "number_placeholder": "1234 1234 1234 1234",
+        "expiry_label": "Expiration",
+        "month_placeholder": "Month",
+        "year_label": "Expiration year",
+        "year_placeholder": "Year",
+        "cvv_label": "Security code",
+        "cvv_placeholder": "CVC",
+        "cvv_image": "assets/img/cvc.png"
+      },
+      "button": "Complete Purchase",
+      "legal_html": "By clicking \"Complete Purchase,\" you agree to enroll in an automatically-renewing subscription. Your initial payment will be refunded if medication is not prescribed after your initial consultation. Your second shipment may be charged and shipped up to 10 days early to prevent treatment gaps. Refills occur every 28 days and you must complete a refill form each refill period to ensure appropriate dosage. Your subscription will renew automatically at the end of each subscription term and you will be charged accordingly, regardless of whether you receive a refill. Your subscription will renew unless you cancel at least 48 hours before your renewal date through your account settings. You also agree to Chime Health <a href=\"#\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>, <a href=\"#\" target=\"_blank\" rel=\"noopener\">Terms of Service</a> and <a href=\"#\" target=\"_blank\" rel=\"noopener\">Telehealth Consent</a>.",
+      "warranty": {
+        "visible": true,
+        "title": "Chime Health Care+ Warranty",
+        "text": "Reach your goal weight with us, or we refund every penny.",
+        "image": "assets/img/weightloss-warranty.webp",
+        "image_alt": "Weight loss warranty"
+      }
+    },
+
+    {
+      "component": "checkout/sidebar",
+      "crumbs": { "back": "Choose", "current": "Checkout" },
+      "title": "Order Summary",
+      "sections": [
+        {
+          "component": "checkout/order-summary",
+          "visible": true,
+          "name": "{product} - {months}M Plan",
+          "best_value": "Best Value",
+          "compounded": "(Compounded)",
+          "as_low_as": "As low as",
+          "per_day": "/day",
+          "perks": ["Flexible month-to-month", "Clinically proven", "Results or you don't pay", "No long-term commitment"],
+          "perks_image": "assets/img/weightloss-warranty.webp",
+          "plan_line": "{months} Month Plan",
+          "plan_line_single": "Standard Plan",
+          "bonus_line": "FREE {bonus}",
+          "fees": [
+            { "label": "Online Clinician Visit", "value": 49 },
+            { "label": "Overnight Shipping", "value": 19.99 }
+          ],
+          "warranty_line": "Protected by Weight Loss Warranty",
+          "warranty_status": "Activated",
+          "total_label": "Total Due Today",
+          "total_per_day": "Just {price}/day",
+          "free_label": "FREE"
+        },
+        { "component": "common/delivery-estimate", "visible": true },
+        {
+          "component": "checkout/included-list",
+          "visible": true,
+          "title": "Your plan, all in. One simple price — no add-ons, no hidden fees.",
+          "free_label": "FREE"
+        },
+        {
+          "component": "common/reviews",
+          "visible": true,
+          "kicker": "Member stories",
+          "title_html": "Loved by <em>real members</em>",
+          "rating_label": "Excellent",
+          "verified_label": "Verified Member",
+          "date_label": "Date of Experience",
+          "items": [
+            { "title": "Chime Health helped me achieve my goal!", "text": "Chime Health helped me achieve my goal weight! The providers I worked with throughout the process were amazing.", "name": "Hayley N.", "date": "July 7, 2025", "image": "assets/img/image_3.png" },
+            { "title": "The best choice for weight loss", "text": "From start to finish, customer service representatives made the entire process simple. The doctors I spoke with were great.", "name": "Courtney D.", "date": "July 4, 2025", "image": "assets/img/image_6.png" },
+            { "title": "Chime Health was miraculous!", "text": "In just 5 months I lost over 20% of my body weight (42 lbs) with the GLP-1 program.", "name": "Niko N.", "date": "July 3, 2025", "image": "assets/img/image_5.png" },
+            { "title": "The process was flawless!", "text": "From signing up, speaking to the physician, and shipping! I've tried other programs and this was by far the easiest.", "name": "Khalia L.", "date": "July 9, 2025", "image": "assets/img/image_8.png" },
+            { "title": "Chime Health helped me get healthy again!!!", "text": "The Chime Health team, and its doctors/NPs were extremely knowledgeable, professional, and supportive.", "name": "Jason W.", "date": "June 26, 2025", "image": "assets/img/image_7.png" },
+            { "title": "Quick and Easy", "text": "The experience to get on a semaglutide medication for weight loss was easy and quick.", "name": "Britt A.", "date": "July 2, 2025", "image": "assets/img/image_9.png" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "footer": true,
+
+  "_text_help": "Text used by assets/checkout.js.",
+  "text": {
+    "button": "Complete Purchase",
+    "state_not_served": "We don't ship to this state yet.",
+    "processing": "Processing…",
+    "required": "This field is required.",
+    "error": "Something went wrong. Please try again.",
+    "offline": "We could not reach the server. Check your connection and try again."
+  }
+}

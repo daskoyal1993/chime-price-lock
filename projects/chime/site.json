@@ -1,0 +1,111 @@
+{
+  "_help": "Settings shared by every page of this project. Each page has its own file next to this one (index.json, product.json, checkout.json, thank-you.json). Keys ending in _html may contain HTML; {placeholders} are filled in by the page. See projects/README.md.",
+
+  "brand": {
+    "name": "Chime Health",
+    "logo": "assets/img/logo.png",
+    "logo_alt": "assets/img/logo-chime.svg",
+    "favicon": "assets/img/favicon.png",
+    "phone": "+1 (551) 239-9025",
+    "email": "hello@chimehealth.com",
+    "rating": "4.7",
+    "members": "300,000+"
+  },
+
+  "theme": {
+    "_help": "Colors override the defaults in assets/css/common.css. Add or change any --variable used by the CSS (write it without the leading --).",
+    "font_url": "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap",
+    "font_family": "",
+    "colors": {
+      "brand": "#2f45c8",
+      "brand-soft": "#eef1ff",
+      "button": "#0f172a",
+      "navy": "#121f82",
+      "footer": "#262626",
+      "ink": "#1f2937",
+      "green": "#15803d",
+      "teal": "#14b8a6",
+      "emerald": "#10b981",
+      "radius": "12px"
+    }
+  },
+
+  "styles": ["assets/css/common.css"],
+
+  "header": {
+    "rating_label": "Excellent",
+    "phone_label_html": "Questions? Call us",
+    "secure_html": "Secure<br>Payment"
+  },
+
+  "footer": {
+    "rating_label": "Excellent",
+    "members_label": "Chime Members",
+    "email_label": "Email us",
+    "badge": "Compounded By U.S.A. Licensed Pharmacies",
+    "copyright": "© {year} {brand}. All rights reserved.",
+    "columns": [
+      { "title": "Legal & Consent", "links": [ { "label": "Telehealth Consent", "url": "#" }, { "label": "Terms & Conditions", "url": "#" } ] },
+      { "title": "Privacy & Data", "links": [ { "label": "HIPAA Notice", "url": "#" }, { "label": "Privacy Policy", "url": "#" } ] },
+      { "title": "Support & Resources", "links": [ { "label": "Return & Refund Policy", "url": "#" }, { "label": "Shipping Policy", "url": "#" } ] }
+    ]
+  },
+
+  "_products_help": "How each API product is shown. The key is matched against the API product name (case-insensitive). The product NAME, prices and plans always come from the funnel JSON; this only adds image, tagline, badge and featured.",
+  "products": {
+    "tirzepatide & tesamorelin": {
+      "_note": "Membership bundle (membership_campaign_set). Copy/image are placeholders — see NOTES-OPEN-ITEMS.md.",
+      "image": "assets/img/vial-tirzepatide.webp",
+      "tagline": "Stronger appetite control. Preferred for faster weight loss.",
+      "badge": "Recommended for you",
+      "featured": true
+    },
+    "semaglutide & tesamorelin": {
+      "_note": "Membership bundle (membership_campaign_set). Copy/image are placeholders — see NOTES-OPEN-ITEMS.md.",
+      "image": "assets/img/vial-semaglutide.webp",
+      "tagline": "Effective appetite control with slower, consistent results.",
+      "badge": "Most Affordable",
+      "featured": false
+    },
+    "tirzepatide": {
+      "image": "assets/img/vial-tirzepatide.webp",
+      "tagline": "Stronger appetite control. Preferred for faster weight loss.",
+      "badge": "Recommended for you",
+      "featured": true
+    },
+    "semaglutide": {
+      "image": "assets/img/vial-semaglutide.webp",
+      "tagline": "Effective appetite control with slower, consistent results.",
+      "badge": "Most Affordable",
+      "featured": false
+    }
+  },
+  "product_fallback_image": "assets/img/image_2.png",
+
+  "_bonus_help": "Free add-on shown on the product and checkout pages. Set to null to hide it everywhere. Its image is only shown for products whose funnel JSON name contains match (e.g. NAD).",
+  "bonus": {
+    "name": "NAD+",
+    "match": "NAD",
+    "value": 299,
+    "image": "assets/img/vial-nad-plus.webp",
+    "line": "with every plan — both products, one low price.",
+    "text": "Your GLP-1 and your NAD+ ship together. Both products, one low price — nothing to add on."
+  },
+
+  "_included_help": "\"Your plan, all in\" list on the product cards and checkout. value = crossed-out price.",
+  "included": [
+    { "text": "Unlimited video visits with clinicians", "value": 129, "icon": "assets/img/image_4.jpg" },
+    { "text": "Always-on medical support by phone", "value": 89, "icon": "assets/img/image_3.jpg" },
+    { "text": "100% U.S.-based Chime care team", "value": 69, "icon": "assets/img/image_6.jpg" },
+    { "text": "On-time refills, guaranteed", "value": 49, "icon": "assets/img/imagenw.jpg" },
+    { "text": "Chime member community", "value": 29, "icon": "assets/img/image_2.jpg" },
+    { "text": "Chime Weight Loss Warranty", "value": 179, "icon": "assets/img/weightloss-warranty.webp" }
+  ],
+
+  "delivery": {
+    "carrier": "assets/img/fedex.png",
+    "carrier_alt": "FedEx",
+    "label": "Est. Delivery:",
+    "estimate": "Within 48 Hours"
+  }
+}

@@ -1,0 +1,9 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# Keep configuration, PHP classes, components, page JSON, the sample response and runtime files private.
+RedirectMatch 404 ^/(.*/)?(config|bootstrap)\.php$
+RedirectMatch 404 ^/(.*/)?(lib|data|storage|components|database|demo|tools)(/.*)?$
+RedirectMatch 404 ^/(.*/)?projects/.*\.(json|php)$
+RedirectMatch 404 ^/(.*/)?[^/]+\.md$
+RedirectMatch 404 ^/(.*/)?\.env(\..*)?$
