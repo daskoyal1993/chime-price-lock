@@ -31,3 +31,7 @@ jobs:
             .env.*
             *.zip
             storage/logs/**
+            demo/**
+            database/**
+            **/*.md
+            deploy-test.txt
