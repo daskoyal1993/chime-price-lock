@@ -15,7 +15,7 @@
             "ghl": {
                 "instance": "chime-health",
                 "is_legacy": false,
-                "location_id": "AeheBO22OOorfyaJeD8X",
+                "credentials": "eyJhcGlfa2V5IjoicGl0LWMzOTVkNmE5LWY4OTEtNDg5OC04YTkwLWU0YWMxMmRkNzllMSIsImxvY2F0aW9uX2lkIjoiQWVoZUJPMjJPT29yZnlhSmVEOFgifQ==.2fd93b7ca28ab815e53bc1ebf8b44683d3926f506ac785034951fa016ed22420",
                 "incomplete_tag": null,
                 "complete_tag": null,
                 "new_contact_tag": [
@@ -30,10 +30,7 @@
                 "portal_new_custom_field": "GpNfOFAW5476eLy5s9yV",
                 "portal_new_custom_field_key": "contact.portal_redirection_link"
             },
-            "vouched": {
-                "app_id": "pub.1.KvzrApmiC.8Dyt7bi24eJAnBASfoO_MSCdQzTctEZeRalByp6sJlQ",
-                "app_secret": "prv.1.KvzrApmiC.QzsD2DKHakzeO2Iwqexv4oyPs2ECDiI1LLWhzTxmt-Q"
-            }
+            "vouched": "eyJhcHBfaWQiOiJwdWIuMS5LdnpyQXBtaUMuOER5dDdiaTI0ZUpBbkJBU2ZvT19NU0NkUXpUY3RFWmVSYWxCeXA2c0psUSIsImFwcF9zZWNyZXQiOiJwcnYuMS5LdnpyQXBtaUMuUXpzRDJES0hha3plTzJJd3FleHY0b3lQczJFQ0RpSTFMTFdoelR4bXQtUSJ9.cadb98d6bdb9ff06968ec6effddcfa62615239ddc14abd3434fb390cf36e2c27"
         },
         "campaign_set": {
             "id": 12,
@@ -201,7 +198,7 @@
                                 "questionnaire_type": "medical",
                                 "is_required": "no",
                                 "is_readonly": "no",
-                                "default_params": "shipping_address2",
+                                "default_params": "address_line2",
                                 "position": 6,
                                 "ghl": {
                                     "ghl_custom_id": "",
@@ -1055,15 +1052,6 @@
                                         "value": "18"
                                     },
                                     {
-                                        "dependent_question_id": 17,
-                                        "dependent_question_key": "age",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "65"
-                                    },
-                                    {
                                         "dependent_question_id": 15,
                                         "dependent_question_key": "bmi",
                                         "dependent_option_id": null,
@@ -1071,15 +1059,6 @@
                                         "visibility": "show",
                                         "operator": "equal_to_greater_than",
                                         "value": "20"
-                                    },
-                                    {
-                                        "dependent_question_id": 15,
-                                        "dependent_question_key": "bmi",
-                                        "dependent_option_id": null,
-                                        "dependent_option_value": null,
-                                        "visibility": "show",
-                                        "operator": "less_than",
-                                        "value": "23"
                                     }
                                 ]
                             }
