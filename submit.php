@@ -290,14 +290,14 @@ if ($action === 'checkout') {
     LeadFlow::log($config, 'VRIO-PREAUTH', $result['success'], $email . ' ' . $record['product']['name'] . ' $' . $record['product']['price']
         . ' campaign ' . $record['product']['crm_campaign_id'] . ' (driver ' . $config['payment_driver'] . '): ' . ($result['log'] ?? $result['message']));
     // DB row + GHL contact get the shipping address, purchased and the order id (like demo/db_update.php).
-    try {
-        LeadFlow::checkout($config, $funnel, $record, $shipping + ['email' => $email, 'phone' => $phone], $result);
-    } catch (Throwable $e) {
-        error_log('[lead-flow] checkout update failed: ' . $e->getMessage());
-    }
+    // Runs after the reply is sent, so slow CRM calls can't time the checkout out (Cloudflare 524 after 120 s).
+    $contact = $shipping + ['email' => $email, 'phone' => $phone];
+    $crmUpdate = static function () use ($config, $funnel, $record, $contact, $result): void {
+        LeadFlow::checkout($config, $funnel, $record, $contact, $result);
+    };
 
     if (!$result['success']) {
-        funnel_json_response(['success' => false, 'message' => $result['message']], 402);
+        funnel_json_response_then(['success' => false, 'message' => $result['message']], 402, $crmUpdate);
     }
 
     $record['order'] = [
@@ -328,7 +328,7 @@ if ($action === 'checkout') {
     }
     $record['identity_verified'] = $verified;
 
-    funnel_json_response(['success' => true, 'redirect' => $verified ? $config['verified_url'] : $config['idcheck_url']]);
+    funnel_json_response_then(['success' => true, 'redirect' => $verified ? $config['verified_url'] : $config['idcheck_url']], 200, $crmUpdate);
 }
 
 if ($action === 'idcheck') {

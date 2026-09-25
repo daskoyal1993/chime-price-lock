@@ -42,6 +42,41 @@ function funnel_json_response(array $body, int $status = 200): void
     exit;
 }
 
+/**
+ * Send the JSON response to the browser now, then run $after (slow CRM updates) on the server.
+ * The session is saved first, so change $_SESSION before calling this — $after can't change it.
+ * The browser (and Cloudflare's 120 s limit) doesn't wait for $after on PHP-FPM / LiteSpeed; elsewhere it runs before the reply ends.
+ */
+function funnel_json_response_then(array $body, int $status, callable $after): void
+{
+    $json = json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    header('Content-Length: ' . strlen($json));
+    header('Connection: close');
+    echo $json;
+
+    session_write_close();   // the next page (thank-you / idcheck) must not wait for the session lock
+    ignore_user_abort(true);
+    @set_time_limit(120);
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } elseif (function_exists('litespeed_finish_request')) {
+        litespeed_finish_request();
+    } else {
+        while (ob_get_level() > 0) @ob_end_flush();
+        flush();
+    }
+
+    try {
+        $after();
+    } catch (Throwable $e) {
+        error_log('[lead-flow] after-response work failed: ' . $e->getMessage());
+    }
+    exit;
+}
+
 /** Load the funnel for a page, or show a friendly error page. */
 function load_funnel_or_fail(array $config): array
 {

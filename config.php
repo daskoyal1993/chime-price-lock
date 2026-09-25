@@ -149,7 +149,7 @@ return [
         'api_key'        => Env::get('FUNNEL_VOUCHED_API_KEY', ''),   // private key (prv.…), server side only
         'app_id'         => Env::get('FUNNEL_VOUCHED_APP_ID', ''),    // public key (pub.…) for the ID check plugin
         'min_confidence' => 80,                                       // crosscheck % needed (with a DOB match)
-        'timeout'        => 30,
+        'timeout'        => 20,                                       // seconds per call; checkout must answer within 120 s (Cloudflare)
     ],
 
     // Payment processing for checkout.php (see lib/Payment.php).
