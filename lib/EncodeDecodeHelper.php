@@ -3,7 +3,7 @@
  * Signed tokens used in the funnel JSON (tenant.ghl.credentials, tenant.vouched):
  *   base64(JSON) . "." . hmac_sha256(base64, tenant secret key)
  * The secret key is the portal's Site Settings → Secret Key (config.php → tenant_secret_key / FUNNEL_TENANT_SECRET_KEY).
- * A token whose signature doesn't match the key is rejected.
+ * With the key set, a token whose signature doesn't match it is rejected; without it, the token is read unchecked.
  */
 final class EncodeDecodeHelper
 {
@@ -13,12 +13,17 @@ final class EncodeDecodeHelper
         return $base64 . '.' . hash_hmac('sha256', $base64, $secretKey);
     }
 
-    /** @return array|false the decoded data, or false when the token is malformed or not signed with $secretKey */
+    /**
+     * With a secret key: the decoded data only when the signature matches it.
+     * Without one (''): the data is decoded without checking the signature — base64 is only encoding, not encryption.
+     *
+     * @return array|false the decoded data, or false when the token is malformed or the signature doesn't match
+     */
     public static function decodeWithToken(string $token, string $secretKey)
     {
-        if ($secretKey === '' || strpos($token, '.') === false) return false;
+        if (strpos($token, '.') === false) return false;
         [$base64, $signature] = explode('.', $token, 2);
-        if (!hash_equals(hash_hmac('sha256', $base64, $secretKey), $signature)) return false;
+        if ($secretKey !== '' && !hash_equals(hash_hmac('sha256', $base64, $secretKey), $signature)) return false;
         $data = json_decode((string) base64_decode($base64, true), true);
         return is_array($data) ? $data : false;
     }

@@ -139,7 +139,7 @@ return [
     ],
 
     // Portal → Site Settings → Secret Key. Checks the signature of the credentials in the funnel JSON
-    // (tenant.ghl.credentials, tenant.vouched — lib/EncodeDecodeHelper.php). Empty = those credentials are not used.
+    // (tenant.ghl.credentials, tenant.vouched — lib/EncodeDecodeHelper.php). Empty = they are read without the signature check.
     'tenant_secret_key' => Env::get('FUNNEL_TENANT_SECRET_KEY', ''),
 
     // Vouched identity check after payment (lib/VouchedClient.php, like demo/identity_verify.php) and the ID check page

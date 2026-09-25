@@ -189,7 +189,7 @@ final class FunnelRepository
             ],
             'membership_products' => $memberProducts,
             // Signed credentials from the tenant (lib/EncodeDecodeHelper.php), server side only — index.php removes them
-            // before output. Empty when the signature doesn't match config.php → tenant_secret_key.
+            // before output. Empty when config.php → tenant_secret_key is set and the signature doesn't match it.
             'ghl'     => self::credentials($data['tenant']['ghl']['credentials'] ?? '', $secretKey, ['api_key' => 'token', 'location_id' => 'location_id']),
             'vouched' => self::credentials($data['tenant']['vouched'] ?? '', $secretKey, ['app_secret' => 'api_key', 'app_id' => 'app_id']),
         ];
@@ -204,7 +204,7 @@ final class FunnelRepository
         $data = is_string($token) ? EncodeDecodeHelper::decodeWithToken($token, $secretKey) : false;
         if ($data === false) {
             if (is_string($token) && $token !== '') {
-                error_log('Funnel credentials ignored: ' . ($secretKey === '' ? 'FUNNEL_TENANT_SECRET_KEY is not set' : 'signature does not match FUNNEL_TENANT_SECRET_KEY'));
+                error_log('Funnel credentials ignored: ' . ($secretKey === '' ? 'not a valid token' : 'signature does not match FUNNEL_TENANT_SECRET_KEY'));
             }
             return [];
         }
