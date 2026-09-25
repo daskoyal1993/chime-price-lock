@@ -37,7 +37,7 @@ $boot = [
 
 page_open($page, $funnel['form']['name'] ?: $page['title']);
 ?>
-<div class="quiz-progress" id="funnel-progress" role="progressbar" aria-label="Form progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+<div class="quiz-progress test" id="funnel-progress" role="progressbar" aria-label="Form progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <span></span>
 </div>
 <main class="quiz-main" id="funnel" aria-live="polite">
