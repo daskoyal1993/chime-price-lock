@@ -155,7 +155,8 @@ return [
     // Patient portal order hand-off on process.php (lib/PortalClient.php, like demo/process/process.php).
     // The payload is signed with tenant_secret_key above, so that must be set too.
     'portal' => [
-        'api_url'          => Env::get('FUNNEL_PORTAL_API_URL', 'https://chime-health.medaxis.io/api/offer/process'),
+        //'api_url'          => Env::get('FUNNEL_PORTAL_API_URL', 'https://chime-health.medaxis.io/api/offer/process'),
+        'api_url'          => Env::get('FUNNEL_PORTAL_API_URL', 'https://chime-health.stagingtenant.axismd.io/api/offer/process'),
         'api_key'          => Env::get('FUNNEL_PORTAL_API_KEY', ''),   // X-API-Key (MEDAXIS_API_KEY in the demo)
         'source'           => 'chime-dynamic API',
         'product_category' => ['weightloss', 'antiaging'],             // as in the demo

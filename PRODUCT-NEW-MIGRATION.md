@@ -1,18 +1,18 @@
 # Chime Health GLP-1 funnel (rnad-v2): project overview + product page migration
 
-**Last updated:** 2026-09-24 · **Snapshot:** `rnad-v2/23-09-2026` + `Dynamic script` (API-driven rebuild)
+**Last updated:** 2026-09-25 · **Snapshot:** `rnad-v2/23-09-2026` + `Dynamic script` (API-driven rebuild)
 
 This document explains how the whole funnel works (quiz → product → checkout → verification → fulfilment) and what was done to replace the product page with the new design. It is written for developers who haven't seen the code yet.
 
 - **§0** describes the **API-driven rebuild in this folder (`Dynamic script`)** and how far it has got. File references in §0 are relative to this folder.
 - **§1–§11** describe the **live rnad-v2 site** (Blade templates on the CodeClouds framework). They are kept as the reference for what the rebuild must eventually do. File references there are relative to the rnad-v2 project root and those files are **not** in this folder.
 
-> **Status of the rebuild (§0):** quiz, product page, checkout and thank-you page built and running on localhost with the sample funnel data. Contact details and answers are saved to the database and GHL, with xverify, the membership check (placeholder) and the Vrio prospect; checkout pre-authorizes the card in Vrio (or uses the test card). **Not live yet: Vrio pre-auth needs its shipping profile id, the real funnel and membership APIs aren't connected, and several keys are temporary.** See [§0.8 Still to do](#08-still-to-do) and `NOTES-OPEN-ITEMS.md`.
+> **Status of the rebuild (§0):** the whole flow is built and deployed to cPanel from GitHub: quiz, product page, checkout with a **real Vrio pre-authorization** (order 4450 on 2026-09-25), Vouched identity check (automatic crosscheck + DOB, then the ID check page), and the order hand-off to the patient portal (`process.php`). Contact details and answers are saved to the database and GHL at every step. **Not confirmed live yet:** a real Vouched check and a real portal hand-off (they need `FUNNEL_TENANT_SECRET_KEY` and `FUNNEL_PORTAL_API_KEY` on the server); the real funnel and membership APIs aren't connected. See [§0.9 Still to do](#09-still-to-do) and `NOTES-OPEN-ITEMS.md`.
 >
 > **Status of the rnad-v2 product page migration:** built, not live. **Blocked on the CRM campaign IDs (CIDs)** for the four new offers — see [§9 Open items](#9-open-items).
 
 ## Contents
-0. [Dynamic funnel rebuild (this folder): status](#0-dynamic-funnel-rebuild-this-folder-status) — flow, files, integrations, local testing, still to do
+0. [Dynamic funnel rebuild (this folder): status](#0-dynamic-funnel-rebuild-this-folder-status) — flow, files, integrations, local testing, deploy, still to do
 1. [Big picture](#1-big-picture)
 2. [Framework and routing](#2-framework-and-routing)
 3. [The quiz (steps 1–18)](#3-the-quiz-steps-118)
@@ -31,120 +31,155 @@ This document explains how the whole funnel works (quiz → product → checkout
 
 ### 0.1 What it is
 
-A standalone PHP + plain JavaScript version of the funnel (no framework, no Blade). The questions, conditions, disqualifying answers and products all come from a **funnel API** instead of being hardcoded per step page. All page content, images, section order and colors live in JSON: `projects/<project>/site.json` plus one file per page (`index.json`, `product.json`, `checkout.json`, `thank-you.json`), rendered by reusable components in `components/`. See `projects/README.md`.
+A standalone PHP + plain JavaScript version of the funnel (no framework, no Blade). The questions, conditions, disqualifying answers and products all come from a **funnel API** instead of being hardcoded per step page. All page content, images, section order and colors live in JSON: `projects/<project>/site.json` plus one file per page (`index.json`, `product.json`, `checkout.json`, `idcheck.json`, `process.json`, `thank-you.json`), rendered by reusable components in `components/`. See `projects/README.md`.
 
 ```
- index.php (quiz) ──────────────────────▶ product.php ─────────────────▶ checkout.php ───────────────────▶ thank-you.php
-   │ contact screen (name/email/phone + SMS consent):          │                          │
-   │   POST ?action=verify  → xverify email + phone            │ POST ?action=product     │ POST ?action=checkout
-   │   POST ?action=lead    → MEMBERSHIP → DB → VRIO → GHL      │ plan must belong to the  │ validate → Payment::charge()
-   │   (every later screen: lead again = DB + GHL update)      │ visitor's offer          │ = Vrio pre-authorization
-   │ last screen: POST ?action=intake → validate, DQ, final save (DB + GHL)                │ → vrio_order_id saved
-   └──────────── visitor record kept in the PHP session ($_SESSION['funnel_<slug>']) ─────────────────────┘
+ index.php (quiz) ─────────────▶ product.php ──────────▶ checkout.php ──────────────────────────┐
+   │ contact screen (name/email/phone + SMS consent):   │                       │ POST ?action=checkout
+   │   POST ?action=verify → xverify email + phone      │ POST ?action=product  │  validate → Vrio pre-auth
+   │   POST ?action=lead   → MEMBERSHIP → DB → VRIO → GHL│ plan must belong to   │  → Vouched crosscheck + DOB
+   │   (every later screen: lead again = DB + GHL)     │ the visitor's offer   │  → reply to the browser
+   │ last screen: POST ?action=intake → validate, DQ, final save                │  → then DB + GHL (address, purchased)
+   │                                                                            ▼
+   │                          verified (crosscheck ≥ 80 and DOB match) ── process.php ──▶ patient portal (redirect_url)
+   │                          not verified ── idcheck.php (Vouched plugin) ──┘   │ POST {tenant}/api/offer/process
+   │                                  └─ POST ?action=idcheck, idcheck-callback.php │ then GHL portal link
+   └──────── visitor record kept in the PHP session ($_SESSION['funnel_<slug>']) ───────────────────┘
 ```
 
 - Every page keeps the visitor's query string (e.g. `prospect_id`, `affid`, `c1`) on redirects.
 - **Offer per visitor:** the membership check (on the contact screen) decides which campaign + products the visitor gets —
   member (`true`) → `membership_campaign_set` + `membership_campaign_set_products`; not a member (`false`) → `campaign_set` + `products`
   (`offer_funnel()` in `bootstrap.php`). The sample answer is `false` for now.
-- Every integration step is logged, one line each, in `storage/logs/lead-flow.log` (`[XVERIFY]`, `[MEMBERSHIP]`, `[DB]`, `[VRIO]`, `[GHL]`, `[VRIO-PREAUTH]`).
-  A failure in one step never stops the others or the funnel. Card data is never logged.
+- **Quiz order** follows the live site (`https://qualify.chimehealth.com/rnad/v1/`): product → height/weight → **target weight** (own screen) → …
+  The shipping address is **not** asked in the quiz (`index.json → skip_questions`); it is asked on checkout.
+- Every integration step is logged, one line each, in `storage/logs/lead-flow.log` (`[XVERIFY]`, `[MEMBERSHIP]`, `[DB]`, `[VRIO]`, `[GHL]`,
+  `[VRIO-PREAUTH]`, `[VOUCHED]`, `[IDCHECK]`, `[IDCHECK-CALLBACK]`, `[PORTAL]`). A failure in one step never stops the others or the funnel.
+  Card data is never logged.
+- `thank-you.php` is no longer part of the flow (verified orders go to the portal); it is kept for a later confirmation page.
 
 ### 0.2 Files
 
 | File | Purpose |
 |---|---|
-| `config.php` | All settings, each overridable from the environment / `.env` (`FUNNEL_…`). Funnel API + sample file, questionnaire slug, validation limits, page URLs, `db`, `membership`, `xverify`, `lead_log`, `vrio`, `ghl`, `google_maps`, `payment_driver`, `test_card`. |
-| `.env` / `.env.example` | Local overrides (loaded by `lib/Env.php`, blocked from the web). `KEY=` keeps the default, `KEY=''` sets an empty value. `.env.example` lists every name. |
-| `bootstrap.php` | Loads classes, config and the project; starts a secure session; CSRF token; `load_funnel_or_fail()` (503 page); `offer_funnel()` (member → membership campaign/products); `funnel_session()`. |
-| `lib/Env.php` | `.env` loader + `Env::get()` (used by `config.php`). |
-| `lib/FunnelRepository.php` | Loads the definition from the API (file cache in `storage/cache/`, stale copy if the API is down) or from `data/updated-sample-funnel.json`. Normalizes steps, questions (incl. each question's GHL field id — kept server side), options, conditions (duplicates removed), products **and** membership products, each with the CRM offer of its own campaign; the prepaid campaign of each set. A variant is sellable only with a CRM offer, price and `crm_offer_id`. |
-| `lib/FunnelRules.php` | Server copy of the rules: age, BMI + rating, show/hide conditions, per-type validation, disqualifying options. Answers keyed by question `key` and by `default_params`. |
+| `config.php` | All settings, each overridable from the environment / `.env` (`FUNNEL_…`). Funnel API + sample file, questionnaire slug, validation limits, page URLs (`verified_url` = `process.php`, `idcheck_url`), `db`, `membership`, `xverify`, `lead_log`, `vrio`, `ghl` (incl. `field_map`), `google_maps`, `tenant_secret_key`, `vouched`, `portal`, `payment_driver`, `test_card`. |
+| `.env` / `.env.example` | Server-specific settings (loaded by `lib/Env.php`, blocked from the web, **never uploaded by the deploy**). `KEY=` keeps the default, `KEY=''` sets an empty value. `.env.example` lists every name. |
+| `bootstrap.php` | Loads classes, config and the project; secure session; CSRF token; `load_funnel_or_fail()` (503 page); `quiz_funnel()` (drops `skip_questions`); `offer_funnel()`; `funnel_session()`; `funnel_json_response_then()` / `redirect_now_then()` (reply first, slow CRM work after). |
+| `lib/Env.php` | `.env` loader + `Env::get()`. |
+| `lib/EncodeDecodeHelper.php` | Signed tokens `base64(JSON).hmac_sha256` (portal code). Decodes `tenant.ghl.credentials` / `tenant.vouched` from the funnel JSON and signs the portal order payload. With `FUNNEL_TENANT_SECRET_KEY` set the signature is checked; without it the token is read unchecked. |
+| `lib/FunnelRepository.php` | Loads the definition from the API (file cache in `storage/cache/`, stale copy if the API is down) or from `data/updated-sample-funnel.json`. Normalizes steps, questions (incl. each question's GHL field — kept server side; a field key without an id is allowed), options, conditions, products **and** membership products with their CRM offers, the prepaid campaign of each set, the tenant's **GHL and Vouched credentials** and the GHL portal-link field. |
+| `lib/FunnelRules.php` | Server copy of the rules: age, BMI + rating, show/hide conditions, per-type validation (incl. **target weight** below the current weight and BMI ≥ 18.5), disqualifying options. |
 | `lib/Screens.php` | Splits the API steps into screens (plan in `index.json → screens`, the rest grouped automatically). |
-| `lib/view.php` | HTML helpers, `product_look()` (product **name from the funnel JSON**; image/tagline/badge from `site.json`; `has_bonus` when the name contains the add-on, e.g. NAD), plan months, sellable/featured variants. |
+| `lib/view.php` | HTML helpers, `product_look()`, plan months, sellable/featured variants. |
 | `lib/Page.php` + `components/` | JSON-driven pages: head (styles, theme colors), header, sections, footer. |
-| `lib/LeadRepository.php` | The `dynamic_remedy` row: insert/update (one row per visitor), quiz JSON merge, Vrio prospect/order ids. |
-| `lib/LeadFlow.php` | What happens when contact details / answers are submitted: MEMBERSHIP → DB → VRIO prospect → GHL contact, consent timestamps, GHL custom-field mapping, the log. |
-| `lib/Membership.php` + `sample-api/membership-check.php` | Membership check (placeholder: sample returns `false`). |
+| `lib/LeadRepository.php` | The `dynamic_remedy` row: insert/update, quiz JSON merge, Vrio ids, checkout (address, `purchased`, `vrio_order_id`), Vouched results, ID check, `customer_id`, portal payload / response / `processed`. |
+| `lib/LeadFlow.php` | The steps and their log: lead save (MEMBERSHIP → DB → VRIO prospect → GHL, consent timestamps, GHL custom fields incl. id lookup), `checkout()` (DB + GHL), `identity()` (Vouched), `process()` (portal payload + hand-off), `portalLink()` (GHL). |
+| `lib/Membership.php` + `sample-api/membership-check.php` | Membership check (placeholder: sample returns `false`). `sample-api/` is blocked on the live site. |
 | `lib/XverifyClient.php` | Email + phone verification (like `demo/xverify.php`). |
-| `lib/VrioClient.php` | Vrio: prospect on the contact screen (like `demo/create-prospect.php`) and card pre-authorization at checkout (like `demo/preauth.php`, incl. prepaid retry, response code 101). |
-| `lib/GhlClient.php` | GoHighLevel contact create / update (like `demo/sample-create-contact.php`; duplicate → update existing). |
-| `lib/Http.php` | JSON-over-HTTPS helper for the API calls (SSL verification on). |
-| `lib/Payment.php` | Payment drivers: `vrio` (default, real pre-auth), `test` (approves `test_card` only, charges nothing), `none`; Luhn check (skipped only for the test card in `test` mode). |
-| `index.php` + `assets/funnel.js` | Quiz: every API question type, conditions, exclusive "None" options, masks, progress, back button, DQ screen, localStorage progress (`funnel:<funnel>:<form>`). **Auto-continue** on "None …/No …/I'm not …" answers (`index.json → auto_continue_*`). **xverify** before leaving the contact screen. Per-question display settings (`index.json → questions`, e.g. `sms_consent` pre-ticked). Background lead save from the contact screen on. |
-| `product.php` + `assets/product.js` | Hero from the answers, product cards + plan rows from the visitor's offer; texts from `product.json`. |
-| `checkout.php` + `assets/checkout.js` | Shipping/contact (prefilled), optional billing, card form, order summary. **Google Places address autocomplete** (fills address, city, state, ZIP). "As low as $x/day" = variant `display_price` ÷ (30 × months). |
-| `submit.php` | JSON endpoint: `verify`, `lead`, `intake`, `product`, `checkout` (all need `X-CSRF-Token`). Re-validates everything on the server. |
-| `thank-you.php` | Order confirmation; clears the session record and the `funnel:*` localStorage keys. |
-| `database/` | `001_create_dynamic_remedy.sql` (fresh install), `002_upgrade_dynamic_remedy.sql` (existing table: check, upgrade, rollback). |
-| `tools/check-integrations.php` | CLI check: DB (connect, columns, test insert rolled back, latest rows), GHL (read-only: token, location, custom fields exist), Vrio settings, membership. |
-| `demo/` | Reference code from the live site (Vrio, GHL, xverify, pre-auth). Not used at runtime; blocked from the web. |
-| `.htaccess` | Blocks `config.php`, `bootstrap.php`, `.env*`, `lib/`, `data/`, `storage/`, `components/`, `database/`, `demo/`, `tools/`, `projects/**/*.json|php` and `*.md` (Apache only). |
+| `lib/VrioClient.php` | Vrio: prospect (like `demo/create-prospect.php`), card pre-authorization (like `demo/preauth.php`, prepaid retry, response 101; on a refusal the log gets Vrio's reply + the ids sent), customer id of an order (like `demo/process/get_vrio_customer_id_using_order_id.php`). |
+| `lib/GhlClient.php` | GoHighLevel contact create / update (duplicate → update existing); `fieldIds()` = the location's custom fields by key (like `demo/check-custom-field.php`, cached one day). |
+| `lib/VouchedClient.php` | Vouched `identity/crosscheck` + `dob/verify` (like `demo/identity_verify.php`). |
+| `lib/PortalClient.php` | Portal order hand-off: `POST {tenant}/api/offer/process` with `{"data": signed token}` (like `demo/process/process.php`). |
+| `lib/Http.php` | JSON-over-HTTPS helper (SSL verification on). |
+| `lib/Payment.php` | Payment drivers: `vrio` (default, real pre-auth), `test` (approves `test_card` only, charges nothing), `none`; Luhn check (skipped for the test card in `test` **and** `vrio` mode — in `vrio` it is sent to Vrio, which decides). |
+| `index.php` + `assets/funnel.js` | Quiz: every API question type, conditions, exclusive "None" options, masks, progress, back button, DQ screen, localStorage progress. Auto-continue, xverify on the contact screen, per-question settings (`index.json → questions`: pre-ticked SMS consent, target weight placeholder + hint), target weight card ("That is 30 lbs, about 15% of your weight"). |
+| `product.php` + `assets/product.js` | Hero from the answers, product cards + plan rows from the visitor's offer. |
+| `checkout.php` + `assets/checkout.js` | Shipping/contact, optional billing, card form, order summary, Google Places autocomplete. |
+| `submit.php` | JSON endpoint: `verify`, `lead`, `intake`, `product`, `checkout`, `idcheck` (all need `X-CSRF-Token`). Re-validates everything on the server. |
+| `idcheck.php` + `assets/idcheck.js` | ID check with the Vouched plugin (like `demo/idcheck.php`), prefilled from the quiz; result → `submit.php?action=idcheck`. |
+| `idcheck-callback.php` | Vouched's job callback (like `demo/idcheck-callback.php`): `idcheck_vouched_status` by job id. |
+| `process.php` | Order hand-off to the portal (like `demo/process/process.php`); verified in the session **or on the DB row**; success → portal `redirect_url`, failure → error page. |
+| `thank-you.php` | Order confirmation (not in the flow for now). |
+| `database/` | `001_create_dynamic_remedy.sql` (fresh install), `002_upgrade_dynamic_remedy.sql` (existing table). The Vouched / portal columns are already in 001. |
+| `tools/check-integrations.php` | CLI check: DB, GHL (read-only), Vrio settings, membership. Run it in cPanel → Terminal: `php tools/check-integrations.php`. |
+| `demo/` | Reference code from the live site. Not used at runtime; blocked from the web; not deployed. Files with hardcoded keys (`check-custom-field.php`, `identity_verify.php`, `idcheck*.php`, `process/`) are in `.gitignore`. |
+| `.github/workflows/deploy.yml` | Deploy: every push to `main` uploads the changed files to cPanel over FTPS (skips `.env`, `storage/logs`, `storage/cache`, `demo/`, `database/`, `*.md`). |
+| `.htaccess` | Blocks `config.php`, `bootstrap.php`, `.env*`, `lib/`, `data/`, `storage/`, `components/`, `database/`, `demo/`, `tools/`, `sample-api/`, `projects/**/*.json|php` and `*.md` (Apache only). |
 | `assets/css/`, `assets/img/` | `common.css` + `quiz.css`, `product.css`, `checkout.css`; images. |
-| `NOTES-OPEN-ITEMS.md` | Decisions still to make (mappings, temporary keys, placeholders). |
+| `NOTES-OPEN-ITEMS.md` | Decisions still to make. |
 
 ### 0.3 Funnel data (`data/updated-sample-funnel.json`)
 
-Funnel **"Chime Main"** (`chime-main`), questionnaire `offer-intake` (6 steps, 49 questions; 23 of them carry a GHL custom field id).
-`address_line2` → `default_params` fixed to `shipping_address2` (per the parameter sheet). The file also contains `tenant.vouched.app_secret` and GHL ids — they never reach the browser (the loader drops them); don't share the file.
+Funnel **"Chime Main"** (`chime-main`), questionnaire `offer-intake` (6 steps, 50 questions; 26 of them carry a GHL custom field).
+`tenant.ghl.credentials` (GHL token + location) and `tenant.vouched` (Vouched `app_id` + `app_secret`) are **signed tokens**
+(`lib/EncodeDecodeHelper.php`) — base64, so readable by anyone who has the file: they never reach the browser, don't share the file.
 
-| Offer | Campaign (CRM id) | Products (sellable variants, charged price) |
+| Offer | Campaign (CRM id) | Products (sellable variants: portal `variant_id`, charged price) |
 |---|---|---|
-| `campaign_set` (not a member) | main 21 (CRM **68**), prepaid: none | Semaglutide (Inj): 1M $299 · 3M $627 · 6M $1,194 — Tirzepatide (inj): 1M $359 · 3M $948 · 6M $1,794 |
-| `membership_campaign_set` (member) | 24 (CRM **64**), prepaid: none | Semaglutide & Tesamorelin Bundle: 1M $299 · 3M $897 — Tirzepatide & Tesamorelin Bundle: 1M $399 · 3M $1,197 |
+| `campaign_set` (not a member) | main 21 (CRM **68**), prepaid: none | Semaglutide (Inj): 1M (1) $129 · 3M (2) $357 · 6M (4) $654 · 12M (35) $1,188 — Tirzepatide (inj): 1M (5) $149 · 3M (6) $417 · 6M (8) $774 · 12M (36) $1,428 |
+| `membership_campaign_set` (member) | 24 (CRM **64**), prepaid: none | Semaglutide & Tesamorelin Bundle: 1M (37) $299 · 3M (57) $897 — Tirzepatide & Tesamorelin Bundle: 1M (39) $399 · 3M (58) $1,197 |
 
-`display_price` differs from the charged price on the 1-month plans (e.g. Semaglutide 1M: display 179, charged 299) — see NOTES item 10.
+`display_price` differs from the charged price on most plans (e.g. Semaglutide 1M: display 179, charged 129) — see NOTES item 10.
 
-### 0.4 Integrations (server side only; keys never reach the browser, except the Google Maps browser key)
+### 0.4 Integrations (server side only; keys never reach the browser, except the Google Maps key and the Vouched public `app_id`)
 
 | Step | When | What | Stored |
 |---|---|---|---|
 | xverify | contact screen Continue (again at lead/intake) | email `/v2/ev/`, phone `/v2/pv/`; only `invalid` blocks | session cache per value |
 | Membership | first save with an email | `lib/Membership.php` (sample: `false`) | session `has_membership` |
-| DB | contact screen, every later screen, final submit | `dynamic_remedy` row: name, email, phone, address, `quiz` JSON (all answers + `consent_timestamps`), tracking; one row per visitor (session id, else newest unpurchased row with that email) | `lead_id` in session |
+| DB | contact screen, every later screen, final submit | `dynamic_remedy` row: name, email, phone, `quiz` JSON (all answers + `consent_timestamps`), tracking; one row per visitor | `lead_id` in session |
 | Vrio prospect | first contact save | `POST /orders` (connection, campaign of the offer, name, email, phone) | `prospectid`, `vrio_order_id` |
-| GHL | every save | create, or update (duplicate → existing contact); standard fields + custom fields from the funnel JSON + `ghl.field_map`; SMS / elderly / GLP consent date + time | `ghl_contact_id` in session |
+| GHL | every save | create / update; standard fields + custom fields (funnel JSON + `ghl.field_map`; a key without an id is looked up in GHL); consent date + time for SMS, elderly, GLP, BMI (`metabolic_consent`) and Truthfulness / Telehealth / Informed (`contact_agree`) | `ghl_contact_id` in session |
 | Vrio pre-auth | "Complete Purchase" | `POST /orders` `action: authorize` (offer, billing, tracking, card) | `vrio_order_id` |
+| DB + GHL at checkout | after the pre-auth, **after the reply is sent** (like `demo/db_update.php`) | row: address, `purchased` (1 when authorized), order id, address in `quiz`; GHL contact: address, city, state, ZIP | row |
+| Vouched | after an authorized pre-auth | `identity/crosscheck` + `dob/verify`; verified = crosscheck ≥ 80 and DOB match; already verified with this email before → no new check | `info_vouched_job_id`, `info_vouched_status`, `info_vouched_dob_id`, `vouched_crosscheck_persent`, `vouched_dob_status` |
+| ID check | `idcheck.php` (not verified) | Vouched plugin; `onDone` → `?action=idcheck`; Vouched → `idcheck-callback.php` | `idcheck_vouched_job_id`, `idcheck_vouched_status` |
+| Portal | `process.php` | `POST {tenant}/api/offer/process` `{"data": token}`, `X-API-Key` (fields: "Parameter Reference" sheet; answers by question key: "Answers Reference" sheet) | `portal_processed_payload`, `portal_process_response`, `processed`, `portal_processed`, `processedtiming`, `customer_id` |
+| GHL portal link | after the redirect to the portal | `contact.portal_redirection_link` = portal `redirect_url` | — |
 | Google Places | typing the address on checkout | browser: suggestions, fills address/city/state/ZIP | — |
 
 Consent timestamps use the live site's `server-time.php` format: `September 24, 2026` / `2:49 PM UTC`.
+The checkout answers the browser before the slow CRM calls (Cloudflare cuts a request off after 120 s); Vouched calls time out after 20 s each.
 
 ### 0.5 What the session stores
 
 `$_SESSION['funnel_<slug>']`:
 - `answers`, `params` (by `default_params`), `disqualified`, `completed_at` — after `intake`
-- `has_membership`, `membership_email`, `xverify` (status per email/phone), `consents` (first-ticked time per consent)
+- `has_membership`, `membership_email`, `xverify`, `consents` (first-ticked time per consent)
 - `lead_id` (DB row), `vrio_prospect_id`, `vrio_order_id`, `ghl_contact_id`
-- `product` — product/variant ids, name, months, days, price, `campaign_id`, `crm_campaign_id`, `prepaid_crm_campaign_id`, `crm_campaign_product_id`, `crm_offer_id`, `crm_item_id` — after `product`
-- `order` — `order_id`, `vrio_customer_id`, `total`, `email`, `placed_at` — after a successful `checkout`
+- `product` — product/variant ids (`variant_id` = portal variant), name, months, days, price, campaign ids, CRM offer/item ids — after `product`
+- `order` — `order_id`, `vrio_customer_id`, `total`, `email`, `placed_at` — after an authorized `checkout`
+- `identity_verified` — after the Vouched check / ID check; `portal_redirect` — after `process.php` (a refresh goes straight to the portal)
 
 Card data is only held in memory for the request and is never stored or logged.
 
-### 0.6 Checked (2026-09-24)
+### 0.6 Checked
 
-- All PHP files pass `php -l`; all pages render without PHP errors; the JSON pages render the same HTML as before the JSON migration.
-- Local DB `amerilean_dynamicdb.dynamic_remedy` (XAMPP MariaDB): connect, insert, update, merge — verified with `tools/check-integrations.php`; a real localhost submission was saved.
-- GHL: token + location accepted (read-only call), all 32 mapped custom field ids exist in the location; a real localhost submission updated a contact.
-- Vrio prospect + pre-auth, xverify, membership: tested against mock servers (approve, decline, prepaid retry, response 101, API down, not configured).
-- Headless Chrome: auto-continue (all "None/No/I'm not" answers, two-question screens, quick answer changes), xverify errors on the contact screen, pre-ticked SMS consent, Google Places autocomplete with the real key (suggestions, fill, list closes after picking).
-- **Not yet done:** a real Vrio pre-auth (needs `FUNNEL_VRIO_SHIPPING_PROFILE_ID`) and a full live run from quiz to thank-you with all integrations on.
+- **2026-09-24:** all PHP files pass `php -l`; pages render without PHP errors; local DB insert/update/merge; GHL token + location + custom field ids; Vrio / xverify / membership against mock servers; headless Chrome for auto-continue, xverify errors, SMS consent, Google Places.
+- **2026-09-25 (live, cPanel):** quiz → product → checkout with a **real Vrio pre-auth** (`HTTP 200 order_id=4450`), DB row updated at checkout (address, `purchased = 1`, `vrio_order_id`), GHL contact updated at checkout; no Cloudflare timeout.
+- **2026-09-25 (local):** target weight rules (below current weight, BMI ≥ 18.5); all 10 consent GHL fields resolve to the right ids via the GHL lookup; funnel credentials decoded (and rejected with a wrong secret); Vouched DB saves, "already verified" check and callback; `process.php` payload against a local mock portal (signature, `X-API-Key`, DB columns); `process.php` accepts a row verified in the DB.
+- **Not yet done:** a real Vouched check and a real portal hand-off on live.
 
 ### 0.7 Running it locally
 
 1. `.env`: local DB (`FUNNEL_DB_*`), and `FUNNEL_PAYMENT_DRIVER=test` to check out with the test card **4111 2222 3333 4444** (any future expiry, any CVV) without Vrio.
 2. `php tools/check-integrations.php` — every line should be OK (or SKIP for what isn't configured).
 3. Run the quiz at `http://localhost/dscript/`, then check `storage/logs/lead-flow.log` and phpMyAdmin → `amerilean_dynamicdb` → `dynamic_remedy`.
-4. On localhost, xverify, GHL and (once configured) Vrio are the **live** services: use test emails.
+4. xverify, GHL, Vouched and (with `vrio`) Vrio are the **live** services, also from localhost: use test emails.
+5. Test data usually fails the Vouched crosscheck (→ ID check page). To test `process.php` anyway: on that row set
+   `vouched_crosscheck_persent = '85'`, `vouched_dob_status = '1'`, `info_vouched_status = 'success'`, then open `process.php`
+   in the same browser tab.
 
-### 0.8 Still to do
+### 0.8 Deploying (GitHub → cPanel)
 
-1. **Vrio pre-auth live:** set `FUNNEL_VRIO_SHIPPING_PROFILE_ID` (and `FUNNEL_VRIO_CONNECTION_ID`); confirm the open points in NOTES item 9 (separate shipping address, prepaid campaign, linking prospect and order).
-2. **Real membership API** (NOTES item 5) and the membership bundle copy/images (item 6).
-3. **Connect the real funnel API** (`FUNNEL_API_URL` / `FUNNEL_API_TOKEN`; `storage/` writable).
-4. **Temporary keys** in `config.php` (GHL token, xverify key/domain): move to the environment / funnel JSON and rotate (NOTES items 4, 7).
-5. **Missing live-site steps:** identity check (Vouched, `idcheck.php`), fulfilment to MedAxis + GHL portal link (`process.php`), `purchased` flag / purchased tag after checkout, tracking pixels (ClickGo/IntentAds). See §6–§8.
-6. **Open decisions:** everything in `NOTES-OPEN-ITEMS.md`.
-7. **Deploy on Apache** (the `.htaccess` rules don't apply on the PHP dev server); keep `.env` off the live server.
+1. `git add .` · `git commit -m "…"` · `git push origin main` → GitHub Actions uploads the changed files (Actions tab; ~1–3 min).
+   To upload everything again: delete `.ftp-deploy-sync-state.json` in the site folder (cPanel shows it with "Show Hidden Files"), then Actions → **Deploy to live** → **Run workflow**. Never delete the whole folder: `.env` and `storage/` live only on the server.
+2. The server's `.env` is edited by hand in cPanel File Manager. Needed on live:
+   `FUNNEL_PAYMENT_DRIVER=vrio`, `FUNNEL_VRIO_CONNECTION_ID`, `FUNNEL_VRIO_SHIPPING_PROFILE_ID`,
+   `FUNNEL_TENANT_SECRET_KEY` (Portal → Site Settings → Secret Key; signs the portal payload),
+   `FUNNEL_PORTAL_API_KEY` (portal `X-API-Key`). Before real customers: `FUNNEL_TEST_CARD=''`.
+   Don't copy the local `.env` to the server (its `FUNNEL_DB_USER=root` would override the live DB login).
+3. `storage/logs/` must be writable (755/775). The DB tables: import `database/001…` (and `002…`) in the server's phpMyAdmin.
+
+### 0.9 Still to do
+
+1. **Live Vouched + portal:** set `FUNNEL_TENANT_SECRET_KEY` and `FUNNEL_PORTAL_API_KEY` on the server; run one order through to the portal; allow `https://<domain>/idcheck-callback.php` as the Vouched callback. Confirm the portal payload points in NOTES item 14.
+2. **Vrio:** confirm the real `FUNNEL_VRIO_CONNECTION_ID` / `FUNNEL_VRIO_SHIPPING_PROFILE_ID` (currently `1`) and the open points in NOTES item 9.
+3. **Real membership API** (NOTES item 5) and the membership bundle copy/images (item 6).
+4. **Connect the real funnel API** (`FUNNEL_API_URL` / `FUNNEL_API_TOKEN`; `storage/` writable).
+5. **Keys in plain text:** the GHL token, xverify key/domain and Google Maps key are still defaults in `config.php` (committed to git): move them to `.env` / the funnel JSON and rotate them (NOTES items 4, 7).
+6. **Missing live-site steps:** "What pace feels right" and the plan screen after the target weight, `purchased` tag in GHL, tracking pixels (ClickGo/IntentAds). See §6–§8.
+7. **Open decisions:** everything in `NOTES-OPEN-ITEMS.md`.
 
 ---
 

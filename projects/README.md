@@ -11,7 +11,9 @@ projects/chime/
 │                                    auto-continue answers, per-question settings (e.g. SMS consent)
 ├── product.json     product page:   sections, text, images, JS button text
 ├── checkout.json    checkout page:  form labels, order summary, reviews, legal text
-└── thank-you.json   thank-you page
+├── idcheck.json     ID check page:  text around the Vouched plugin, "not verified" message
+├── process.json     process page:   error text when the portal hand-off fails (on success the visitor goes to the portal)
+└── thank-you.json   thank-you page  (not in the flow for now)
 ```
 
 **To change a page, edit only its JSON file.** The PHP files in the project root and `components/`
@@ -59,11 +61,12 @@ footer   site.json → "footer"          (hide per page with "footer": false)
 
 | Key | What it does |
 |---|---|
-| `screens` | Groups API question keys into screens, with optional `heading`, `text`, `badge`, `badge_style`, `button`, `doctor`. |
+| `screens` | Groups API question keys into screens, with optional `heading`, `text`, `badge`, `badge_style`, `button`, `doctor`. API questions not listed are added **after** these screens, so list every question where it should appear (e.g. `target_weight` right after height/weight). |
+| `skip_questions` | API question keys left out of the quiz (not shown, validated or saved), e.g. the shipping address, which is asked on checkout. |
 | `doctor_image` | Clinician photo shown on screens with `"doctor": true`. |
 | `auto_continue_options` | Exact answers (any case) that submit the screen by themselves, e.g. `"None of these"`, `"No"`. |
 | `auto_continue_patterns` | Regular expressions tested against the start of the answer, e.g. `"^no\b"` ("No - I affirm…"), `"^i am not\b"`. In JSON a regex `\b` must be written `\b`. |
-| `questions.<key>` | Display settings for one API question: `prechecked` (checkbox starts ticked), `compact` (only the checkbox line), `text` (shown instead of the API option text), `required_message`. |
+| `questions.<key>` | Display settings for one API question: `prechecked` (checkbox starts ticked), `compact` (only the checkbox line), `text` (shown instead of the API option text), `required_message`, `placeholder` (weight field), `hint` (small note under a text / weight field, e.g. target weight "You can always adjust later."). |
 | `text` | Quiz wording: buttons, placeholders, BMI boxes, DQ screen, xverify messages (`xverify_email`, `xverify_phone`, `verifying`). |
 
 Auto-continue presses the screen's own Continue button (validation, DQ, saves all run as usual) and only when
@@ -87,8 +90,10 @@ every question on the screen is answered.
 - **Form field ids, validation, payment, CRM data** stay in PHP/JS (`submit.php`, `lib/`, `assets/*.js`).
   JSON only changes the labels.
 - **Quiz questions** come from the API. `index.json → screens` only groups them into screens.
-- **Settings, keys and integrations** (DB, Vrio, GHL, xverify, membership, Google Maps key, payment driver, test card)
-  are in `config.php` / `.env`, not in the project JSON.
+- **Settings, keys and integrations** (DB, Vrio, GHL, xverify, membership, Vouched, portal, Google Maps key, payment driver,
+  test card) are in `config.php` / `.env` (or the funnel JSON's `tenant`), not in the project JSON.
+- **Target weight rules** (below the current weight, BMI ≥ 18.5) and the "That is X lbs" card are in `assets/funnel.js` /
+  `lib/FunnelRules.php`; their wording can be changed with `index.json → text` (`goal_lose`, `goal_note`, `goal_none`, `goal_none_note`).
 
 ## Start a new project
 
@@ -116,7 +121,7 @@ every question on the screen is answered.
 | `assets/css/common.css` | every page (reset, color defaults, shared text/form parts, shop header, footer) |
 | `assets/css/quiz.css` | quiz |
 | `assets/css/product.css` | product page |
-| `assets/css/checkout.css` | checkout + thank-you |
+| `assets/css/checkout.css` | checkout, ID check, process error page, thank-you |
 
 Colors are CSS variables (`--brand`, `--button`, `--navy`…). The defaults are in `common.css`;
 `site.json → theme.colors` overrides them for the whole project, and `<page>.json → theme.colors` for one page.

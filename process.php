@@ -14,6 +14,17 @@ $record =& funnel_session($funnel);
 if (empty($record['order'])) {
     redirect_to('index.php');
 }
+// Verified in this session, or on the DB row (Vouched's callback, or a result saved later).
+if (empty($record['identity_verified']) && !empty($record['lead_id'])) {
+    try {
+        $repo = new LeadRepository($config['db'] ?? []);
+        if ($repo->enabled() && $repo->isVerified((int) $record['lead_id'], (float) ($config['vouched']['min_confidence'] ?? 80))) {
+            $record['identity_verified'] = true;
+        }
+    } catch (Throwable $e) {
+        LeadFlow::log($config, 'DB', false, $e->getMessage());
+    }
+}
 if (empty($record['identity_verified'])) {
     redirect_to($config['idcheck_url']);
 }

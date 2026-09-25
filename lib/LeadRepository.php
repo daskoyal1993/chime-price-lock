@@ -266,6 +266,25 @@ final class LeadRepository
         }
     }
 
+    /**
+     * True when this row is verified: crosscheck ≥ $minConfidence with a DOB match, or the ID check passed
+     * (idcheck_vouched_status 'true', e.g. from idcheck-callback.php).
+     */
+    public function isVerified(int $id, float $minConfidence = 80): bool
+    {
+        try {
+            $st = $this->pdo()->prepare("SELECT `vouched_crosscheck_persent`, `vouched_dob_status`, `idcheck_vouched_status` FROM {$this->table()} WHERE `id` = ?");
+            $st->execute([$id]);
+            $row = $st->fetch();
+        } catch (PDOException $e) {
+            throw new RuntimeException('Reading the Vouched status failed: ' . $e->getMessage(), 0, $e);
+        }
+        if (!$row) return false;
+        $crosscheck = is_numeric($row['vouched_crosscheck_persent']) && (float) $row['vouched_crosscheck_persent'] >= $minConfidence
+            && !in_array((string) $row['vouched_dob_status'], ['', '0'], true);
+        return $crosscheck || $row['idcheck_vouched_status'] === 'true';
+    }
+
     /** Crosscheck + DOB results on the row (columns as in demo/identity_verify.php). */
     public function saveIdentity(int $id, array $result): void
     {
