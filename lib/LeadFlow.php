@@ -166,6 +166,180 @@ final class LeadFlow
         return $result['verified'];
     }
 
+    /**
+     * Hand the verified order to the patient portal (process.php, like demo/process/process.php):
+     * payload from the visitor's row (address, Vouched results, order ids) and quiz answers → PortalClient.
+     * The payload and the portal's answer are stored on the row (portal_processed_payload / portal_process_response).
+     *
+     * @return array [success, redirect_url, message]
+     */
+    public static function process(array $config, array $funnel, array &$record): array
+    {
+        $fail = static function (string $log, string $message = 'We could not finish setting up your account. Please contact support.') use ($config): array {
+            self::log($config, 'PORTAL', false, $log);
+            return ['success' => false, 'redirect_url' => null, 'message' => $message];
+        };
+
+        $portal = new PortalClient($config['portal'] ?? [], (string) ($config['tenant_secret_key'] ?? ''));
+        if ($missing = $portal->missing()) {
+            return $fail('not sent: set ' . implode(', ', $missing));
+        }
+        $repo = new LeadRepository($config['db'] ?? []);
+        if (!$repo->enabled() || empty($record['lead_id'])) {
+            return $fail('not sent: no saved lead in this session');
+        }
+        try {
+            $row = $repo->find((int) $record['lead_id']);
+        } catch (Throwable $e) {
+            return $fail($e->getMessage());
+        }
+        if (!$row) {
+            return $fail('not sent: row #' . $record['lead_id'] . ' not found');
+        }
+
+        $orderId = (string) ($row['vrio_order_id'] ?: ($record['order']['order_id'] ?? ''));
+        if ($orderId === '') {
+            return $fail('not sent: row #' . $row['id'] . ' has no vrio_order_id');
+        }
+        $customerId = self::customerId($config, $repo, $record, $row, $orderId);
+
+        $quiz = json_decode((string) $row['quiz'], true);
+        $quiz = is_array($quiz) ? $quiz : [];
+        $height = $quiz['height'] ?? null;
+        $product = $record['product'] ?? [];
+        $cfg = $config['portal'];
+
+        $payload = [
+            'first_name'        => $row['firstName'],
+            'last_name'         => $row['lastName'],
+            'email'             => $row['email'],
+            'phone'             => $row['phone'],
+            'crm_order_id'      => $orderId,
+            'crm_customer_id'   => $customerId,
+            'products'          => [['variant_id' => (int) ($product['variant_id'] ?? 0), 'quantity' => 1, 'product_type' => 'regular']],
+            'date_of_birth'     => (string) ($quiz['dob'] ?? ''),
+            'dob'               => (string) ($quiz['dob'] ?? ''),   // the demo sends both names
+            'gender'            => (string) ($quiz['gender'] ?? ''),
+            'height'            => is_array($height) && is_numeric($height['feet'] ?? null) ? (int) $height['feet'] * 12 + (int) ($height['inches'] ?? 0) : null,
+            'weight'            => is_numeric($quiz['weight'] ?? null) ? $quiz['weight'] + 0 : null,
+            'bmi'               => is_numeric($quiz['bmi'] ?? null) ? $quiz['bmi'] + 0 : null,
+            'offer_funnel_slug' => (string) ($funnel['slug'] ?? ''),
+            'crm_campaign_id'   => (string) ($product['crm_campaign_id'] ?? ''),
+            'source'            => (string) ($cfg['source'] ?? ''),
+            'product_category'  => $cfg['product_category'] ?? 'weightloss',
+            'shipping_address1' => (string) ($quiz['address_line1'] ?? $row['address1']),   // the address1 column holds line 1 + 2
+            'shipping_address2' => (string) ($quiz['address_line2'] ?? ''),
+            'shipping_city'     => (string) $row['city'],
+            'shipping_state'    => (string) $row['state'],
+            'shipping_zip'      => (string) $row['postalCode'],
+            'shipping_country'  => 'US',
+            'billing_same_as_shipping' => 'yes',
+            // Vouched results as demo/process/process.php sends them.
+            'vouched_crosscheck_status'  => $row['info_vouched_status'] === 'success' ? 'verified' : 'failed',
+            'vouched_crosscheck_persent' => is_numeric($row['vouched_crosscheck_persent']) ? $row['vouched_crosscheck_persent'] + 0 : null,
+            'vouched_crosscheck_job_id'  => $row['info_vouched_job_id'],
+            'vouched_dob_status'         => !empty($row['vouched_dob_status']) ? 'verified' : 'failed',
+            'vouched_dob_job_id'         => $row['idcheck_vouched_job_id'],
+            'vouched_dob_id'             => $row['info_vouched_dob_id'],
+            'vouched_idcheck_status'     => $row['idcheck_vouched_status'],
+            'answers'           => self::portalAnswers($funnel, $quiz),
+        ];
+
+        $required = ['first_name', 'last_name', 'email', 'phone', 'crm_order_id', 'crm_customer_id', 'date_of_birth', 'gender', 'shipping_address1', 'shipping_city', 'shipping_zip'];
+        $missingFields = array_values(array_filter($required, static function ($k) use ($payload) { return empty($payload[$k]); }));
+        if (empty($payload['products'][0]['variant_id'])) $missingFields[] = 'products[].variant_id';
+        if ($missingFields) {
+            return $fail('not sent: row #' . $row['id'] . ' missing ' . implode(', ', $missingFields), 'Some of your details are missing. Please contact support to finish your order.');
+        }
+
+        $json = (string) json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        try {
+            $repo->saveProcessPayload((int) $row['id'], $json);
+        } catch (Throwable $e) {
+            self::log($config, 'DB', false, $e->getMessage());
+        }
+
+        $result = $portal->process($payload);
+        try {
+            $repo->markProcessed((int) $row['id'], $result['success'], $result['raw']);
+        } catch (Throwable $e) {
+            self::log($config, 'DB', false, $e->getMessage());
+        }
+        if ($result['success'] && $result['redirect_url'] === null) {
+            return $fail('row #' . $row['id'] . ' order ' . $orderId . ' processed but no redirect_url in the reply: ' . mb_substr($result['raw'], 0, 500),
+                'Your order was processed, but we could not continue automatically. Please contact support.');
+        }
+        self::log($config, 'PORTAL', $result['success'], 'row #' . $row['id'] . ' order ' . $orderId . ' variant ' . $payload['products'][0]['variant_id'] . ': '
+            . $result['message'] . ($result['success'] ? '' : ' | reply: ' . mb_substr($result['raw'], 0, 1000)));
+        return $result['success'] ? $result : ['success' => false, 'redirect_url' => null, 'message' => 'We could not finish setting up your account. Please contact support.'];
+    }
+
+    /** crm_customer_id: the row, else the pre-auth reply, else Vrio's order lookup — saved on the row when new. */
+    private static function customerId(array $config, LeadRepository $repo, array $record, array $row, string $orderId): string
+    {
+        $id = (string) ($row['customer_id'] ?: ($record['order']['vrio_customer_id'] ?? ''));
+        if ($id === '') {
+            try {
+                $id = (new VrioClient($config['vrio'] ?? []))->customerIdForOrder($orderId);
+            } catch (Throwable $e) {
+                self::log($config, 'VRIO', false, 'customer id for order ' . $orderId . ': ' . $e->getMessage());
+                return '';
+            }
+        }
+        if ($id !== '' && (string) $row['customer_id'] !== $id) {
+            try {
+                $repo->setCustomerId((int) $row['id'], $id);
+            } catch (Throwable $e) {
+                self::log($config, 'DB', false, $e->getMessage());
+            }
+        }
+        return $id;
+    }
+
+    /**
+     * Quiz answers for the portal, keyed by question key (the "Answers Reference" sheet uses the same keys).
+     * Contact / body / address fields go at the top level of the payload, so they are left out here.
+     */
+    private static function portalAnswers(array $funnel, array $quiz): array
+    {
+        $topLevel = ['first_name', 'last_name', 'email', 'phone', 'dob', 'gender', 'height', 'weight', 'bmi', 'address_line1', 'address_line2', 'city', 'zip'];
+        $answers = [];
+        foreach ($funnel['steps'] as $step) {
+            foreach ($step['questions'] as $q) {
+                $key = $q['key'];
+                if (in_array($key, $topLevel, true) || !array_key_exists($key, $quiz)) continue;
+                $answers[$key] = $quiz[$key];
+            }
+        }
+        return $answers;
+    }
+
+    /** Put the portal link on the GHL contact (like demo/process/update_portal_redirect.php). */
+    public static function portalLink(array $config, array $funnel, array $record, string $url): void
+    {
+        $field = $funnel['ghl_portal_field'] ?? [];
+        $cfg   = self::ghlConfig($config, $funnel);
+        $client = new GhlClient($cfg);
+        if (empty($record['ghl_contact_id']) || empty($field['key']) || $client->missing()) {
+            self::log($config, 'GHL', null, 'portal link skipped: ' . (empty($record['ghl_contact_id']) ? 'no GHL contact in this session' : (empty($field['key']) ? 'no tenant.ghl.portal_new_custom_field_key in the funnel' : 'GHL not configured')));
+            return;
+        }
+        $id = (string) ($field['id'] ?? '');
+        if ($id === '') {
+            try {
+                $id = $client->fieldIds(rtrim((string) $config['storage_dir'], '/\\') . '/cache/ghl-fields-' . md5((string) $cfg['location_id']) . '.json')[$field['key']] ?? '';
+            } catch (Throwable $e) {
+                $id = '';
+            }
+        }
+        try {
+            $client->save($record['ghl_contact_id'], ['customFields' => [array_filter(['id' => $id, 'key' => $field['key'], 'fieldValue' => $url])]]);
+            self::log($config, 'GHL', true, 'contact ' . $record['ghl_contact_id'] . ' portal link saved (' . $field['key'] . ')');
+        } catch (Throwable $e) {
+            self::log($config, 'GHL', false, 'portal link: ' . $e->getMessage());
+        }
+    }
+
     private static function membership(array $config, array &$record, string $email): void
     {
         if (isset($record['has_membership']) && ($record['membership_email'] ?? null) === $email) {

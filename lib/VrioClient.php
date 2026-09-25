@@ -91,6 +91,21 @@ final class VrioClient
         return $result;
     }
 
+    /**
+     * The customer id of an order (like demo/process/get_vrio_customer_id_using_order_id.php): GET {api_url}/{order_id}.
+     * @throws RuntimeException when Vrio fails or the reply has no customer id
+     */
+    public function customerIdForOrder(string $orderId): string
+    {
+        [$status, $body, $raw, $error] = Http::json('GET', rtrim((string) $this->cfg['api_url'], '/') . '/' . rawurlencode($orderId), ['X-Api-Key: ' . $this->cfg['api_key']], null, (int) ($this->cfg['timeout'] ?? 30));
+        if ($error !== '') throw new RuntimeException('order lookup failed: ' . $error);
+        $id = is_array($body) ? ($body['customer_id'] ?? $body['order']['customer_id'] ?? $body['transaction']['customer_id'] ?? null) : null;
+        if ($status !== 200 || empty($id)) {
+            throw new RuntimeException('order lookup HTTP ' . $status . ': no customer_id (' . self::logBody($raw) . ')');
+        }
+        return (string) $id;
+    }
+
     /** Vrio's raw reply for the log: one line, max 2000 chars, anything that looks like a card number masked. */
     private static function logBody(string $raw): string
     {

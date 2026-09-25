@@ -1,0 +1,16 @@
+{
+  "_help": "Order processing page (process.php). On success the visitor goes straight to the patient portal; this page's text is only shown when the portal hand-off fails.",
+
+  "title": "Processing your order",
+  "body_class": "page-checkout",
+  "styles": ["assets/css/checkout.css"],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-shop", "show_phone": true },
+  "main_class": "ty",
+
+  "text": {
+    "error_heading": "Something went wrong",
+    "error_order": "Your order {order_id} is placed. Please try again, or contact support and mention this order number.",
+    "retry": "Try again"
+  }
+}

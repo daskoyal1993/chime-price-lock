@@ -54,7 +54,8 @@ page_open($page);
             <p><?= e($text['failed_text'] ?? '') ?></p>
             <button type="button" class="btn-complete" id="idcheck-retry"><?= e($text['retry'] ?? 'Try again') ?></button>
         </div>
-        <div id="vouched-element" style="min-height: 560px"></div>
+        <!-- A real height (not only min-height): the plugin sizes its iframe with height: 100% of this box. -->
+        <div id="vouched-element" style="height: 85vh; min-height: 640px; width: 100%"></div>
     </section>
 </main>
 <script src="https://static.vouched.id/plugin/releases/latest/index.js"></script>

@@ -192,6 +192,11 @@ final class FunnelRepository
             // before output. Empty when config.php → tenant_secret_key is set and the signature doesn't match it.
             'ghl'     => self::credentials($data['tenant']['ghl']['credentials'] ?? '', $secretKey, ['api_key' => 'token', 'location_id' => 'location_id']),
             'vouched' => self::credentials($data['tenant']['vouched'] ?? '', $secretKey, ['app_secret' => 'api_key', 'app_id' => 'app_id']),
+            // GHL custom field that gets the patient portal link after process.php (tenant.ghl.portal_new_custom_field / _key).
+            'ghl_portal_field' => [
+                'id'  => (string) ($data['tenant']['ghl']['portal_new_custom_field'] ?? ''),
+                'key' => (string) ($data['tenant']['ghl']['portal_new_custom_field_key'] ?? ''),
+            ],
         ];
     }
 

@@ -33,8 +33,8 @@ return [
     'product_url'      => 'product.php',
     'checkout_url'     => 'checkout.php',
     'thank_you_url'    => 'thank-you.php',
-    // After the card is authorized: Vouched verified → verified_url (the demo's process.php), not verified → idcheck_url.
-    'verified_url'     => 'thank-you.php',
+    // After the card is authorized: Vouched verified → verified_url (process.php → patient portal), not verified → idcheck_url.
+    'verified_url'     => 'process.php',
     'idcheck_url'      => 'idcheck.php',
     'disqualified_url' => '',   // empty = show the built-in disqualified screen
 
@@ -150,6 +150,16 @@ return [
         'app_id'         => Env::get('FUNNEL_VOUCHED_APP_ID', ''),    // public key (pub.…) for the ID check plugin
         'min_confidence' => 80,                                       // crosscheck % needed (with a DOB match)
         'timeout'        => 20,                                       // seconds per call; checkout must answer within 120 s (Cloudflare)
+    ],
+
+    // Patient portal order hand-off on process.php (lib/PortalClient.php, like demo/process/process.php).
+    // The payload is signed with tenant_secret_key above, so that must be set too.
+    'portal' => [
+        'api_url'          => Env::get('FUNNEL_PORTAL_API_URL', 'https://chime-health.medaxis.io/api/offer/process'),
+        'api_key'          => Env::get('FUNNEL_PORTAL_API_KEY', ''),   // X-API-Key (MEDAXIS_API_KEY in the demo)
+        'source'           => 'chime-dynamic API',
+        'product_category' => ['weightloss', 'antiaging'],             // as in the demo
+        'timeout'          => 30,
     ],
 
     // Payment processing for checkout.php (see lib/Payment.php).

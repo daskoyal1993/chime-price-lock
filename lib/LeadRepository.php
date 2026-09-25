@@ -304,6 +304,60 @@ final class LeadRepository
         }
     }
 
+    /** The whole row (process.php reads the address, Vouched results and order ids from it). */
+    public function find(int $id): ?array
+    {
+        try {
+            $st = $this->pdo()->prepare("SELECT * FROM {$this->table()} WHERE `id` = ?");
+            $st->execute([$id]);
+            return $st->fetch() ?: null;
+        } catch (PDOException $e) {
+            throw new RuntimeException('Reading the lead failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    public function setCustomerId(int $id, string $customerId): void
+    {
+        try {
+            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `customer_id` = ?, `updated_at` = ? WHERE `id` = ?");
+            $st->execute([mb_substr($customerId, 0, 255), gmdate('Y-m-d H:i:s'), $id]);
+        } catch (PDOException $e) {
+            throw new RuntimeException('Saving the customer id failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /** The exact payload sent to the portal's offer/process API (like demo/process/save_processed_payload.php). */
+    public function saveProcessPayload(int $id, string $json): void
+    {
+        try {
+            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `portal_processed_payload` = ?, `updated_at` = ? WHERE `id` = ?");
+            $st->execute([$json, gmdate('Y-m-d H:i:s'), $id]);
+        } catch (PDOException $e) {
+            throw new RuntimeException('Saving the process payload failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /** The portal's answer (like demo/process/mark_portal_processed.php): processed / portal_processed = 1 on success. */
+    public function markProcessed(int $id, bool $success, string $rawResponse): void
+    {
+        $now = gmdate('Y-m-d H:i:s');
+        try {
+            $st = $this->pdo()->prepare("UPDATE {$this->table()} SET `processed` = ?, `portal_processed` = ?, `portal_process_response` = ?,"
+                . " `processedtiming` = ?, `updated_at` = ? WHERE `id` = ?");
+            $st->execute([$success ? 1 : 0, $success ? '1' : '0', self::jsonOrNull($rawResponse), $now, $now, $id]);
+        } catch (PDOException $e) {
+            throw new RuntimeException('Saving the process result failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /** The column is JSON on MySQL: store the reply as-is when it is JSON, else wrapped as {"raw": "..."}. */
+    private static function jsonOrNull(string $raw): ?string
+    {
+        if (trim($raw) === '') return null;
+        json_decode($raw);
+        return json_last_error() === JSON_ERROR_NONE ? $raw : json_encode(['raw' => mb_substr($raw, 0, 5000)]);
+    }
+
     /** `table` from config, quoted. Only letters, digits, _ and - are allowed. */
     private function table(): string
     {

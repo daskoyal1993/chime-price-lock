@@ -9,6 +9,7 @@ require __DIR__ . '/lib/GhlClient.php';
 require __DIR__ . '/lib/Membership.php';
 require __DIR__ . '/lib/XverifyClient.php';
 require __DIR__ . '/lib/VouchedClient.php';
+require __DIR__ . '/lib/PortalClient.php';
 require __DIR__ . '/lib/Payment.php';
 require __DIR__ . '/lib/LeadFlow.php';
 require __DIR__ . '/lib/view.php';
@@ -56,8 +57,22 @@ function funnel_json_response_then(array $body, int $status, callable $after): v
     header('Content-Length: ' . strlen($json));
     header('Connection: close');
     echo $json;
+    finish_request_then($after);
+}
 
-    session_write_close();   // the next page (thank-you / idcheck) must not wait for the session lock
+/** Redirect the browser now (e.g. to the patient portal), then run $after. Same rules as funnel_json_response_then(). */
+function redirect_now_then(string $url, callable $after): void
+{
+    header('Location: ' . $url, true, 302);
+    header('Content-Length: 0');
+    header('Connection: close');
+    finish_request_then($after);
+}
+
+/** End the response (saving the session first), then run $after and exit. */
+function finish_request_then(callable $after): void
+{
+    session_write_close();   // the next page must not wait for the session lock
     ignore_user_abort(true);
     @set_time_limit(120);
     if (function_exists('fastcgi_finish_request')) {
