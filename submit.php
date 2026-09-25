@@ -29,7 +29,7 @@ if (!is_array($input)) {
 }
 
 try {
-    $funnel = (new FunnelRepository($config))->load();
+    $funnel = quiz_funnel((new FunnelRepository($config))->load());
 } catch (RuntimeException $e) {
     error_log('Funnel load failed: ' . $e->getMessage());
     funnel_json_response(['success' => false, 'message' => 'The form is temporarily unavailable.'], 503);

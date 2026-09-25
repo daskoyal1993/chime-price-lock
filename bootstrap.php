@@ -58,6 +58,23 @@ function load_funnel_or_fail(array $config): array
 }
 
 /**
+ * The funnel without the questions listed in projects/<project>/index.json → "skip_questions"
+ * (e.g. the shipping address, which is asked on checkout.php instead). They are not shown, validated or saved by the quiz.
+ */
+function quiz_funnel(array $funnel): array
+{
+    $skip = array_flip(Page::load('index')['skip_questions'] ?? []);
+    if (!$skip) return $funnel;
+    foreach ($funnel['steps'] as &$step) {
+        $step['questions'] = array_values(array_filter($step['questions'], static function (array $q) use ($skip): bool {
+            return !isset($skip[$q['key']]);
+        }));
+    }
+    unset($step);
+    return $funnel;
+}
+
+/**
  * The funnel with the offer for this visitor (membership check in lib/LeadFlow.php, stored in the session):
  *   member (API true)      → membership_campaign_set: "campaign" + "products" replaced by the membership ones
  *   not member (API false) → campaign_set:            "campaign" + "products" unchanged

@@ -5,7 +5,7 @@
  */
 require __DIR__ . '/bootstrap.php';
 
-$funnel = load_funnel_or_fail($config);
+$funnel = quiz_funnel(load_funnel_or_fail($config));
 $page   = Page::load('index');
 
 // The browser gets the questions without the server-side GHL field mapping.

@@ -23,6 +23,9 @@
     }
   },
 
+  "_skip_questions_help": "API question keys left out of the quiz (not shown, validated or saved here). The shipping address is asked on the checkout page instead.",
+  "skip_questions": ["address_line1", "address_line2", "city", "zip"],
+
   "_screens_help": "One screen at a time. keys = API question keys. heading/text/badge/button are optional (a screen with one question uses its label as the heading); badge defaults to the API step name; badge_style: info | success; doctor: show the clinician photo. Keys not in the API are ignored; API questions not listed are added after these screens automatically. A screen whose questions are all hidden by conditions is skipped.",
   "screens": [
     { "keys": ["product_pick"], "badge": "Get started" },
@@ -46,7 +49,6 @@
     { "keys": ["glp_consent"] },
     { "keys": ["additional_doc_information", "additional_doc_information_info"] },
     { "keys": ["first_name", "last_name", "email", "phone", "sms_consent"], "heading": "Your plan is ready. Where should we send it?", "text": "Your clinician will use this to reach you about your treatment.", "badge": "Plan ready", "badge_style": "success" },
-    { "keys": ["address_line1", "address_line2", "city", "zip"], "heading": "Where should we ship your medication?", "text": "Delivered discreetly to your door.", "badge": "Shipping" },
     { "keys": ["contact_agree"], "heading": "Last step — please confirm", "button": "See my plan" }
   ],
 
