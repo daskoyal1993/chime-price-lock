@@ -227,7 +227,12 @@ final class LeadFlow
             'crm_campaign_id'   => (string) ($product['crm_campaign_id'] ?? ''),
             'source'            => (string) ($cfg['source'] ?? ''),
             'product_category'  => $cfg['product_category'] ?? 'weightloss',
-            'shipping_address1' => (string) ($quiz['address_line1'] ?? $row['address1']),   // the address1 column holds line 1 + 2
+            // The portal documents address_line1/address_line2/city/zip; the demo also sends the shipping_ names.
+            'address_line1'     => (string) ($quiz['address_line1'] ?? $row['address1']),   // the address1 column holds line 1 + 2
+            'address_line2'     => (string) ($quiz['address_line2'] ?? ''),
+            'city'              => (string) $row['city'],
+            'zip'               => (string) $row['postalCode'],
+            'shipping_address1' => (string) ($quiz['address_line1'] ?? $row['address1']),
             'shipping_address2' => (string) ($quiz['address_line2'] ?? ''),
             'shipping_city'     => (string) $row['city'],
             'shipping_state'    => (string) $row['state'],
@@ -242,7 +247,7 @@ final class LeadFlow
             'vouched_dob_job_id'         => $row['idcheck_vouched_job_id'],
             'vouched_dob_id'             => $row['info_vouched_dob_id'],
             'vouched_idcheck_status'     => $row['idcheck_vouched_status'],
-            'answers'           => self::portalAnswers($funnel, $quiz),
+            'answers'           => self::portalAnswers($funnel, $quiz, $config['ghl']['consent_questions'] ?? []),
         ];
 
         $required = ['first_name', 'last_name', 'email', 'phone', 'crm_order_id', 'crm_customer_id', 'date_of_birth', 'gender', 'shipping_address1', 'shipping_city', 'shipping_zip'];
@@ -259,7 +264,9 @@ final class LeadFlow
             self::log($config, 'DB', false, $e->getMessage());
         }
 
+        error_log('[process] offer/process payload: ' . $json);
         $result = $portal->process($payload);
+        error_log('[process] offer/process response (HTTP ' . $result['status'] . '): ' . $result['raw']);
         try {
             $repo->markProcessed((int) $row['id'], $result['success'], $result['raw']);
         } catch (Throwable $e) {
@@ -299,8 +306,9 @@ final class LeadFlow
     /**
      * Quiz answers for the portal, keyed by question key (the "Answers Reference" sheet uses the same keys).
      * Contact / body / address fields go at the top level of the payload, so they are left out here.
+     * Consents that were not shown (e.g. metabolic_consent outside its BMI band) are sent as null, like the demo.
      */
-    private static function portalAnswers(array $funnel, array $quiz): array
+    private static function portalAnswers(array $funnel, array $quiz, array $consentKeys): array
     {
         $topLevel = ['first_name', 'last_name', 'email', 'phone', 'dob', 'gender', 'height', 'weight', 'bmi', 'address_line1', 'address_line2', 'city', 'zip'];
         $answers = [];
@@ -310,6 +318,9 @@ final class LeadFlow
                 if (in_array($key, $topLevel, true) || !array_key_exists($key, $quiz)) continue;
                 $answers[$key] = $quiz[$key];
             }
+        }
+        foreach ($consentKeys as $key) {
+            if (!array_key_exists($key, $answers)) $answers[$key] = null;
         }
         return $answers;
     }
@@ -550,7 +561,7 @@ final class LeadFlow
     public static function log(array $config, string $service, ?bool $ok, string $message): void
     {
         $line = gmdate('Y-m-d H:i:s') . ' UTC [' . $service . '] ' . ($ok === null ? 'SKIP' : ($ok ? 'OK' : 'FAILED')) . ' ' . $message;
-        if ($ok === false) {
+        if ($ok === false || $service === 'PORTAL') {   // process.php results always go to the PHP error log too
             error_log('[lead-flow] ' . $line);
         }
         $file = (string) ($config['lead_log'] ?? '');
