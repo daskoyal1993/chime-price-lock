@@ -120,10 +120,11 @@ return [
     // Payment processing for checkout.php (see lib/Payment.php).
     //   'vrio' - card pre-authorization in Vrio on "Complete Purchase" (like demo/preauth.php) — REAL authorizations
     //   'none' - checkout validates the form but refuses to charge
-    //   'test' - LOCAL TESTING ONLY: approves the test_card below without charging anything
+    //   'test' - LOCAL TESTING ONLY: approves the test_card below without charging anything (with 'vrio' the test_card is sent to Vrio)
     'payment_driver' => Env::get('FUNNEL_PAYMENT_DRIVER', 'vrio'),
 
-    // Card number the 'test' driver approves (spaces allowed). Only with payment_driver = test it also skips the
-    // card-number checksum, so a made-up number like this one can be used. Any other card is declined by the test driver.
+    // Card number the 'test' driver approves (spaces allowed). With payment_driver = test or vrio it also skips the
+    // card-number checksum, so a made-up number like this one can be used ('vrio' sends it to Vrio, which decides).
+    // Any other card is declined by the test driver. On a live site set FUNNEL_TEST_CARD='' in .env to turn it off.
     'test_card' => Env::get('FUNNEL_TEST_CARD', '4111 2222 3333 4444'),
 ];

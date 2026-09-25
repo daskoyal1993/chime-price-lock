@@ -255,7 +255,7 @@ if ($action === 'checkout') {
     $month  = (int) ($card['month'] ?? 0);
     $year   = (int) ($card['year'] ?? 0);
     $cvv    = preg_replace('/\D/', '', (string) ($card['cvv'] ?? ''));
-    $isTestCard = $number !== '' && $number === Payment::testCard($config);   // test driver only: no checksum for the test card
+    $isTestCard = $number !== '' && $number === Payment::testCard($config);   // test / vrio driver: no checksum for the test card
     if (strlen($number) < 13 || strlen($number) > 19 || (!$isTestCard && !Payment::luhn($number))) $errors['card_number'] = 'Enter a valid card number.';
     if ($month < 1 || $month > 12) $errors['card_month'] = 'Select the expiry month.';
     if ($year < (int) date('Y') || $year > (int) date('Y') + 25) $errors['card_year'] = 'Select the expiry year.';

@@ -91,11 +91,22 @@ final class VrioClient
         return $result;
     }
 
+    /** Vrio's raw reply for the log: one line, max 2000 chars, anything that looks like a card number masked. */
+    private static function logBody(string $raw): string
+    {
+        $raw = trim(preg_replace('/\s+/', ' ', $raw));
+        $raw = preg_replace('/\b\d{12,19}\b/', '[masked]', $raw);
+        if ($raw === '') return '(empty)';
+        return strlen($raw) > 2000 ? substr($raw, 0, 2000) . '…' : $raw;
+    }
+
     private function sendAuthorize(array $body): array
     {
         [$status, $response, $raw, $error] = Http::json('POST', (string) $this->cfg['api_url'], ['X-Api-Key: ' . $this->cfg['api_key']], $body, (int) ($this->cfg['timeout'] ?? 30));
-        $fail = static function (string $message, string $log, bool $prepaid = false): array {
-            return ['success' => false, 'order_id' => null, 'customer_id' => null, 'message' => $message, 'log' => $log, 'prepaid' => $prepaid];
+        // What was sent, for the log on a refusal — ids and offer only, no card or personal data.
+        $sent = json_encode(array_intersect_key($body, array_flip(['connection_id', 'campaign_id', 'crm_campaign_id', 'offer_funnel_slug', 'offers', 'shipping_profile_id', 'card_type_id', 'bill_state', 'bill_country'])), JSON_UNESCAPED_SLASHES);
+        $fail = static function (string $message, string $log, bool $prepaid = false) use ($sent): array {
+            return ['success' => false, 'order_id' => null, 'customer_id' => null, 'message' => $message, 'log' => $log . ' sent=' . $sent, 'prepaid' => $prepaid];
         };
         if ($error !== '') {
             return $fail('We could not process your payment. Please try again.', 'request failed: ' . $error);
@@ -120,10 +131,10 @@ final class VrioClient
         $log = 'HTTP ' . $status . ($errorCode !== '' ? ' code=' . $errorCode : '') . ($decline ? ' message=' . $decline : '') . ($orderId ? ' order_id=' . $orderId : '');
 
         if ($status !== 200 || empty($orderId) || $decline) {
-            return $fail($decline ?: 'We could not process your payment. Please try again.', $log, $prepaid);
+            return $fail($decline ?: 'We could not process your payment. Please try again.', $log . ' response=' . self::logBody($raw), $prepaid);
         }
         if (!empty($responseCode) && (int) $responseCode === 101) {
-            return $fail('Additional verification is required for this card. Please try a different card or contact support.', $log . ' response_code=101');
+            return $fail('Additional verification is required for this card. Please try a different card or contact support.', $log . ' response_code=101 response=' . self::logBody($raw));
         }
         return ['success' => true, 'order_id' => (string) $orderId, 'customer_id' => $customerId !== null ? (string) $customerId : null, 'message' => 'Card authorized.', 'log' => $log, 'prepaid' => false];
     }

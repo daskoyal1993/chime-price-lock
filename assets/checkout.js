@@ -72,7 +72,7 @@
         if (!EMAIL.test(val('shipping_email'))) errors.shipping_email = 'Enter a valid email address.';
 
         var card = digits(val('card_number'));
-        var testCard = boot.testCard && card === boot.testCard;   // only set when payment_driver = test
+        var testCard = boot.testCard && card === boot.testCard;   // only set when payment_driver = test or vrio
         if (card.length < 13 || card.length > 19 || (!testCard && !luhn(card))) errors.card_number = 'Enter a valid card number.';
         var month = +val('card_month'), year = +val('card_year'), now = new Date();
         if (!month) errors.card_month = 'Select the expiry month.';

@@ -36,10 +36,14 @@ final class Payment
         }
     }
 
-    /** The test card (config.php → test_card), digits only. Empty unless payment_driver is "test". */
+    /**
+     * The test card (config.php → test_card), digits only; it skips the card-number checksum.
+     * "test" approves it locally; "vrio" sends it to Vrio like demo/preauth.php (a Vrio test gateway accepts it,
+     * a live one declines it). Set FUNNEL_TEST_CARD='' in .env to turn it off on a live site.
+     */
     public static function testCard(array $config): string
     {
-        return ($config['payment_driver'] ?? '') === 'test' ? preg_replace('/\D/', '', (string) ($config['test_card'] ?? '')) : '';
+        return in_array($config['payment_driver'] ?? '', ['test', 'vrio'], true) ? preg_replace('/\D/', '', (string) ($config['test_card'] ?? '')) : '';
     }
 
     /** Luhn check for card numbers. */
