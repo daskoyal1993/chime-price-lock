@@ -95,12 +95,21 @@ Live since 2026-09-25 (`HTTP 200 order_id=4450`). `lib/VrioClient.php → author
   (`VRIO_CONNECTION_ID` / `VRIO_SHIPPING_PROFILE_ID` in the demo's `vrio-config.php`).
 - **Logging:** every attempt that reaches the server gets a `[VRIO-PREAUTH]` line, also when it stops before Vrio (no plan in the
   session, form errors — field names only). A Vrio refusal logs Vrio's full reply (`response=`, card-like numbers masked) and the ids sent (`sent=`).
+  **Every call** to Vrio is also logged in full (2026-09-28): `[VRIO-PREAUTH] SENT <email> attempt 1 campaign 65 payload: {…}` and
+  `[VRIO-PREAUTH] REPLY … response (HTTP …): {…}` — attempt 2 after a prepaid retry. Card number masked to the last 4 digits, CVV never logged;
+  name, email and billing address are in the payload.
 - **Test card** `4111 2222 3333 4444`: with `payment_driver = test` it is approved locally (order id `TEST-…`); with `vrio` it skips the
   card-number checksum and is **sent to Vrio**, which decides (a test gateway approves it). Set `FUNNEL_TEST_CARD=''` on the live
   server before real customers.
 - **Different billing address:** like the demo, only `bill_*` fields and `same_address: true` are sent; with a separate billing address
   the shipping address isn't sent to Vrio. Confirm the Vrio field names for a separate shipping address if needed.
-- **Prepaid retry:** implemented like the demo, but both campaign sets have `prepaid_campaign: null` in the funnel JSON.
+- **Prepaid retry (2026-09-28):** when Vrio refuses the card as prepaid (`campaign_prepaid_not_allowed`, "Prepaid cards not allowed on campaign …"),
+  the order is sent once more on `campaign_set → prepaid_campaign` (e.g. `r4mf-v1-funnel.json`: 65 → **66**) with the plan's own offer on that
+  campaign (variant `crm_campaigns` of type `prepaid` — e.g. Semaglutide 4M: offer 137 → **141**). The demo re-sent the main offer.
+  The campaign actually charged is kept on the order and sent to the portal as `crm_campaign_id`. No prepaid campaign in the funnel → no retry (logged).
+  Check with Vrio: in `r4mf-v1-funnel.json` the Semaglutide 4M prepaid offer (141) is the same id as the Tirzepatide 4M offer — confirm it's right.
+  **Test it** with the prepaid test card **4111 2222 3333 6666** (any future expiry, any CVV) and `payment_driver = vrio`: `lead-flow.log` →
+  `[VRIO-PREAUTH] … code=campaign_prepaid_not_allowed …; prepaid card → retried on campaign 66 (offer …): HTTP 200 … order_id=…`.
 - **Scrap flow** (`VRIO_SRP_CAMPAIGN_ID` in the demo) is not part of this funnel — not implemented.
 - **Offers:** one offer per order (the chosen plan, quantity 1); the demo could send several. `offer_funnel_slug` is the funnel's `slug`
   (`chime-main`), the demo sent `"chime-main"` too.

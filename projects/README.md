@@ -12,6 +12,8 @@ projects/chime/
 ├── product.json     product page:   sections, text, images, JS button text
 ├── checkout.json    checkout page:  form labels, order summary, reviews, legal text
 ├── idcheck.json     ID check page:  text around the Vouched plugin, "not verified" message
+├── legal.json       legal pages (legal.php?page=<key>): page list, titles, "last updated"
+├── legal/<key>.html legal page content (plain HTML: privacy-policy, terms, telehealth-consent, hipaa-notice, …)
 ├── process.json     process page:   error text when the portal hand-off fails (on success the visitor goes to the portal)
 └── thank-you.json   thank-you page  (not in the flow for now)
 ```
@@ -31,6 +33,17 @@ header   product.json → "header"       (components/layout/header-shop.php)
 after    product.json → "after_main"   (sticky buy bar)
 footer   site.json → "footer"          (hide per page with "footer": false)
 ```
+
+## Legal pages (`legal.php`)
+
+Footer links (`site.json → footer.columns`) and the checkout agreement text (`checkout.json → legal_html`) point to
+`legal.php?page=<key>`. Each page is one entry in `legal.json → pages` (`title`, `updated`) plus its content in
+`legal/<key>.html` — plain HTML (`<h2>`, `<p>`, `<ul>`, `<a>`); `{brand}`, `{email}`, `{phone}` are filled from `site.json → brand`,
+and `<!-- comments -->` are left out of the page. The `.html` files can't be opened directly (`.htaccess`).
+
+- **Edit a page:** change `legal/<key>.html`; set `"updated": "September 28, 2026"` in `legal.json` to show the date.
+- **Add a page:** add `"<key>": { "title": "…" }` to `legal.json → pages`, create `legal/<key>.html`, link `legal.php?page=<key>`.
+- An unknown key shows a 404 page listing the existing ones.
 
 ## Page JSON keys
 

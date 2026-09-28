@@ -228,7 +228,7 @@ final class LeadFlow
             'weight'            => is_numeric($quiz['weight'] ?? null) ? $quiz['weight'] + 0 : null,
             'bmi'               => is_numeric($quiz['bmi'] ?? null) ? $quiz['bmi'] + 0 : null,
             'offer_funnel_slug' => (string) ($funnel['slug'] ?? ''),
-            'crm_campaign_id'   => (string) ($product['crm_campaign_id'] ?? ''),
+            'crm_campaign_id'   => (string) ($record['order']['crm_campaign_id'] ?? $product['crm_campaign_id'] ?? ''),   // the campaign charged (prepaid after a retry)
             'source'            => (string) ($cfg['source'] ?? ''),
             'product_category'  => $cfg['product_category'] ?? 'weightloss',
             // The portal documents address_line1/address_line2/city/zip; the demo also sends the shipping_ names.

@@ -158,11 +158,13 @@ final class FunnelRepository
             return $a['number'] <=> $b['number'];
         });
 
-        $products = self::normalizeProducts($data['products'] ?? [], $campaignId);
+        // Each variant has an offer per campaign; the prepaid one is used when Vrio refuses a prepaid card (lib/VrioClient.php).
+        $products = self::normalizeProducts($data['products'] ?? [], $campaignId, $data['campaign_set']['prepaid_campaign']['id'] ?? null);
 
         // Offer for visitors without a membership (see offer_funnel() in bootstrap.php).
         $memberCampaign = $data['membership_campaign_set']['main_campaign'] ?? null;
-        $memberProducts = self::normalizeProducts($data['membership_campaign_set_products'] ?? [], $memberCampaign['id'] ?? null);
+        $memberProducts = self::normalizeProducts($data['membership_campaign_set_products'] ?? [], $memberCampaign['id'] ?? null,
+            $data['membership_campaign_set']['prepaid_campaign']['id'] ?? null);
 
         return [
             'id'       => $data['id'] ?? null,
@@ -221,24 +223,32 @@ final class FunnelRepository
         return $out;
     }
 
-    /** Products with their offer (CRM price) for one campaign. */
-    private static function normalizeProducts(array $list, $campaignId): array
+    /**
+     * Products with their offer (CRM price) for one campaign, plus the offer on the prepaid campaign
+     * (prepaid_offer: null when the set has no prepaid campaign or the variant has no offer there).
+     */
+    private static function normalizeProducts(array $list, $campaignId, $prepaidCampaignId = null): array
     {
+        $offerOf = static function (array $crm): array {
+            return [
+                'campaign_id'             => $crm['campaign_id'] ?? null,
+                'crm_campaign_product_id' => $crm['crm_campaign_product_id'] ?? null,
+                'crm_offer_id'            => $crm['crm_offer_id'] ?? null,
+                'crm_item_id'             => $crm['crm_item_id'] ?? null,
+                'price'                   => isset($crm['price']) ? (float) $crm['price'] : null,
+            ];
+        };
         $products = [];
         foreach ($list as $product) {
             $variants = [];
             foreach ($product['variants'] ?? [] as $variant) {
-                $offer = null;
+                $offer = $prepaidOffer = null;
                 foreach ($variant['crm_campaigns'] ?? [] as $crm) {
-                    if ($campaignId === null || ($crm['campaign_id'] ?? null) == $campaignId) {
-                        $offer = [
-                            'campaign_id'             => $crm['campaign_id'] ?? null,
-                            'crm_campaign_product_id' => $crm['crm_campaign_product_id'] ?? null,
-                            'crm_offer_id'            => $crm['crm_offer_id'] ?? null,
-                            'crm_item_id'             => $crm['crm_item_id'] ?? null,
-                            'price'                   => isset($crm['price']) ? (float) $crm['price'] : null,
-                        ];
-                        break;
+                    if ($offer === null && ($campaignId === null || ($crm['campaign_id'] ?? null) == $campaignId)) {
+                        $offer = $offerOf($crm);
+                    }
+                    if ($prepaidOffer === null && $prepaidCampaignId !== null && ($crm['campaign_id'] ?? null) == $prepaidCampaignId) {
+                        $prepaidOffer = $offerOf($crm);
                     }
                 }
                 $variants[] = [
@@ -248,6 +258,7 @@ final class FunnelRepository
                     'typical_duration' => isset($variant['typical_duration']) ? (int) $variant['typical_duration'] : null,
                     'display_price'    => isset($variant['display_price']) ? (float) $variant['display_price'] : null,
                     'offer'            => $offer,
+                    'prepaid_offer'    => $prepaidOffer && $prepaidOffer['crm_offer_id'] !== null && $prepaidOffer['price'] !== null ? $prepaidOffer : null,
                     // Only variants with a CRM offer and price can be sold.
                     'available'        => $offer !== null && $offer['price'] !== null && $offer['crm_offer_id'] !== null,
                 ];

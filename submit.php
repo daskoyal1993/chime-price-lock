@@ -212,6 +212,8 @@ if ($action === 'product') {
         'crm_campaign_product_id' => $v['offer']['crm_campaign_product_id'],
         'crm_offer_id'            => $v['offer']['crm_offer_id'],
         'crm_item_id'             => $v['offer']['crm_item_id'],
+        // This plan's offer on the prepaid campaign (a prepaid card is retried there, lib/VrioClient.php); null = same offer.
+        'prepaid_offer'           => $v['prepaid_offer'] ?? null,
     ];
     $record['order'] = null;
 
@@ -299,6 +301,14 @@ if ($action === 'checkout') {
     ], $config);
     unset($number, $cvv, $card, $input);
 
+    // Each request sent to Vrio (card number masked to the last 4 digits, no CVV) and Vrio's reply — 2 of each after a prepaid retry.
+    foreach ($result['calls'] ?? [] as $i => $call) {
+        $attempt = $email . ' attempt ' . ($i + 1) . ' campaign ' . $call['campaign_id'];
+        LeadFlow::log($config, 'VRIO-PREAUTH', null, $attempt . ' payload: ' . $call['request'], 'SENT');
+        LeadFlow::log($config, 'VRIO-PREAUTH', $call['status'] === 200, $attempt . ' response (HTTP ' . $call['status'] . '): ' . $call['response'], 'REPLY');
+    }
+    unset($result['calls']);
+
     // One log line per attempt (never card data): storage/logs/lead-flow.log
     LeadFlow::log($config, 'VRIO-PREAUTH', $result['success'], $email . ' ' . $record['product']['name'] . ' $' . $record['product']['price']
         . ' campaign ' . $record['product']['crm_campaign_id'] . ' (driver ' . $config['payment_driver'] . '): ' . ($result['log'] ?? $result['message']));
@@ -316,6 +326,8 @@ if ($action === 'checkout') {
     $record['order'] = [
         'order_id' => $result['order_id'],
         'vrio_customer_id' => $result['customer_id'] ?? null,
+        'crm_campaign_id'  => $result['crm_campaign_id'] ?? $record['product']['crm_campaign_id'],   // the prepaid one after a prepaid retry
+        'prepaid_campaign' => !empty($result['prepaid_campaign']),
         'total'    => $record['product']['price'],
         'email'    => $email,
         'placed_at'=> gmdate('c'),

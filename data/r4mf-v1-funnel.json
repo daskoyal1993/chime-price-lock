@@ -1,0 +1,3416 @@
+{
+    "success": true,
+    "data": {
+        "id": "089e7527-9ab1-4ba2-b818-3081bd501b19",
+        "name": "r4mf-v1",
+        "slug": "r4mf-v1",
+        "description": null,
+        "status": "active",
+        "is_membership_funnel": false,
+        "intake_after_checkout": false,
+        "tenant": {
+            "id": 3,
+            "name": "Chime Health",
+            "domain": null,
+            "ghl": {
+                "instance": "chime-health",
+                "is_legacy": false,
+                "credentials": "eyJhcGlfa2V5IjoicGl0LWMzOTVkNmE5LWY4OTEtNDg5OC04YTkwLWU0YWMxMmRkNzllMSIsImxvY2F0aW9uX2lkIjoiQWVoZUJPMjJPT29yZnlhSmVEOFgifQ==.2fd93b7ca28ab815e53bc1ebf8b44683d3926f506ac785034951fa016ed22420",
+                "incomplete_tag": null,
+                "complete_tag": null,
+                "new_contact_tag": [
+                    "lead"
+                ],
+                "purchased_tag": [
+                    "purchased"
+                ],
+                "mwl_tag": "mwl",
+                "peptide_tag": "peptide",
+                "failed_id_tag": "failed_id",
+                "portal_new_custom_field": "GpNfOFAW5476eLy5s9yV",
+                "portal_new_custom_field_key": "contact.portal_redirection_link"
+            },
+            "vouched": "eyJhcHBfaWQiOiJwdWIuMS5LdnpyQXBtaUMuOER5dDdiaTI0ZUpBbkJBU2ZvT19NU0NkUXpUY3RFWmVSYWxCeXA2c0psUSIsImFwcF9zZWNyZXQiOiJwcnYuMS5LdnpyQXBtaUMuUXpzRDJES0hha3plTzJJd3FleHY0b3lQczJFQ0RpSTFMTFdoelR4bXQtUSJ9.cadb98d6bdb9ff06968ec6effddcfa62615239ddc14abd3434fb390cf36e2c27"
+        },
+        "campaign_set": {
+            "id": 9,
+            "name": "Non Bundle Product",
+            "main_campaign": {
+                "id": 17,
+                "name": "Chime GLP - 4th Month Free",
+                "crm_campaign_id": "65",
+                "type": "main"
+            },
+            "prepaid_campaign": {
+                "id": 18,
+                "name": "Chime GLP - 4th Month Free (PP)",
+                "crm_campaign_id": "66",
+                "type": "prepaid"
+            }
+        },
+        "membership_campaign_set": null,
+        "questionnaire_sets": [
+            {
+                "id": 4,
+                "name": "Offer Intake",
+                "slug": "offer-intake",
+                "form_type": "step_form",
+                "steps": [
+                    {
+                        "id": 43,
+                        "name": "",
+                        "step": "1",
+                        "questions": [
+                            {
+                                "id": 1,
+                                "label": "Which program are you here for?",
+                                "description": "Select the program you want. You can choose more than one and we will combine them into a single intake.",
+                                "key": "product_pick",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "product_pick",
+                                "position": 1,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 1,
+                                        "value": "GLP-1 Program",
+                                        "subtext": "Weight management with GLP-1 medication.",
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 2,
+                                        "value": "NAD+ Program",
+                                        "subtext": "NAD+ restoration program.",
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 3,
+                                        "value": "Peptides Program",
+                                        "subtext": "Targeted peptide therapy.",
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 44,
+                        "name": "Start",
+                        "step": "2",
+                        "questions": [
+                            {
+                                "id": 2,
+                                "label": "First name",
+                                "description": null,
+                                "key": "first_name",
+                                "type": "input",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "first_name",
+                                "position": 1,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 3,
+                                "label": "Last name",
+                                "description": null,
+                                "key": "last_name",
+                                "type": "input",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "last_name",
+                                "position": 2,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 4,
+                                "label": "Email",
+                                "description": null,
+                                "key": "email",
+                                "type": "email",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "email",
+                                "position": 3,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 5,
+                                "label": "Phone",
+                                "description": null,
+                                "key": "phone",
+                                "type": "phone",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "phone",
+                                "position": 4,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 6,
+                                "label": "Street address",
+                                "description": null,
+                                "key": "address_line1",
+                                "type": "input",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "shipping_address1",
+                                "position": 5,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 7,
+                                "label": "Apartment, suite, unit (optional)",
+                                "description": null,
+                                "key": "address_line2",
+                                "type": "input",
+                                "questionnaire_type": "medical",
+                                "is_required": "no",
+                                "is_readonly": "no",
+                                "default_params": "address_line2",
+                                "position": 6,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 8,
+                                "label": "City",
+                                "description": null,
+                                "key": "city",
+                                "type": "input",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "shipping_city",
+                                "position": 7,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 9,
+                                "label": "What state will your medication be shipped to?",
+                                "description": null,
+                                "key": "shipping_state",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "shipping_state",
+                                "position": 8,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 4,
+                                        "value": "AL",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 5,
+                                        "value": "AZ",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 6,
+                                        "value": "AR",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 7,
+                                        "value": "CA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 8,
+                                        "value": "CO",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 9,
+                                        "value": "CT",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 10,
+                                        "value": "DE",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 11,
+                                        "value": "FL",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 12,
+                                        "value": "GA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 13,
+                                        "value": "ID",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 14,
+                                        "value": "IL",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 15,
+                                        "value": "IN",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 16,
+                                        "value": "IA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 17,
+                                        "value": "KS",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 18,
+                                        "value": "KY",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 19,
+                                        "value": "LA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 20,
+                                        "value": "ME",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 21,
+                                        "value": "MD",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 22,
+                                        "value": "MA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 23,
+                                        "value": "MI",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 24,
+                                        "value": "MN",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 25,
+                                        "value": "MS",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 26,
+                                        "value": "MO",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 27,
+                                        "value": "MT",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 28,
+                                        "value": "NE",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 29,
+                                        "value": "NV",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 30,
+                                        "value": "NH",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 31,
+                                        "value": "NJ",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 32,
+                                        "value": "NM",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 33,
+                                        "value": "NY",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 34,
+                                        "value": "NC",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 35,
+                                        "value": "ND",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 36,
+                                        "value": "OH",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 37,
+                                        "value": "OK",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 38,
+                                        "value": "OR",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 39,
+                                        "value": "PA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 40,
+                                        "value": "RI",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 41,
+                                        "value": "SC",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 42,
+                                        "value": "SD",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 43,
+                                        "value": "TN",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 44,
+                                        "value": "TX",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 45,
+                                        "value": "UT",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 46,
+                                        "value": "VT",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 47,
+                                        "value": "VA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 48,
+                                        "value": "WA",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 49,
+                                        "value": "WV",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 50,
+                                        "value": "WI",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 51,
+                                        "value": "WY",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 10,
+                                "label": "ZIP code",
+                                "description": null,
+                                "key": "zip",
+                                "type": "number",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "shipping_zip",
+                                "position": 9,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 11,
+                                "label": "Sex assigned at birth:",
+                                "description": "Helps your clinician personalize your dosing",
+                                "key": "gender",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "gender",
+                                "position": 10,
+                                "ghl": {
+                                    "ghl_custom_id": "oefSxUIwlnGAtSKKNxqm",
+                                    "ghl_field_key": "contact.male_or_female"
+                                },
+                                "options": [
+                                    {
+                                        "id": 52,
+                                        "value": "Female",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 53,
+                                        "value": "Male",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 12,
+                                "label": "Date of Birth:",
+                                "description": null,
+                                "key": "dob",
+                                "type": "date",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "date_of_birth",
+                                "position": 11,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 13,
+                                "label": "What is your height in feet and inches?",
+                                "description": null,
+                                "key": "height",
+                                "type": "height",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "height",
+                                "position": 12,
+                                "ghl": {
+                                    "ghl_custom_id": "mQMDC9Bcj0pUgAkCebO1",
+                                    "ghl_field_key": "contact.current_height_in"
+                                }
+                            },
+                            {
+                                "id": 14,
+                                "label": "Weight (in lbs)",
+                                "description": null,
+                                "key": "weight",
+                                "type": "weight",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "weight",
+                                "position": 13,
+                                "ghl": {
+                                    "ghl_custom_id": "zXj4rsqlGdaqSnUhOyUs",
+                                    "ghl_field_key": "contact.current_weight"
+                                }
+                            },
+                            {
+                                "id": 73,
+                                "label": "What is your target weight?",
+                                "description": "Your target helps set your medication, dose & timeline.",
+                                "key": "target_weight",
+                                "type": "weight",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "",
+                                "default_params": "target_weight",
+                                "position": 14,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": null
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 15,
+                                "label": "Your BMI",
+                                "description": null,
+                                "key": "bmi",
+                                "type": "bmi",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "bmi",
+                                "position": 15,
+                                "ghl": {
+                                    "ghl_custom_id": "4emnLaNgsxk06KGM5ALK",
+                                    "ghl_field_key": "contact.body_mass_index_bmi"
+                                }
+                            },
+                            {
+                                "id": 16,
+                                "label": "BMI Rating",
+                                "description": null,
+                                "key": "bmi_rating",
+                                "type": "hidden",
+                                "questionnaire_type": "medical",
+                                "is_required": "no",
+                                "is_readonly": "no",
+                                "default_params": "bmi_rating",
+                                "position": 16,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 17,
+                                "label": "Age",
+                                "description": null,
+                                "key": "age",
+                                "type": "hidden",
+                                "questionnaire_type": "medical",
+                                "is_required": "no",
+                                "is_readonly": "no",
+                                "default_params": "age",
+                                "position": 17,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                }
+                            },
+                            {
+                                "id": 18,
+                                "label": "Do any of these apply to you?",
+                                "description": null,
+                                "key": "female_health_status",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "female_health_status",
+                                "position": 18,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 54,
+                                        "value": "Currently or possibly pregnant, or actively trying to become pregnant",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 55,
+                                        "value": "Breastfeeding or bottle feeding with breastmilk",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 56,
+                                        "value": "Have given birth to a child within the last 6 months",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 57,
+                                        "value": "None of the above",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 11,
+                                        "dependent_question_key": "gender",
+                                        "dependent_option_id": 52,
+                                        "dependent_option_value": "Female",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Female"
+                                    },
+                                    {
+                                        "dependent_question_id": 11,
+                                        "dependent_question_key": "gender",
+                                        "dependent_option_id": 52,
+                                        "dependent_option_value": "Female",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Female"
+                                    },
+                                    {
+                                        "dependent_question_id": 11,
+                                        "dependent_question_key": "gender",
+                                        "dependent_option_id": 52,
+                                        "dependent_option_value": "Female",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Female"
+                                    },
+                                    {
+                                        "dependent_question_id": 11,
+                                        "dependent_question_key": "gender",
+                                        "dependent_option_id": 52,
+                                        "dependent_option_value": "Female",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Female"
+                                    },
+                                    {
+                                        "dependent_question_id": 11,
+                                        "dependent_question_key": "gender",
+                                        "dependent_option_id": 52,
+                                        "dependent_option_value": "Female",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Female"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 19,
+                                "label": "Please read and acknowledge before continuing",
+                                "description": "We would like to make sure you are fully aware of some important considerations regarding GLP-1 medications, especially for older adults. These medications, while effective for weight loss and metabolic health, can sometimes cause gastrointestinal side effects like nausea, vomiting, and diarrhea. In older patients, these symptoms can lead to dehydration and may have an impact on kidney function, particularly if you have known kidney issues. Additionally, GLP-1 medications can occasionally cause dizziness or balance problems, which could raise the risk of falls. Appetite suppression and rapid weight loss may increase the risk of frailty, weakness, or malnutrition. Muscle wasting and bone demineralization is also a concern with rapid or aggressive weight loss. This is compounded in the elderly. It's important that your doctor is aware you are starting this medication so they can help monitor your health during treatment. If you haven't spoken with your primary care provider yet, I recommend sharing your plan with them before starting therapy.",
+                                "key": "elderly_consent",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "elderly_consent",
+                                "position": 19,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 58,
+                                        "value": "I have read and understand the considerations above.",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "65"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "22"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "65"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "22"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "65"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "22"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "65"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "22"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "65"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "22"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 20,
+                                "label": "Please read and acknowledge before continuing",
+                                "description": null,
+                                "key": "metabolic_consent",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "metabolic_consent",
+                                "position": 20,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 59,
+                                        "value": "I acknowledge that with this BMI I am using these medications for metabolic health, anti-inflammatory, and better eating habits, but not for weight loss primarily.",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "less_than",
+                                        "value": "65"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "20"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "less_than",
+                                        "value": "23"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "20"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "20"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "20"
+                                    },
+                                    {
+                                        "dependent_question_id": 17,
+                                        "dependent_question_key": "age",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "dependent_question_id": 15,
+                                        "dependent_question_key": "bmi",
+                                        "dependent_option_id": null,
+                                        "dependent_option_value": null,
+                                        "visibility": "show",
+                                        "operator": "equal_to_greater_than",
+                                        "value": "20"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 45,
+                        "name": "Preliminary",
+                        "step": "3",
+                        "questions": [
+                            {
+                                "id": 21,
+                                "label": "Do any of these apply to you?",
+                                "description": null,
+                                "key": "health_conditions",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "health_conditions",
+                                "position": 1,
+                                "ghl": {
+                                    "ghl_custom_id": "OPcuOApNva0QrZSAzJ0P",
+                                    "ghl_field_key": "contact.do_any_of_these_apply_to_you_chronic_kidney_diease_end_stage_kidney_liver_diease_suicidal_thoughts_c"
+                                },
+                                "options": [
+                                    {
+                                        "id": 60,
+                                        "value": "None of these",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 61,
+                                        "value": "End-stage kidney disease (on or about to be on dialysis)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 62,
+                                        "value": "End-stage liver disease (cirrhosis)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 63,
+                                        "value": "Current suicidal thoughts and/or prior suicidal attempt",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 64,
+                                        "value": "Cancer (active diagnosis, active treatment, or in remission or cancer-free for less than 5 continuous years - does not apply to non-melanoma skin cancer that was considered cured via simple excision)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 65,
+                                        "value": "History of organ transplant on anti-rejection medication",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 66,
+                                        "value": "Severe gastrointestinal condition (gastroparesis, blockage, inflammatory bowel disease)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 67,
+                                        "value": "Current diagnosis of or treatment for alcohol, opioid, or substance use disorder/dependence",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 68,
+                                        "value": "Have or had an eating disorder (like anorexia or bulimia)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 22,
+                                "label": "Have you experienced or been diagnosed with any of the following?",
+                                "description": null,
+                                "key": "health_conditions_additional",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "health_conditions_additional",
+                                "position": 2,
+                                "ghl": {
+                                    "ghl_custom_id": "fBGnqQRSDlLP3Z9fNlNb",
+                                    "ghl_field_key": "contact.have_you_experienced_or_been_diagnosed_with_any_of_the_following_current_gallstones_diabetic_reinopa"
+                                },
+                                "options": [
+                                    {
+                                        "id": 69,
+                                        "value": "None of the below",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 70,
+                                        "value": "Current symptomatic gallstones",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 71,
+                                        "value": "Diabetic Retinopathy (diabetic eye disease), damage to the optic nerve from trauma or reduced blood flow, or blindness",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 72,
+                                        "value": "History of glucose-6-phosphate dehydrogenase (G6PD) deficiency",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 73,
+                                        "value": "Hypoglycemia (low blood sugar)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 74,
+                                        "value": "Pancreatitis or Pancreatic Cancer",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 75,
+                                        "value": "Personal or family history of thyroid cyst/nodule, thyroid cancer, medullary thyroid carcinoma, or multiple endocrine neoplasia syndrome type 2",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 76,
+                                        "value": "QT prolongation or other heart rhythm disorder (including Heart Arrhythmia)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 77,
+                                        "value": "Type 1 diabetes",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 78,
+                                        "value": "Type 2 diabetes (not on insulin)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 79,
+                                        "value": "Type 2 diabetes (on insulin)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 23,
+                                "label": "Do any of these apply to you?",
+                                "description": null,
+                                "key": "more_health_conditions",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "more_health_conditions",
+                                "position": 3,
+                                "ghl": {
+                                    "ghl_custom_id": "bLBLf7UNhrQtmXoHe5a7",
+                                    "ghl_field_key": "contact.do_any_of_these_apply_to_you_active_gall_bladder_disease_hypertension_sleep_apnea_high_cholesterol_o"
+                                },
+                                "options": [
+                                    {
+                                        "id": 80,
+                                        "value": "None of these",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 81,
+                                        "value": "Active Gall Bladder Disease",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 82,
+                                        "value": "Hypertension (high blood pressure)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 83,
+                                        "value": "Sleep apnea",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 84,
+                                        "value": "High cholesterol or triglycerides",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 85,
+                                        "value": "Severe Depression",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 86,
+                                        "value": "Liver disease, including fatty liver",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 87,
+                                        "value": "Congestive heart failure",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 88,
+                                        "value": "Urinary stress incontinence",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 89,
+                                        "value": "Polycystic ovarian syndrome (PCOS)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 90,
+                                        "value": "Clinically proven low testosterone",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 91,
+                                        "value": "Osteoarthritis",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 92,
+                                        "value": "Acid reflux",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 93,
+                                        "value": "Asthma/reactive airway disease",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 94,
+                                        "value": "Constipation",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 95,
+                                        "value": "Coronary artery disease or heart attack/stroke in last 2 years",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 96,
+                                        "value": "Hospitalization within the last 1 year",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 97,
+                                        "value": "Tumor/infection in brain/spinal cord",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 46,
+                        "name": "Health",
+                        "step": "4",
+                        "questions": [
+                            {
+                                "id": 24,
+                                "label": "Within the last 3 months, have you taken opiate pain medications and/or opiate-based street drugs?",
+                                "description": null,
+                                "key": "taken_pain_medications_or_street_drugs",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "taken_pain_medications_or_street_drugs",
+                                "position": 1,
+                                "ghl": {
+                                    "ghl_custom_id": "9s4eqjC7dUzjgXy463Tk",
+                                    "ghl_field_key": "contact.within_the_last_3_months_have_you_taken_opiate_pain_medications_andor_opiatebased_street_drugs"
+                                },
+                                "options": [
+                                    {
+                                        "id": 98,
+                                        "value": "Yes",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 99,
+                                        "value": "No",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 25,
+                                "label": "Please tell us more.",
+                                "description": null,
+                                "key": "taken_pain_medications_or_street_drugs_info",
+                                "type": "textarea",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "taken_pain_medications_or_street_drugs_info",
+                                "position": 2,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 24,
+                                        "dependent_question_key": "taken_pain_medications_or_street_drugs",
+                                        "dependent_option_id": 98,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 24,
+                                        "dependent_question_key": "taken_pain_medications_or_street_drugs",
+                                        "dependent_option_id": 98,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 24,
+                                        "dependent_question_key": "taken_pain_medications_or_street_drugs",
+                                        "dependent_option_id": 98,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 24,
+                                        "dependent_question_key": "taken_pain_medications_or_street_drugs",
+                                        "dependent_option_id": 98,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 24,
+                                        "dependent_question_key": "taken_pain_medications_or_street_drugs",
+                                        "dependent_option_id": 98,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 26,
+                                "label": "What is your average blood pressure range?",
+                                "description": null,
+                                "key": "blood_pressure",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "blood_pressure",
+                                "position": 3,
+                                "ghl": {
+                                    "ghl_custom_id": "6u6VbRNCIo5Vl2ApnKvr",
+                                    "ghl_field_key": "contact.what_is_your_blood_pressure_range"
+                                },
+                                "options": [
+                                    {
+                                        "id": 100,
+                                        "value": "Less than 120/80 (Normal)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 101,
+                                        "value": "120-129/less than 80 (Elevated)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 102,
+                                        "value": "130-139/80-89 (High Stage 1)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 103,
+                                        "value": "140/90 or higher (High Stage 2)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 27,
+                                "label": "How about your average resting heart rate?",
+                                "description": null,
+                                "key": "resting_heart_rate",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "resting_heart_rate",
+                                "position": 4,
+                                "ghl": {
+                                    "ghl_custom_id": "I9bIKwFBZuMU45mykrZW",
+                                    "ghl_field_key": "contact.how_about_your_average_resting_heart_rate"
+                                },
+                                "options": [
+                                    {
+                                        "id": 104,
+                                        "value": "Less than 60 beats per minute (Slow)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 105,
+                                        "value": "60-100 beats per minute (Normal)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 106,
+                                        "value": "101-110 beats per minute (Slightly Fast)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 107,
+                                        "value": "More than 110 beats per minute (Fast)",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 28,
+                                "label": "When was the last time you had an in-person Medical Evaluation?",
+                                "description": null,
+                                "key": "last_medical_evaluation",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "last_medical_evaluation",
+                                "position": 5,
+                                "ghl": {
+                                    "ghl_custom_id": "gu59bf88zaue6wFjGiWz",
+                                    "ghl_field_key": "contact.when_was_the_last_time_you_had_an_in_person_medical_evaluation"
+                                },
+                                "options": [
+                                    {
+                                        "id": 108,
+                                        "value": "Less than a year ago",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 109,
+                                        "value": "1 to 2 years ago",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 110,
+                                        "value": "More than 2 years ago",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 29,
+                                "label": "When was the last time you had Lab Tests done?",
+                                "description": null,
+                                "key": "last_lab_tests",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "last_lab_tests",
+                                "position": 6,
+                                "ghl": {
+                                    "ghl_custom_id": "GZDmNvsBKWrAKXiCkYfx",
+                                    "ghl_field_key": "contact.when_was_the_last_time_you_had_lab_tests_done"
+                                },
+                                "options": [
+                                    {
+                                        "id": 111,
+                                        "value": "Less than a year ago",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 112,
+                                        "value": "1 to 2 years ago",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 113,
+                                        "value": "More than 2 years ago",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 30,
+                                "label": "Are you currently taking any Prescription Medications?",
+                                "description": null,
+                                "key": "offer_prescription_medications",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "offer_prescription_medications",
+                                "position": 7,
+                                "ghl": {
+                                    "ghl_custom_id": "lTPXz06QbvoiKqSFaS8F",
+                                    "ghl_field_key": "contact.are_you_currently_taking_any_prescription_medications"
+                                },
+                                "options": [
+                                    {
+                                        "id": 114,
+                                        "value": "Yes - Please list the names and dosages",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 115,
+                                        "value": "No - I affirm I'm not taking any medications",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 31,
+                                "label": "Please list your medications, strengths, and how often you take them.",
+                                "description": "Metformin 500mg, twice daily",
+                                "key": "offer_prescription_medications_info",
+                                "type": "textarea",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "offer_prescription_medications_info",
+                                "position": 8,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 30,
+                                        "dependent_question_key": "offer_prescription_medications",
+                                        "dependent_option_id": 114,
+                                        "dependent_option_value": "Yes - Please list the names and dosages",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list the names and dosages"
+                                    },
+                                    {
+                                        "dependent_question_id": 30,
+                                        "dependent_question_key": "offer_prescription_medications",
+                                        "dependent_option_id": 114,
+                                        "dependent_option_value": "Yes - Please list the names and dosages",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list the names and dosages"
+                                    },
+                                    {
+                                        "dependent_question_id": 30,
+                                        "dependent_question_key": "offer_prescription_medications",
+                                        "dependent_option_id": 114,
+                                        "dependent_option_value": "Yes - Please list the names and dosages",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list the names and dosages"
+                                    },
+                                    {
+                                        "dependent_question_id": 30,
+                                        "dependent_question_key": "offer_prescription_medications",
+                                        "dependent_option_id": 114,
+                                        "dependent_option_value": "Yes - Please list the names and dosages",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list the names and dosages"
+                                    },
+                                    {
+                                        "dependent_question_id": 30,
+                                        "dependent_question_key": "offer_prescription_medications",
+                                        "dependent_option_id": 114,
+                                        "dependent_option_value": "Yes - Please list the names and dosages",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list the names and dosages"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 32,
+                                "label": "Do you have any medication allergies?",
+                                "description": null,
+                                "key": "offer_medication_allergies",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "offer_medication_allergies",
+                                "position": 9,
+                                "ghl": {
+                                    "ghl_custom_id": "E5uDMuVAQ1zrKOthruOn",
+                                    "ghl_field_key": "contact.do_you_have_any_medication_allergies"
+                                },
+                                "options": [
+                                    {
+                                        "id": 116,
+                                        "value": "Yes - Please list your allergies and any known reactions",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 117,
+                                        "value": "No - I affirm I have no known drug allergies",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 33,
+                                "label": "Please list your allergies and any known reactions.",
+                                "description": "Penicillin, rash",
+                                "key": "offer_medication_allergies_info",
+                                "type": "textarea",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "offer_medication_allergies_info",
+                                "position": 10,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 32,
+                                        "dependent_question_key": "offer_medication_allergies",
+                                        "dependent_option_id": 116,
+                                        "dependent_option_value": "Yes - Please list your allergies and any known reactions",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list your allergies and any known reactions"
+                                    },
+                                    {
+                                        "dependent_question_id": 32,
+                                        "dependent_question_key": "offer_medication_allergies",
+                                        "dependent_option_id": 116,
+                                        "dependent_option_value": "Yes - Please list your allergies and any known reactions",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list your allergies and any known reactions"
+                                    },
+                                    {
+                                        "dependent_question_id": 32,
+                                        "dependent_question_key": "offer_medication_allergies",
+                                        "dependent_option_id": 116,
+                                        "dependent_option_value": "Yes - Please list your allergies and any known reactions",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list your allergies and any known reactions"
+                                    },
+                                    {
+                                        "dependent_question_id": 32,
+                                        "dependent_question_key": "offer_medication_allergies",
+                                        "dependent_option_id": 116,
+                                        "dependent_option_value": "Yes - Please list your allergies and any known reactions",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list your allergies and any known reactions"
+                                    },
+                                    {
+                                        "dependent_question_id": 32,
+                                        "dependent_question_key": "offer_medication_allergies",
+                                        "dependent_option_id": 116,
+                                        "dependent_option_value": "Yes - Please list your allergies and any known reactions",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes - Please list your allergies and any known reactions"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 34,
+                                "label": "Do you have any further information which you would like our medical team to know?",
+                                "description": null,
+                                "key": "additional_doc_information",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "additional_doc_information",
+                                "position": 11,
+                                "ghl": {
+                                    "ghl_custom_id": "RBNEmCsIGxUCJ400Suh9",
+                                    "ghl_field_key": "contact.is_there_anything_you_want_your_doctor_to_know"
+                                },
+                                "options": [
+                                    {
+                                        "id": 118,
+                                        "value": "Yes",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 119,
+                                        "value": "No",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 35,
+                                "label": "Please tell our medical team what they should know.",
+                                "description": null,
+                                "key": "additional_doc_information_info",
+                                "type": "textarea",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "additional_doc_information_info",
+                                "position": 12,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 34,
+                                        "dependent_question_key": "additional_doc_information",
+                                        "dependent_option_id": 118,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 34,
+                                        "dependent_question_key": "additional_doc_information",
+                                        "dependent_option_id": 118,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 34,
+                                        "dependent_question_key": "additional_doc_information",
+                                        "dependent_option_id": 118,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 34,
+                                        "dependent_question_key": "additional_doc_information",
+                                        "dependent_option_id": 118,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "dependent_question_id": 34,
+                                        "dependent_question_key": "additional_doc_information",
+                                        "dependent_option_id": 118,
+                                        "dependent_option_value": "Yes",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Yes"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 47,
+                        "name": "Details",
+                        "step": "5",
+                        "questions": [
+                            {
+                                "id": 36,
+                                "label": "Are you allergic to any of the following medications?",
+                                "description": null,
+                                "key": "glp1_allergies",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "glp1_allergies",
+                                "position": 1,
+                                "ghl": {
+                                    "ghl_custom_id": "aFyn372YkzAL89vLqQJ8",
+                                    "ghl_field_key": "contact.are_you_allergic_to_any_of_the_following_medications_sema_tirz_liraglutide_dulaglutide"
+                                },
+                                "options": [
+                                    {
+                                        "id": 120,
+                                        "value": "Semaglutide",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 121,
+                                        "value": "Tirzepatide",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 122,
+                                        "value": "Liraglutide",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 123,
+                                        "value": "Dulaglutide",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 124,
+                                        "value": "I am NOT allergic to any of these medications",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 37,
+                                "label": "Please affirm you are not currently on any of the following medications",
+                                "description": null,
+                                "key": "current_glucose_medications",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "current_glucose_medications",
+                                "position": 2,
+                                "ghl": {
+                                    "ghl_custom_id": "n9B589auiWyGQqoDSKNk",
+                                    "ghl_field_key": "contact.please_affirm_you_are_not_currently_on_any_of_the_following_medications"
+                                },
+                                "options": [
+                                    {
+                                        "id": 125,
+                                        "value": "Insulin",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 126,
+                                        "value": "Glimepiride (Amaryl)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 127,
+                                        "value": "Glipizide (Glucotrol and Glucotrol XL)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 128,
+                                        "value": "Glyburide (Micronase, Glynase, and Diabeta)",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 129,
+                                        "value": "Sitagliptin",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 130,
+                                        "value": "Saxagliptin",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 131,
+                                        "value": "Linagliptin",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 132,
+                                        "value": "Alogliptin",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 133,
+                                        "value": "I am NOT on any of these medications",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 38,
+                                "label": "Have you taken medication for weight loss within the past month?",
+                                "description": null,
+                                "key": "weight_loss_medications",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "weight_loss_medications",
+                                "position": 3,
+                                "ghl": {
+                                    "ghl_custom_id": "Pd188iVTe07z08fCrIpg",
+                                    "ghl_field_key": "contact.have_you_taken_medication_for_weight_loss_within_the_past_month"
+                                },
+                                "options": [
+                                    {
+                                        "id": 134,
+                                        "value": "Semaglutide",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 135,
+                                        "value": "Tirzepatide",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 136,
+                                        "value": "None",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 39,
+                                "label": "What was your last dose?",
+                                "description": null,
+                                "key": "previous_semaglutide_medication_last_dose",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "previous_semaglutide_medication_last_dose",
+                                "position": 4,
+                                "ghl": {
+                                    "ghl_custom_id": "NnkhtHILOwzX1EyaMNrR",
+                                    "ghl_field_key": "contact.what_semaglutide_dosage_are_you_currently_taking"
+                                },
+                                "options": [
+                                    {
+                                        "id": 137,
+                                        "value": "Semaglutide 0.25 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 138,
+                                        "value": "Semaglutide 0.50 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 139,
+                                        "value": "Semaglutide 1 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 140,
+                                        "value": "Semaglutide 1.5 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 141,
+                                        "value": "Semaglutide 2 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 142,
+                                        "value": "Semaglutide 2.5 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 143,
+                                        "value": "Semaglutide - Unknown",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 40,
+                                "label": "When did you take that last dose?",
+                                "description": null,
+                                "key": "previous_semaglutide_medication_last_dose_date",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "previous_semaglutide_medication_last_dose_date",
+                                "position": 5,
+                                "ghl": {
+                                    "ghl_custom_id": "66Qb8R2AvnBHHVdEFD5d",
+                                    "ghl_field_key": "contact.when_did_you_take_your_last_semaglutide_dose"
+                                },
+                                "options": [
+                                    {
+                                        "id": 144,
+                                        "value": "0-7 days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 145,
+                                        "value": "8-14 days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 146,
+                                        "value": "15-30 days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 147,
+                                        "value": "30+ days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 41,
+                                "label": "How would you like to continue?",
+                                "description": null,
+                                "key": "previous_semaglutide_medication_experience",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "previous_semaglutide_medication_experience",
+                                "position": 6,
+                                "ghl": {
+                                    "ghl_custom_id": "oeebMCuuMVNtOluPqxnC",
+                                    "ghl_field_key": "contact.how_do_you_want_to_continue_your_semaglutide"
+                                },
+                                "options": [
+                                    {
+                                        "id": 148,
+                                        "value": "Stay on the same dose or equivalent dose",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 149,
+                                        "value": "I want to change medications",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 150,
+                                        "value": "Increase my dosage",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 151,
+                                        "value": "Decrease my dosage",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 152,
+                                        "value": "Let the provider decide what dose is best for me",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 134,
+                                        "dependent_option_value": "Semaglutide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Semaglutide"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 42,
+                                "label": "What was your last dose?",
+                                "description": null,
+                                "key": "previous_tirzepatide_medication_last_dose",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "previous_tirzepatide_medication_last_dose",
+                                "position": 7,
+                                "ghl": {
+                                    "ghl_custom_id": "RI8sBvOI4LYhb3L7gT96",
+                                    "ghl_field_key": "contact.what_tirzepatide_dosage_are_you_currently_taking"
+                                },
+                                "options": [
+                                    {
+                                        "id": 153,
+                                        "value": "Tirzepatide 2.5 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 154,
+                                        "value": "Tirzepatide 5 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 155,
+                                        "value": "Tirzepatide 7.5 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 156,
+                                        "value": "Tirzepatide 10 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 157,
+                                        "value": "Tirzepatide 12.5 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 158,
+                                        "value": "Tirzepatide 15 mg",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 159,
+                                        "value": "Tirzepatide - Unknown",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 43,
+                                "label": "When did you take that last dose?",
+                                "description": null,
+                                "key": "previous_tirzepatide_medication_last_dose_date",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "previous_tirzepatide_medication_last_dose_date",
+                                "position": 8,
+                                "ghl": {
+                                    "ghl_custom_id": "oGTVs9Wh01ufw29OezhW",
+                                    "ghl_field_key": "contact.when_did_you_take_your_last_tirzepatide_dose"
+                                },
+                                "options": [
+                                    {
+                                        "id": 160,
+                                        "value": "0-7 days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 161,
+                                        "value": "8-14 days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 162,
+                                        "value": "15-30 days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 163,
+                                        "value": "30+ days",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 44,
+                                "label": "How would you like to continue?",
+                                "description": null,
+                                "key": "previous_tirzepatide_medication_experience",
+                                "type": "radio",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "previous_tirzepatide_medication_experience",
+                                "position": 9,
+                                "ghl": {
+                                    "ghl_custom_id": "3o9lyiZjpAyLw6It0Ztd",
+                                    "ghl_field_key": "contact.how_do_you_want_to_continue_your_tirzepatide"
+                                },
+                                "options": [
+                                    {
+                                        "id": 164,
+                                        "value": "Stay on the same dose or equivalent dose",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 165,
+                                        "value": "I want to change medications",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 166,
+                                        "value": "Increase my dosage",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 167,
+                                        "value": "Decrease my dosage",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    },
+                                    {
+                                        "id": 168,
+                                        "value": "Let the provider decide what dose is best for me",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 38,
+                                        "dependent_question_key": "weight_loss_medications",
+                                        "dependent_option_id": 135,
+                                        "dependent_option_value": "Tirzepatide",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "Tirzepatide"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 45,
+                                "label": "Have you had gastric bypass surgery in the past 6 months?",
+                                "description": null,
+                                "key": "gastric_bypass_6_months",
+                                "type": "select",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "gastric_bypass_6_months",
+                                "position": 10,
+                                "ghl": {
+                                    "ghl_custom_id": "sKXhegflNJTlt2xeyhjX",
+                                    "ghl_field_key": "contact.have_you_had_a_gastric_bypass_surgery_in_the_past_6_months"
+                                },
+                                "options": [
+                                    {
+                                        "id": 169,
+                                        "value": "Yes",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 170,
+                                        "value": "No",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 46,
+                                "label": "Please read and acknowledge before continuing",
+                                "description": "You are requesting treatment with a GLP-1 receptor agonist (such as semaglutide) or a GLP-1/GIP receptor agonist (such as tirzepatide) for weight management. These medications work by mimicking hormones that regulate appetite and blood sugar. They may be compounded by a licensed 503A pharmacy. Compounded medications are not FDA-approved. Potential benefits include: reduced appetite, weight loss, improved blood sugar control. Potential risks and side effects include: nausea, vomiting, diarrhea, constipation, abdominal pain, injection site reactions, pancreatitis (rare), gallbladder problems (rare), thyroid tumors (observed in animal studies). You should not take these medications if you have a personal or family history of medullary thyroid carcinoma or Multiple Endocrine Neoplasia syndrome type 2.",
+                                "key": "glp_consent",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "glp_consent",
+                                "position": 11,
+                                "ghl": {
+                                    "ghl_custom_id": "EBwjhHrmWoH3mSN6Af7n",
+                                    "ghl_field_key": "contact.date_of_glp_consent"
+                                },
+                                "options": [
+                                    {
+                                        "id": 171,
+                                        "value": "I have read and understand the considerations above.",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 1,
+                                        "dependent_option_value": "GLP-1 Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "GLP-1 Program"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 47,
+                                "label": "Do you now, or have you ever had, any heart arrhythmia or irregular heartbeat?",
+                                "description": null,
+                                "key": "heart_arrhythmia",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "heart_arrhythmia",
+                                "position": 12,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 172,
+                                        "value": "Yes",
+                                        "subtext": null,
+                                        "is_disqualify": "yes"
+                                    },
+                                    {
+                                        "id": 173,
+                                        "value": "No",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 2,
+                                        "dependent_option_value": "NAD+ Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "NAD+ Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 2,
+                                        "dependent_option_value": "NAD+ Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "NAD+ Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 2,
+                                        "dependent_option_value": "NAD+ Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "NAD+ Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 2,
+                                        "dependent_option_value": "NAD+ Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "NAD+ Program"
+                                    },
+                                    {
+                                        "dependent_question_id": 1,
+                                        "dependent_question_key": "product_pick",
+                                        "dependent_option_id": 2,
+                                        "dependent_option_value": "NAD+ Program",
+                                        "visibility": "show",
+                                        "operator": "equal_to",
+                                        "value": "NAD+ Program"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 48,
+                        "name": "Eligibility",
+                        "step": "6",
+                        "questions": [
+                            {
+                                "id": 48,
+                                "label": "Please confirm before continuing",
+                                "description": null,
+                                "key": "contact_agree",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "contact_agree",
+                                "position": 1,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 174,
+                                        "value": "I confirm that I am the patient completing this intake form and that my answers are accurate and complete to the best of my knowledge. I understand the importance of providing accurate health information for my care. I agree to the Truthfulness Consent, Telehealth Consent & Informed Treatment Consent.",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 49,
+                                "label": "SMS Consent",
+                                "description": null,
+                                "key": "sms_consent",
+                                "type": "checkbox",
+                                "questionnaire_type": "medical",
+                                "is_required": "yes",
+                                "is_readonly": "no",
+                                "default_params": "sms_consent",
+                                "position": 2,
+                                "ghl": {
+                                    "ghl_custom_id": "",
+                                    "ghl_field_key": ""
+                                },
+                                "options": [
+                                    {
+                                        "id": 175,
+                                        "value": "I consent to receive marketing text messages from AmeriLean and its medical providers at the phone number provided, including promotions, discounts, and product/service updates. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Consent is not a condition of purchase.",
+                                        "subtext": null,
+                                        "is_disqualify": "no"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "products": [
+            {
+                "id": 1,
+                "name": "Semaglutide (Inj)",
+                "type": "simple",
+                "variants": [
+                    {
+                        "id": 1,
+                        "name": "Semaglutide - 1M",
+                        "display_price": "179.00",
+                        "form": "Injectable",
+                        "typical_duration": 28,
+                        "crm_campaigns": [
+                            {
+                                "campaign_id": 17,
+                                "type": "main",
+                                "crm_campaign_product_id": "1501",
+                                "crm_offer_id": "135",
+                                "crm_item_id": "156",
+                                "price": 299
+                            },
+                            {
+                                "campaign_id": 18,
+                                "type": "prepaid",
+                                "crm_campaign_product_id": "1508",
+                                "crm_offer_id": "135",
+                                "crm_item_id": "156",
+                                "price": 299
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "name": "Semaglutide - 4M",
+                        "display_price": "747.00",
+                        "form": "Injectable",
+                        "typical_duration": 112,
+                        "crm_campaigns": [
+                            {
+                                "campaign_id": 17,
+                                "type": "main",
+                                "crm_campaign_product_id": "1502",
+                                "crm_offer_id": "137",
+                                "crm_item_id": "158",
+                                "price": 747
+                            },
+                            {
+                                "campaign_id": 18,
+                                "type": "prepaid",
+                                "crm_campaign_product_id": "1509",
+                                "crm_offer_id": "141",
+                                "crm_item_id": "158",
+                                "price": 747
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Tirzepatide (inj)",
+                "type": "simple",
+                "variants": [
+                    {
+                        "id": 5,
+                        "name": "Tirzepatide - 1M",
+                        "display_price": "399.00",
+                        "form": "Injectable",
+                        "typical_duration": 28,
+                        "crm_campaigns": [
+                            {
+                                "campaign_id": 17,
+                                "type": "main",
+                                "crm_campaign_product_id": "1504",
+                                "crm_offer_id": "139",
+                                "crm_item_id": "160",
+                                "price": 359
+                            },
+                            {
+                                "campaign_id": 18,
+                                "type": "prepaid",
+                                "crm_campaign_product_id": "1511",
+                                "crm_offer_id": "139",
+                                "crm_item_id": "160",
+                                "price": 359
+                            }
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "name": "Tirzepatide - 4th Month FREE",
+                        "display_price": "896.00",
+                        "form": "Injectable",
+                        "typical_duration": 112,
+                        "crm_campaigns": [
+                            {
+                                "campaign_id": 17,
+                                "type": "main",
+                                "crm_campaign_product_id": "1505",
+                                "crm_offer_id": "141",
+                                "crm_item_id": "162",
+                                "price": 896
+                            },
+                            {
+                                "campaign_id": 18,
+                                "type": "prepaid",
+                                "crm_campaign_product_id": "1512",
+                                "crm_offer_id": "141",
+                                "crm_item_id": "162",
+                                "price": 896
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "membership_campaign_set_products": []
+    }
+}

@@ -45,9 +45,9 @@
     "badge": "Compounded By U.S.A. Licensed Pharmacies",
     "copyright": "© {year} {brand}. All rights reserved.",
     "columns": [
-      { "title": "Legal & Consent", "links": [ { "label": "Telehealth Consent", "url": "#" }, { "label": "Terms & Conditions", "url": "#" } ] },
-      { "title": "Privacy & Data", "links": [ { "label": "HIPAA Notice", "url": "#" }, { "label": "Privacy Policy", "url": "#" } ] },
-      { "title": "Support & Resources", "links": [ { "label": "Return & Refund Policy", "url": "#" }, { "label": "Shipping Policy", "url": "#" } ] }
+      { "title": "Legal & Consent", "links": [ { "label": "Telehealth Consent", "url": "legal.php?page=telehealth-consent" }, { "label": "Terms & Conditions", "url": "legal.php?page=terms" } ] },
+      { "title": "Privacy & Data", "links": [ { "label": "HIPAA Notice", "url": "legal.php?page=hipaa-notice" }, { "label": "Privacy Policy", "url": "legal.php?page=privacy-policy" } ] },
+      { "title": "Support & Resources", "links": [ { "label": "Return & Refund Policy", "url": "legal.php?page=refund-policy" }, { "label": "Shipping Policy", "url": "legal.php?page=shipping-policy" } ] }
     ]
   },
 

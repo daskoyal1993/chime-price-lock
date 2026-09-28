@@ -155,6 +155,7 @@ Card data is only held in memory for the request and is never stored or logged.
 Full setup for a new developer (XAMPP, `.env`, database, safe local settings): `README.md`.
 
 1. `.env`: local DB (`FUNNEL_DB_*`), and `FUNNEL_PAYMENT_DRIVER=test` to check out with the test card **4111 2222 3333 4444** (any future expiry, any CVV) without Vrio.
+   Prepaid test card **4111 2222 3333 6666** (driver `vrio` only): refused on the main campaign, then retried on the prepaid campaign (NOTES item 9).
 2. `php tools/check-integrations.php` — every line should be OK (or SKIP for what isn't configured).
 3. Run the quiz at `http://localhost/dscript/`, then check `storage/logs/lead-flow.log` and phpMyAdmin → `amerilean_dynamicdb` → `dynamic_remedy`.
 4. xverify, GHL, Vouched and (with `vrio`) Vrio are the **live** services, also from localhost: use test emails.

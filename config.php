@@ -18,7 +18,9 @@ return [
     'api_timeout' => 10,                                  // seconds
     'cache_ttl'   => 300,                                 // seconds to reuse a fetched definition
 
-    'sample_file' => __DIR__ . '/data/updated-sample-funnel.json',
+    //'sample_file' => __DIR__ . '/data/updated-sample-funnel.json',
+    //r4mf-v1-funnel.json
+    'sample_file' => __DIR__ . '/data/r4mf-v1-funnel.json',
     'storage_dir' => __DIR__ . '/storage',
 
     // Which questionnaire set to render (slug). null = the first one in the response.

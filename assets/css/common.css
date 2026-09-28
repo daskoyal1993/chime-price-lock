@@ -84,6 +84,17 @@ a { color: inherit; }
 .delivery-est img { height: 26px; width: auto; }
 
 
+/* ================================================================ LEGAL PAGES (legal.php) */
+.legal-main { padding: 40px 0 64px; }
+.legal-title { margin: 0; font-size: 28px; line-height: 1.25; font-weight: 500; color: var(--ink); }
+.legal-updated { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+.legal-body { margin-top: 24px; font-size: 15px; line-height: 1.7; color: var(--ink-soft); }
+.legal-body h2 { margin: 32px 0 8px; font-size: 20px; font-weight: 600; color: var(--ink); }
+.legal-body h3 { margin: 24px 0 6px; font-size: 16px; font-weight: 600; color: var(--ink); }
+.legal-body p, .legal-body ul, .legal-body ol { margin: 0 0 14px; }
+.legal-body ul, .legal-body ol { padding-left: 22px; }
+.legal-body a { color: var(--brand); }
+
 /* ================================================================ FOOTER */
 .site-footer { background: var(--footer); color: #fff; }
 .footer-inner { max-width: 1440px; margin: 0 auto; padding: 56px 24px 40px; }

@@ -138,7 +138,7 @@ function quiz_funnel(array $funnel): array
 function offer_funnel(array $funnel, array $record, array $config): array
 {
     $member = $record['has_membership'] ?? (bool) ($config['membership']['fallback'] ?? false);
-    if ($member) {
+    if ($member && !empty($funnel['membership_products'])) {   // no membership set in the funnel (null): campaign_set for everyone
         $funnel['campaign'] = $funnel['membership_campaign'];
         $funnel['products'] = $funnel['membership_products'];
     }

@@ -58,6 +58,9 @@ DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-
    ```
 5. `php tools/check-integrations.php` — OK / SKIP / FAIL per integration; writes nothing (the DB test row is rolled back).
 6. Open `http://localhost/dscript/`, answer the quiz, pick a plan, pay with **4111 2222 3333 4444** (any future expiry, any CVV).
+   Prepaid-card test: **4111 2222 3333 6666** with `FUNNEL_PAYMENT_DRIVER=vrio` — Vrio refuses it on the main campaign
+   ("Prepaid cards not allowed…") and checkout retries on the prepaid campaign (log: `prepaid card → retried on campaign …`).
+   With the `test` driver this card is simply declined.
 7. Watch `storage/logs/lead-flow.log`.
 
 ## Configuration
@@ -85,6 +88,7 @@ All settings are in `config.php`; each server overrides them with its own `.env`
 |---|---|
 | Logo, brand name, colors, fonts, footer, product images | `projects/<brand>/site.json` |
 | Page text, images, section order / visibility | `projects/<brand>/<page>.json` |
+| Privacy, terms, telehealth consent, HIPAA, refund, shipping pages | `projects/<brand>/legal/<key>.html` (list: `legal.json`; URL `legal.php?page=<key>`) |
 | Section markup | `components/<group>/*.php` — keep the ids, classes and `data-*` the JS uses (listed in each header comment) |
 | Styling | `assets/css/*.css`, or `projects/<brand>/css/*.css` for one brand |
 | Flow, validation, integrations | page controllers (`*.php` in the root), `submit.php`, `lib/`, `assets/*.js` |

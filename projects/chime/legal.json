@@ -1,0 +1,26 @@
+{
+  "_help": "Legal / info pages (legal.php?page=<key>). To add a page: add it under \"pages\" and create legal/<key>.html next to this file, then link it (site.json → footer, checkout.json → legal_html). Content is plain HTML; {brand}, {email}, {phone} are filled in from site.json. \"updated\" is shown under the title (leave empty to hide).",
+
+  "title": "Legal",
+  "body_class": "page-legal",
+  "styles": [],
+  "theme": { "colors": {} },
+  "header": { "component": "layout/header-shop", "show_phone": true },
+  "main_class": "legal-main",
+  "footer": true,
+
+  "pages": {
+    "telehealth-consent": { "title": "Telehealth Consent", "updated": "" },
+    "terms": { "title": "Terms & Conditions", "updated": "" },
+    "hipaa-notice": { "title": "HIPAA Notice of Privacy Practices", "updated": "" },
+    "privacy-policy": { "title": "Privacy Policy", "updated": "" },
+    "refund-policy": { "title": "Return & Refund Policy", "updated": "" },
+    "shipping-policy": { "title": "Shipping Policy", "updated": "" }
+  },
+
+  "text": {
+    "updated": "Last updated: {date}",
+    "not_found_title": "Page not found",
+    "not_found": "This page does not exist. You may be looking for one of these:"
+  }
+}

@@ -30,10 +30,13 @@ final class VrioClient
      * Card pre-authorization at checkout — same request as demo/preauth.php:
      *   POST {api_url} { connection_id, campaign_id, offer_funnel_slug, crm_campaign_id, email, offers[], shipping_profile_id,
      *                    bill_*, tracking1-3, same_address, payment_method_id: 1, card_type_id, card_*, action: "authorize" }
-     * A prepaid-card rejection is retried once on the prepaid campaign (when the funnel has one).
+     * A prepaid-card rejection ("Prepaid cards not allowed on campaign ...") is retried once on the funnel's prepaid campaign
+     * (campaign_set -> prepaid_campaign), with the plan's offer on that campaign (variant crm_campaigns, type prepaid).
      *
      * @param array $order submit.php checkout order: product, billing, billing_same, email, card, tracking, funnel_slug
-     * @return array [success, order_id, customer_id, message, log]  (log = what happened, card data never included)
+     * @return array [success, order_id, customer_id, message, log, crm_campaign_id, prepaid_campaign, calls]
+     *               (crm_campaign_id = the campaign that was charged; log = what happened, card data never included;
+     *                calls = each request sent (card masked, no CVV) and Vrio's reply, for the log — see submit.php)
      */
     public function authorize(array $order): array
     {
@@ -79,16 +82,30 @@ final class VrioClient
             'action'              => 'authorize',
         ];
 
-        $result = $this->sendAuthorize($body);
+        $result = $this->sendAuthorize($body) + ['crm_campaign_id' => $campaign, 'prepaid_campaign' => false];
+        $calls  = [$result['call']];
         $prepaid = (string) ($p['prepaid_crm_campaign_id'] ?? '');
-        if ($result['prepaid'] && $prepaid !== '' && $prepaid !== $campaign) {
+        if ($result['prepaid'] && $prepaid === '') {
+            $result['log'] .= '; prepaid card, but the funnel has no prepaid campaign (campaign_set → prepaid_campaign): not retried';
+        } elseif ($result['prepaid'] && $prepaid !== $campaign) {
             $body['campaign_id'] = $body['crm_campaign_id'] = $prepaid;
-            $retry = $this->sendAuthorize($body);
-            $retry['log'] = $result['log'] . '; prepaid card → retried on campaign ' . $prepaid . ': ' . $retry['log'];
+            $pp = $p['prepaid_offer'] ?? null;
+            if (is_array($pp)) {   // the plan's own offer on the prepaid campaign
+                $body['offers'] = [[
+                    'offer_id'             => (int) $pp['crm_offer_id'],
+                    'item_id'              => (int) $pp['crm_item_id'],
+                    'order_offer_quantity' => 1,
+                    'order_offer_price'    => (float) $pp['price'],
+                ]];
+            }
+            $retry = $this->sendAuthorize($body) + ['crm_campaign_id' => $prepaid, 'prepaid_campaign' => true];
+            $calls[] = $retry['call'];
+            $retry['log'] = $result['log'] . '; prepaid card → retried on campaign ' . $prepaid
+                . (is_array($pp) ? ' (offer ' . $pp['crm_offer_id'] . ')' : ' (same offer: the plan has none on the prepaid campaign)') . ': ' . $retry['log'];
             $result = $retry;
         }
-        unset($body);
-        return $result;
+        unset($body, $result['call']);
+        return $result + ['calls' => $calls];
     }
 
     /**
@@ -115,13 +132,24 @@ final class VrioClient
         return strlen($raw) > 2000 ? substr($raw, 0, 2000) . '…' : $raw;
     }
 
+    /** The request as logged: card number cut to its last 4 digits, CVV left out. */
+    private static function maskedBody(array $body): string
+    {
+        $number = preg_replace('/\D/', '', (string) ($body['card_number'] ?? ''));
+        $body['card_number'] = str_repeat('*', max(0, strlen($number) - 4)) . substr($number, -4);
+        $body['card_cvv']    = '***';
+        return (string) json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
     private function sendAuthorize(array $body): array
     {
         [$status, $response, $raw, $error] = Http::json('POST', (string) $this->cfg['api_url'], ['X-Api-Key: ' . $this->cfg['api_key']], $body, (int) ($this->cfg['timeout'] ?? 30));
+        $call = ['campaign_id' => (string) $body['campaign_id'], 'request' => self::maskedBody($body), 'status' => $status,
+                 'response' => $error !== '' ? 'request failed: ' . $error : self::logBody($raw)];
         // What was sent, for the log on a refusal — ids and offer only, no card or personal data.
         $sent = json_encode(array_intersect_key($body, array_flip(['connection_id', 'campaign_id', 'crm_campaign_id', 'offer_funnel_slug', 'offers', 'shipping_profile_id', 'card_type_id', 'bill_state', 'bill_country'])), JSON_UNESCAPED_SLASHES);
-        $fail = static function (string $message, string $log, bool $prepaid = false) use ($sent): array {
-            return ['success' => false, 'order_id' => null, 'customer_id' => null, 'message' => $message, 'log' => $log . ' sent=' . $sent, 'prepaid' => $prepaid];
+        $fail = static function (string $message, string $log, bool $prepaid = false) use ($sent, $call): array {
+            return ['success' => false, 'order_id' => null, 'customer_id' => null, 'message' => $message, 'log' => $log . ' sent=' . $sent, 'prepaid' => $prepaid, 'call' => $call];
         };
         if ($error !== '') {
             return $fail('We could not process your payment. Please try again.', 'request failed: ' . $error);
@@ -151,7 +179,7 @@ final class VrioClient
         if (!empty($responseCode) && (int) $responseCode === 101) {
             return $fail('Additional verification is required for this card. Please try a different card or contact support.', $log . ' response_code=101 response=' . self::logBody($raw));
         }
-        return ['success' => true, 'order_id' => (string) $orderId, 'customer_id' => $customerId !== null ? (string) $customerId : null, 'message' => 'Card authorized.', 'log' => $log, 'prepaid' => false];
+        return ['success' => true, 'order_id' => (string) $orderId, 'customer_id' => $customerId !== null ? (string) $customerId : null, 'message' => 'Card authorized.', 'log' => $log, 'prepaid' => false, 'call' => $call];
     }
 
     /** Vrio card_type_id, as in demo/preauth.php: 1 Mastercard, 2 Visa, 3 Discover, 4 Amex. */
