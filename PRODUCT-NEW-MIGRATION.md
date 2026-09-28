@@ -1,6 +1,6 @@
 # Chime Health GLP-1 funnel (rnad-v2): project overview + product page migration
 
-**Last updated:** 2026-09-28 · **Snapshot:** `rnad-v2/23-09-2026` + `Dynamic script` (API-driven rebuild)
+**Last updated:** 2026-09-28 (team guides: `docs/DEVELOPER.md`, `docs/DESIGNER.md`) · **Snapshot:** `rnad-v2/23-09-2026` + `Dynamic script` (API-driven rebuild)
 
 This document explains how the whole funnel works (quiz → product → checkout → verification → fulfilment) and what was done to replace the product page with the new design. It is written for developers who haven't seen the code yet.
 
@@ -67,7 +67,7 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `bootstrap.php` | Loads classes, config and the project; secure session; CSRF token; `load_funnel_or_fail()` (503 page); `quiz_funnel()` (drops `skip_questions`); `offer_funnel()`; `funnel_session()`; `funnel_json_response_then()` / `redirect_now_then()` (reply first, slow CRM work after). |
 | `lib/Env.php` | `.env` loader + `Env::get()`. |
 | `lib/EncodeDecodeHelper.php` | Signed tokens `base64(JSON).hmac_sha256` (portal code). Decodes `tenant.ghl.credentials` / `tenant.vouched` from the funnel JSON and signs the portal order payload. With `FUNNEL_TENANT_SECRET_KEY` set the signature is checked; without it the token is read unchecked. |
-| `lib/FunnelRepository.php` | Loads the definition from the API (file cache in `storage/cache/`, stale copy if the API is down) or from `data/updated-sample-funnel.json`. Normalizes steps, questions (incl. each question's GHL field — kept server side; a field key without an id is allowed), options, conditions, products **and** membership products with their CRM offers, the prepaid campaign of each set, the tenant's **GHL and Vouched credentials** and the GHL portal-link field. |
+| `lib/FunnelRepository.php` | Loads the definition from the API (file cache in `storage/cache/`, stale copy if the API is down) or from `config.php → sample_file` (now `data/r4mf-v1-funnel.json`; older samples: `updated-sample-funnel.json`, `sample-funnel.json`). Each variant gets its offer on the main campaign and on the prepaid campaign (`prepaid_offer`). Normalizes steps, questions (incl. each question's GHL field — kept server side; a field key without an id is allowed), options, conditions, products **and** membership products with their CRM offers, the prepaid campaign of each set, the tenant's **GHL and Vouched credentials** and the GHL portal-link field. |
 | `lib/FunnelRules.php` | Server copy of the rules: age, BMI + rating, show/hide conditions, per-type validation (incl. **target weight** below the current weight and BMI ≥ 18.5), disqualifying options. |
 | `lib/Screens.php` | Splits the API steps into screens (plan in `index.json → screens`, the rest grouped automatically). |
 | `lib/view.php` | HTML helpers, `product_look()`, plan months, sellable/featured variants. |
@@ -76,8 +76,9 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `lib/LeadFlow.php` | The steps and their log: lead save (MEMBERSHIP → DB → VRIO prospect → GHL, consent timestamps, GHL custom fields incl. id lookup), `checkout()` (DB + GHL), `identity()` (Vouched), `process()` (portal payload + hand-off), `portalLink()` (GHL). |
 | `lib/Membership.php` + `sample-api/membership-check.php` | Membership check (placeholder: sample returns `false`). `sample-api/` is blocked on the live site. |
 | `lib/XverifyClient.php` | Email + phone verification (like `demo/xverify.php`). |
-| `lib/VrioClient.php` | Vrio: prospect (like `demo/create-prospect.php`), card pre-authorization (like `demo/preauth.php`, prepaid retry, response 101; on a refusal the log gets Vrio's reply + the ids sent), customer id of an order (like `demo/process/get_vrio_customer_id_using_order_id.php`). |
-| `lib/GhlClient.php` | GoHighLevel contact create / update (duplicate → update existing); `fieldIds()` = the location's custom fields by key (like `demo/check-custom-field.php`, cached one day). |
+| `lib/VrioClient.php` | Vrio: prospect (like `demo/create-prospect.php`), card pre-authorization (like `demo/preauth.php`; prepaid retry on the prepaid campaign **with the plan's prepaid offer**; response 101; every call returned for the log with the card masked), customer id of an order (like `demo/process/get_vrio_customer_id_using_order_id.php`). |
+| `lib/GhlClient.php` | GoHighLevel contact create / update (duplicate → update existing); `fieldIds()` = the location's custom fields by key (like `demo/check-custom-field.php`, cached one day); `addTags()` (tag `failed_id`, like `demo/usernotverified.php`). |
+| `lib/FlowTracker.php` | Progress tracking: `fid` cookie → `flow_tracking` (last step per visitor) + `flow_tracking_events` (every step); `database/003_create_flow_tracking.sql`. |
 | `lib/VouchedClient.php` | Vouched `identity/crosscheck` + `dob/verify` (like `demo/identity_verify.php`). |
 | `lib/PortalClient.php` | Portal order hand-off: `POST {tenant}/api/offer/process` with `{"data": signed token}` (like `demo/process/process.php`). |
 | `lib/Http.php` | JSON-over-HTTPS helper (SSL verification on). |
@@ -85,9 +86,11 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `index.php` + `assets/funnel.js` | Quiz: every API question type, conditions, exclusive "None" options, masks, progress, back button, DQ screen, localStorage progress. Auto-continue, xverify on the contact screen, per-question settings (`index.json → questions`: pre-ticked SMS consent, target weight placeholder + hint), target weight card ("That is 30 lbs, about 15% of your weight"). |
 | `product.php` + `assets/product.js` | Hero from the answers, product cards + plan rows from the visitor's offer. |
 | `checkout.php` + `assets/checkout.js` | Shipping/contact, optional billing, card form, order summary, Google Places autocomplete. |
-| `submit.php` | JSON endpoint: `verify`, `lead`, `intake`, `product`, `checkout`, `idcheck` (all need `X-CSRF-Token`). Re-validates everything on the server. |
+| `submit.php` | JSON endpoint: `track`, `verify`, `lead`, `intake`, `product`, `checkout`, `idcheck` (all need `X-CSRF-Token`). Re-validates everything on the server. |
 | `idcheck.php` + `assets/idcheck.js` | ID check with the Vouched plugin (like `demo/idcheck.php`), prefilled from the quiz; result → `submit.php?action=idcheck`. |
 | `idcheck-callback.php` | Vouched's job callback (like `demo/idcheck-callback.php`): `idcheck_vouched_status` by job id. |
+| `usernotverified.php` | ID check failed (like `demo/usernotverified.php`): header + one paragraph (`projects/<project>/not-verified.json`); the GHL contact is tagged `failed_id` by `submit.php?action=idcheck`. |
+| `legal.php` | Legal pages `legal.php?page=<key>`: list in `projects/<project>/legal.json`, content in `projects/<project>/legal/<key>.html`; linked from the footer and the checkout agreement text. |
 | `process.php` | Order hand-off to the portal (like `demo/process/process.php`); verified in the session **or on the DB row**; success → portal `redirect_url`, failure → error page. |
 | `thank-you.php` | Order confirmation (not in the flow for now). |
 | `database/` | `001_create_dynamic_remedy.sql` (fresh install), `002_upgrade_dynamic_remedy.sql` (existing table). The Vouched / portal columns are already in 001. `003_create_flow_tracking.sql`: progress tracking tables (`lib/FlowTracker.php`, see `README.md`). |
@@ -97,6 +100,7 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `.htaccess` | Blocks `config.php`, `bootstrap.php`, `.env*`, `lib/`, `data/`, `storage/`, `components/`, `database/`, `demo/`, `tools/`, `sample-api/`, `projects/**/*.json|php` and `*.md` (Apache only). |
 | `assets/css/`, `assets/img/` | `common.css` + `quiz.css`, `product.css`, `checkout.css`; images. |
 | `NOTES-OPEN-ITEMS.md` | Decisions still to make. |
+| `docs/` | Team guides: `docs/README.md` (index), `docs/DEVELOPER.md`, `docs/DESIGNER.md`. |
 
 ### 0.3 Funnel data (`data/updated-sample-funnel.json`)
 

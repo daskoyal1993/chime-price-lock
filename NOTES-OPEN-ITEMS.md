@@ -97,7 +97,10 @@ Live since 2026-09-25 (`HTTP 200 order_id=4450`). `lib/VrioClient.php → author
   session, form errors — field names only). A Vrio refusal logs Vrio's full reply (`response=`, card-like numbers masked) and the ids sent (`sent=`).
   **Every call** to Vrio is also logged in full (2026-09-28): `[VRIO-PREAUTH] SENT <email> attempt 1 campaign 65 payload: {…}` and
   `[VRIO-PREAUTH] REPLY … response (HTTP …): {…}` — attempt 2 after a prepaid retry. Card number masked to the last 4 digits, CVV never logged;
-  name, email and billing address are in the payload.
+  name, email and billing address are in the payload. Then one result line on the campaign actually charged, e.g.
+  `[VRIO-PREAUTH] OK … campaign 66 (driver vrio): approved, order 4548 (prepaid card: refused on campaign 65, retried on 66)`.
+- **Refused attempt = extra Vrio order:** Vrio creates an order for the refused prepaid attempt too (live test 2026-09-28:
+  4547 refused on 65, 4548 approved on 66). Same as the demo — ask Vrio whether those can be avoided or cleaned up.
 - **Test card** `4111 2222 3333 4444`: with `payment_driver = test` it is approved locally (order id `TEST-…`); with `vrio` it skips the
   card-number checksum and is **sent to Vrio**, which decides (a test gateway approves it). Set `FUNNEL_TEST_CARD=''` on the live
   server before real customers.
@@ -153,7 +156,8 @@ Verified = crosscheck **≥ 80** (`config.php → vouched.min_confidence`) **and
 - **ID check result:** like the demo, the browser reports `job.result.success` (`submit.php?action=idcheck`) and the page moves on;
   Vouched's own callback (`idcheck-callback.php`) confirms it on the row by job id. Don't rely on the browser's report alone for shipping.
   Allow `https://<domain>/idcheck-callback.php` as the callback URL in Vouched.
-- **Not verified (2026-09-28, like the demo):** the visitor is sent to `usernotverified.php` (text: `projects/<project>/not-verified.json`) and the
+- **Not verified (2026-09-28, like the demo):** the visitor is sent to `usernotverified.php` — quiz header (logo + rating) and one paragraph,
+  text in `projects/<project>/not-verified.json` — and the
   GHL contact gets the tag **`failed_id`** (`config.php → ghl.failed_id_tag`, `POST /contacts/{id}/tags`), once per session, after the reply.
   Log: `[GHL] OK contact … tagged "failed_id"`. The page has no retry button (as in the demo) — confirm whether a "Try again" link is wanted.
 - `process.php` also accepts a row that is verified in the DB (crosscheck ≥ 80 + DOB match, or `idcheck_vouched_status = 'true'`).

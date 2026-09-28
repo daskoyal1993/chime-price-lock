@@ -1,5 +1,7 @@
 # Projects: page content, images and design from JSON
 
+(Short version for designers: `docs/DESIGNER.md`.)
+
 Each folder here is one project (brand / offer). The active one is set in `config.php` → `project`
 (or the `FUNNEL_PROJECT` environment variable). Default: `chime`.
 
@@ -14,6 +16,7 @@ projects/chime/
 ├── idcheck.json     ID check page:  text around the Vouched plugin, "not verified" message
 ├── legal.json       legal pages (legal.php?page=<key>): page list, titles, "last updated"
 ├── legal/<key>.html legal page content (plain HTML: privacy-policy, terms, telehealth-consent, hipaa-notice, …)
+├── not-verified.json ID check failed page (usernotverified.php): one paragraph
 ├── process.json     process page:   error text when the portal hand-off fails (on success the visitor goes to the portal)
 └── thank-you.json   thank-you page  (not in the flow for now)
 ```

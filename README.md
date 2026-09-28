@@ -4,8 +4,12 @@ Plain PHP + JavaScript funnel (no framework, no Composer, no build step): quiz �
 Vouched identity check → order hand-off to the patient portal. Questions, products and prices come from the funnel API;
 design and text come from `projects/<brand>/*.json`; keys come from `.env`.
 
+**Team docs are in [`docs/`](docs/README.md):** [`docs/DEVELOPER.md`](docs/DEVELOPER.md) (code, integrations, logs, Git workflow) ·
+[`docs/DESIGNER.md`](docs/DESIGNER.md) (text, images, colors, layout, the `design` branch).
+
 | Read next | For |
 |---|---|
+| `docs/` | developer and designer guides (start at `docs/README.md`) |
 | `projects/README.md` | page JSON, components, CSS variables, rebranding, design roadmap |
 | `PRODUCT-NEW-MIGRATION.md` §0 | how the whole flow works, integrations, what is checked, still to do |
 | `NOTES-OPEN-ITEMS.md` | open decisions and temporary values, by item |
@@ -15,10 +19,12 @@ design and text come from `projects/<brand>/*.json`; keys come from `.env`.
 ```
 index.php (quiz) → product.php → checkout.php ──(Vrio pre-auth, Vouched crosscheck + DOB)──┐
                                                                                             ├─ verified     → process.php → patient portal
-                                                                                            └─ not verified → idcheck.php → process.php
+                                                                                            └─ not verified → idcheck.php ─┬─ verified → process.php
+                                                                                                                            └─ failed   → usernotverified.php (GHL tag failed_id)
 ```
 
-Every browser call goes to `submit.php?action=lead|verify|intake|product|checkout|idcheck`. `lib/LeadFlow.php` runs the
+A prepaid card refused on the main campaign is retried on the prepaid campaign (`campaign_set → prepaid_campaign`).
+Every browser call goes to `submit.php?action=track|lead|verify|intake|product|checkout|idcheck`. `lib/LeadFlow.php` runs the
 DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-flow.log`.
 
 ## Requirements
@@ -112,7 +118,9 @@ change in `flow_tracking_events`. Tables: `database/003_create_flow_tracking.sql
 ## Logs and troubleshooting
 
 - `storage/logs/lead-flow.log`: one line per step (`[DB]`, `[VRIO]`, `[GHL]`, `[VOUCHED]`, `[PORTAL]` …, `OK` / `FAILED` / `SKIP`).
-  The portal payload and reply are logged in full (`[PORTAL] SENT …` / `[PORTAL] REPLY …`). Failures and portal lines also go to the PHP error log.
+  The portal payload and reply are logged in full (`[PORTAL] SENT …` / `[PORTAL] REPLY …`), and so is every Vrio pre-auth call
+  (`[VRIO-PREAUTH] SENT … attempt N campaign X payload` / `REPLY …`, card masked to the last 4 digits, no CVV) followed by one
+  result line on the campaign actually charged. Failures and portal lines also go to the PHP error log.
 - The log holds patients' personal and health data: never paste it into tickets or chats.
 - Funnel API changes not showing → delete `storage/cache/`.
 - "Page config not found" → `FUNNEL_PROJECT` names a missing `projects/` folder. "Unknown component" → a page JSON names a missing `components/` file.
@@ -120,6 +128,7 @@ change in `flow_tracking_events`. Tables: `database/003_create_flow_tracking.sql
 ## Deployment
 
 A push to `main` goes live: `.github/workflows/deploy.yml` uploads the changed files over FTPS (secrets `FTP_SERVER`,
-`FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR`). Work on a branch and merge through a pull request.
+`FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR`). `main` is protected: work on a branch (the designer uses `design`)
+and merge through a pull request — see `docs/DEVELOPER.md` → "Git workflow".
 Not uploaded: `.env`, `storage/logs/`, `storage/cache/`, `demo/`, `database/`, `*.md`. Each server keeps its own `.env`;
 SQL files are run by hand. Details: `PRODUCT-NEW-MIGRATION.md` §0.8.
