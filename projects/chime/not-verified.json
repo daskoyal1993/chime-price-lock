@@ -1,18 +1,15 @@
 {
-  "_help": "ID check not verified page (usernotverified.php), like demo/usernotverified.php. Shown when the Vouched ID check fails; the GHL contact is tagged failed_id (config.php → ghl.failed_id_tag). {phone}, {tel} (digits only), {email} come from site.json → brand, {order_id} from the order.",
+  "_help": "ID check not verified page (usernotverified.php), like demo/usernotverified.php: header (logo + rating) and one paragraph. Shown when the Vouched ID check fails; the GHL contact is tagged failed_id (config.php → ghl.failed_id_tag). \"text\" may use {phone}, {email} (site.json → brand) and {order_id}.",
 
   "title": "We couldn't verify your identity",
-  "body_class": "page-checkout",
-  "styles": ["assets/css/checkout.css"],
+  "body_class": "page-not-verified",
+  "styles": ["assets/css/quiz.css"],
   "theme": { "colors": {} },
-  "header": { "component": "layout/header-shop", "show_phone": true },
-  "main_class": "ty",
+  "header": { "component": "layout/header-quiz" },
+  "main_class": "nv-main",
+  "footer": false,
 
   "text": {
-    "badge": "Identity not verified",
-    "heading": "We couldn't verify your identity",
-    "text": "Unfortunately we couldn't verify your identity, please schedule an in person call with someone on our team to troubleshoot the issue.",
-    "contact_html": "Call us at <a href=\"tel:{tel}\">{phone}</a> or email <a href=\"mailto:{email}\">{email}</a>.",
-    "order": "Your order number: {order_id}"
+    "text": "Unfortunately we couldn’t verify your identity, please schedule an in person call with someone on our team to troubleshoot the issue."
   }
 }

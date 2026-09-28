@@ -91,3 +91,10 @@ textarea.input { height: auto; min-height: 112px; resize: vertical; }
 /* compact consent (index.json → questions.<key>.compact): one checkbox line under the fields, as on the live step 16 */
 .fq-consent.is-compact { gap: 0; }
 .fq-consent.is-compact .consent-check { font-size: 13px; line-height: 18px; color: var(--ink-soft); }
+
+/* ID check not verified (usernotverified.php): logo left, rating right, one paragraph */
+.page-not-verified .quiz-header { max-width: 1280px; margin: 24px auto; padding: 0 24px; }
+.page-not-verified .quiz-back { display: none !important; }
+.page-not-verified .quiz-logo { position: static; transform: none; }
+.nv-main { max-width: 34rem; margin: 0 auto; padding: 64px 16px 96px; }
+.nv-text { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-strong); }

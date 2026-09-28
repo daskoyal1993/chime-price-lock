@@ -309,11 +309,18 @@ if ($action === 'checkout') {
         LeadFlow::log($config, 'VRIO-PREAUTH', null, $attempt . ' payload: ' . $call['request'], 'SENT');
         LeadFlow::log($config, 'VRIO-PREAUTH', $call['status'] === 200, $attempt . ' response (HTTP ' . $call['status'] . '): ' . $call['response'], 'REPLY');
     }
+    $attempts = count($result['calls'] ?? []);
     unset($result['calls']);
 
-    // One log line per attempt (never card data): storage/logs/lead-flow.log
+    // The checkout's result in one line (never card data): storage/logs/lead-flow.log. With Vrio, the SENT / REPLY lines above
+    // hold the requests and replies, so this only says what happened, on the campaign that was actually charged.
+    $charged = (string) ($result['crm_campaign_id'] ?? $record['product']['crm_campaign_id']);
+    $summary = $attempts === 0 ? ($result['log'] ?? $result['message'])
+        : ($result['success'] ? 'approved, order ' . $result['order_id'] : 'declined: ' . $result['message'])
+          . (!empty($result['prepaid_campaign']) ? ' (prepaid card: refused on campaign ' . $record['product']['crm_campaign_id'] . ', retried on ' . $charged . ')' : '')
+          . (strpos((string) ($result['log'] ?? ''), 'not retried') !== false ? ' (prepaid card: the funnel has no prepaid campaign)' : '');
     LeadFlow::log($config, 'VRIO-PREAUTH', $result['success'], $email . ' ' . $record['product']['name'] . ' $' . $record['product']['price']
-        . ' campaign ' . $record['product']['crm_campaign_id'] . ' (driver ' . $config['payment_driver'] . '): ' . ($result['log'] ?? $result['message']));
+        . ' campaign ' . $charged . ' (driver ' . $config['payment_driver'] . '): ' . $summary);
     // DB row + GHL contact get the shipping address, purchased and the order id (like demo/db_update.php).
     // Runs after the reply is sent, so slow CRM calls can't time the checkout out (Cloudflare 524 after 120 s).
     $contact = $shipping + ['email' => $email, 'phone' => $phone];
