@@ -329,6 +329,26 @@ final class LeadFlow
         return $answers;
     }
 
+    /**
+     * The ID check failed (idcheck.php → not_verified_url): tag the GHL contact with config.php → ghl.failed_id_tag
+     * ("failed_id"), like demo/usernotverified.php. Run after the reply (submit.php); never blocks the visitor.
+     */
+    public static function idFailed(array $config, array $funnel, array $record): void
+    {
+        $tag    = trim((string) ($config['ghl']['failed_id_tag'] ?? 'failed_id'));
+        $client = new GhlClient(self::ghlConfig($config, $funnel));
+        if (empty($record['ghl_contact_id']) || $tag === '' || $client->missing()) {
+            self::log($config, 'GHL', null, 'failed_id tag skipped: ' . (empty($record['ghl_contact_id']) ? 'no GHL contact in this session' : ($tag === '' ? 'no ghl.failed_id_tag' : 'GHL not configured')));
+            return;
+        }
+        try {
+            $client->addTags((string) $record['ghl_contact_id'], [$tag]);
+            self::log($config, 'GHL', true, 'contact ' . $record['ghl_contact_id'] . ' tagged "' . $tag . '" (ID check not verified, row #' . ($record['lead_id'] ?? '?') . ')');
+        } catch (Throwable $e) {
+            self::log($config, 'GHL', false, 'tag "' . $tag . '" on contact ' . $record['ghl_contact_id'] . ': ' . $e->getMessage());
+        }
+    }
+
     /** Put the portal link on the GHL contact (like demo/process/update_portal_redirect.php). */
     public static function portalLink(array $config, array $funnel, array $record, string $url): void
     {

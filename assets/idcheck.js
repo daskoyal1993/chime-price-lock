@@ -1,7 +1,8 @@
 /**
  * ID check page (idcheck.php): mounts the Vouched plugin like demo/idcheck.php.
  * onSubmit / onDone → submit.php?action=idcheck (job id + result, saved on the visitor's row).
- * Verified → the server's redirect (config.php → verified_url); not verified → failure message with "Try again".
+ * Verified → the server's redirect (config.php → verified_url); not verified → the server's redirect (not_verified_url,
+ * usernotverified.php — the GHL contact is tagged failed_id). The failure box + "Try again" is only for errors.
  */
 (function () {
     'use strict';
@@ -54,8 +55,8 @@
             onDone: function (job) {
                 var ok = !!(job && job.result && job.result.success);
                 send(job && job.id ? job.id : '', ok).then(function (data) {
-                    if (ok && data.success && data.redirect) {
-                        location.replace(data.redirect + location.search);
+                    if (data.success && data.redirect) {
+                        location.replace(data.redirect + location.search);   // verified → portal, not verified → usernotverified.php
                     } else {
                         showFailed();
                     }

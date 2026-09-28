@@ -152,7 +152,10 @@ Verified = crosscheck **≥ 80** (`config.php → vouched.min_confidence`) **and
 - **Already verified:** a row with the same email that passed before (ID check `true`, crosscheck ≥ 80, DOB match — the demo's rule) → no new check.
 - **ID check result:** like the demo, the browser reports `job.result.success` (`submit.php?action=idcheck`) and the page moves on;
   Vouched's own callback (`idcheck-callback.php`) confirms it on the row by job id. Don't rely on the browser's report alone for shipping.
-  Allow `https://<domain>/idcheck-callback.php` as the callback URL in Vouched. Not verified → message with "Try again" (replaces the demo's `usernotverified.php`).
+  Allow `https://<domain>/idcheck-callback.php` as the callback URL in Vouched.
+- **Not verified (2026-09-28, like the demo):** the visitor is sent to `usernotverified.php` (text: `projects/<project>/not-verified.json`) and the
+  GHL contact gets the tag **`failed_id`** (`config.php → ghl.failed_id_tag`, `POST /contacts/{id}/tags`), once per session, after the reply.
+  Log: `[GHL] OK contact … tagged "failed_id"`. The page has no retry button (as in the demo) — confirm whether a "Try again" link is wanted.
 - `process.php` also accepts a row that is verified in the DB (crosscheck ≥ 80 + DOB match, or `idcheck_vouched_status = 'true'`).
 
 ## 14. Portal order hand-off (`process.php`) — to confirm

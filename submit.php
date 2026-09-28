@@ -13,6 +13,8 @@
  *       → 200 { success }
  *   ?action=product   { variant_id }
  *       → 200 { success, redirect }
+ *   ?action=idcheck   { job_id, success: true|false|null }   (idcheck.php, Vouched plugin)
+ *       → 200 { success, redirect }   true → verified_url, false → not_verified_url (+ GHL tag failed_id), null → submitted only
  *   ?action=checkout  { shipping: {...}, billing_same: bool, billing: {...}, card: {number, month, year, cvv} }
  *       → 200 { success, redirect }   | 422 { success: false, errors: {field: message} } | 402 { success: false, message }
  */
@@ -379,6 +381,16 @@ if ($action === 'idcheck') {
     }
     if ($success === true) {
         $record['identity_verified'] = true;
+    }
+    if ($success === false) {
+        // Not verified (like demo/idcheck.php → usernotverified.php): the not-verified page, and the GHL contact gets the
+        // failed_id tag once per session — after the reply, so the visitor doesn't wait for GHL.
+        $tag = empty($record['ghl_failed_id_tagged']);
+        $record['ghl_failed_id_tagged'] = true;
+        $snapshot = $record;
+        funnel_json_response_then(['success' => true, 'redirect' => $config['not_verified_url']], 200, static function () use ($config, $funnel, $snapshot, $tag): void {
+            if ($tag) LeadFlow::idFailed($config, $funnel, $snapshot);
+        });
     }
     funnel_json_response(['success' => true, 'redirect' => $success === true ? $config['verified_url'] : null]);
 }

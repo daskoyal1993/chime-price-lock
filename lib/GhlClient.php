@@ -87,6 +87,21 @@ final class GhlClient
         throw new RuntimeException('custom fields HTTP ' . $status . ': ' . ($error !== '' ? $error : Http::message($body, $raw)));
     }
 
+    /**
+     * Add tags to a contact, keeping the ones it has (like demo/usernotverified.php): POST /contacts/{id}/tags {"tags": [...]}.
+     * @throws RuntimeException on failure
+     */
+    public function addTags(string $contactId, array $tags): void
+    {
+        [$status, $body, $raw, $error] = $this->request('POST', '/contacts/' . rawurlencode($contactId) . '/tags', ['tags' => array_values($tags)]);
+        if ($error !== '') {
+            throw new RuntimeException('add tags failed: ' . $error);
+        }
+        if ($status < 200 || $status >= 300) {
+            throw new RuntimeException('add tags HTTP ' . $status . ': ' . Http::message($body, $raw));
+        }
+    }
+
     private function update(string $id, array $contact): void
     {
         unset($contact['locationId'], $contact['tags']);

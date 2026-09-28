@@ -38,6 +38,8 @@ return [
     // After the card is authorized: Vouched verified → verified_url (process.php → patient portal), not verified → idcheck_url.
     'verified_url'     => 'process.php',
     'idcheck_url'      => 'idcheck.php',
+    // ID check failed (like demo/usernotverified.php): this page, and the GHL contact gets ghl.failed_id_tag.
+    'not_verified_url' => 'usernotverified.php',
     'disqualified_url' => '',   // empty = show the built-in disqualified screen
 
     // Lead storage (lib/LeadRepository.php, table from database/001_create_dynamic_remedy.sql).
@@ -109,6 +111,7 @@ return [
         'location_id' => Env::get('FUNNEL_GHL_LOCATION_ID', 'AeheBO22OOorfyaJeD8X'),
         'source'      => 'chime-dynamic API',
         'tags'        => ['lead'],   // added when the contact is created
+        'failed_id_tag' => 'failed_id',   // added when the ID check fails (usernotverified.php, like the demo)
         'timeout'     => 30,
         // "<question>@date" / "<question>@time" = when that consent was ticked. An entry can be a list (one answer → several
         // fields) and may leave out the id: it is then looked up in GHL by key (GhlClient::fieldIds(), cached one day).
