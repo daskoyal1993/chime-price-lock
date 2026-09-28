@@ -373,6 +373,15 @@
         post('lead', { answers: collectAnswers(), tracking: tracking() }).catch(function () { /* ignore */ });
     }
 
+    // Progress tracking: report each quiz screen shown (submit.php?action=track). Never waited for.
+    // Screens are numbered in index.json order (step1 … stepN); key = the screen's first question.
+    var lastTracked = null;
+    function trackScreen(index) {
+        if (index === lastTracked || !screens[index]) return;
+        lastTracked = index;
+        post('track', { step: 'step' + (index + 1), index: index + 1, key: screens[index].keys[0], tracking: tracking() }).catch(function () { /* ignore */ });
+    }
+
     function wrapOf(key) {
         return root.querySelector('.fq[data-key="' + cssEscape(key) + '"]');
     }
@@ -621,6 +630,7 @@
             var prev = list.filter(function (i) { return i < state.screen; });
             state.screen = prev.length ? prev[prev.length - 1] : (list[0] || 0);
         }
+        trackScreen(state.screen);
 
         var screen = screens[state.screen];
         var qs = screenQuestions(state.screen);
@@ -875,6 +885,7 @@
     }
 
     function disqualify(dq) {
+        lastTracked = null;   // going back from the DQ screen is tracked again (back to in_progress)
         if (cfg.disqualifiedUrl) {
             forget();
             location.href = nextUrl(cfg.disqualifiedUrl);

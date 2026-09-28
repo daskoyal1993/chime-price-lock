@@ -72,6 +72,16 @@ return [
         'timeout'        => 10,
     ],
 
+    // Progress tracking (lib/FlowTracker.php, tables from database/003_create_flow_tracking.sql), in the db above.
+    // The last step each visitor reached; completed = checkout payment approved. Needs no DB of its own.
+    'tracking' => [
+        'enabled'      => true,
+        'table'        => 'flow_tracking',
+        'events_table' => 'flow_tracking_events',
+        'cookie'       => 'fid',   // tracking id cookie (HttpOnly)
+        'cookie_days'  => 365,
+    ],
+
     // Where each lead step (MEMBERSHIP / DB / VRIO / GHL) is logged. storage/ is blocked from the web by .htaccess.
     'lead_log' => __DIR__ . '/storage/logs/lead-flow.log',
 

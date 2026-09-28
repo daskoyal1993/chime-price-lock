@@ -33,7 +33,7 @@ DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-
 1. Clone into the XAMPP web root and start Apache + MySQL:
    ```bash
    cd C:/xampp/htdocs
-   git clone <repo-url> dscript
+   git clone git@github.com:INV2025/dynamicquiz.git dscript   # or https://github.com/INV2025/dynamicquiz.git
    ```
 2. Copy `.env.example` to `.env`.
 3. **Before opening any page, turn off what you are not testing.** `config.php` falls back to live Vrio, GHL, xverify and
@@ -48,7 +48,8 @@ DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-
    FUNNEL_API_URL=                   # empty = data/updated-sample-funnel.json
    ```
 4. Database (optional — without it leads are just not saved): create a database in phpMyAdmin, import
-   `database/001_create_dynamic_remedy.sql` (an existing old table: run `002_upgrade_dynamic_remedy.sql` step by step), then:
+   `database/001_create_dynamic_remedy.sql` (an existing old table: run `002_upgrade_dynamic_remedy.sql` step by step) and
+   `database/003_create_flow_tracking.sql` (progress tracking), then:
    ```bash
    FUNNEL_DB_HOST=localhost
    FUNNEL_DB_NAME=dscript_local
@@ -88,6 +89,21 @@ All settings are in `config.php`; each server overrides them with its own `.env`
 | Styling | `assets/css/*.css`, or `projects/<brand>/css/*.css` for one brand |
 | Flow, validation, integrations | page controllers (`*.php` in the root), `submit.php`, `lib/`, `assets/*.js` |
 | DB schema | a new numbered file in `database/` |
+
+## Progress tracking (drop-offs)
+
+`lib/FlowTracker.php` records the last step each visitor reached in `flow_tracking` (one row per visitor) and every step
+change in `flow_tracking_events`. Tables: `database/003_create_flow_tracking.sql` (report queries at the end of that file).
+
+- **Visitor id:** `tracking_id` from the `fid` cookie (HttpOnly, 1 year), set on the first page load — before email/phone.
+  `lead_id` (the `dynamic_remedy` row) and `prospect_id` (Vrio) are added once the contact screen is saved.
+- **Steps:** quiz screens `step1` … `stepN` in `projects/<brand>/index.json → screens` order, with `last_step_key` = the
+  screen's first question (`funnel.js → trackScreen()` → `submit.php?action=track`); then `product` (900) and `checkout` (910).
+  `max_step_index` = furthest reached (Back doesn't lower it).
+- **Status:** `in_progress` → `disqualified` (DQ answer) or `completed` (checkout payment approved; `last_step` stays `checkout`,
+  `completed_at` set). A new quiz start after completion gets a new tracking id.
+- The drop-off point is simply the last recorded step — no unload/close events. No personal data is stored.
+- Turn off with `config.php → tracking.enabled = false`. DB problems are logged as `[TRACK] FAILED` and never stop the funnel.
 
 ## Logs and troubleshooting
 

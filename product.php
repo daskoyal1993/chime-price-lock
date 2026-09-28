@@ -11,6 +11,8 @@ if (empty($record['answers']) || !empty($record['disqualified'])) {
     redirect_to('index.php');
 }
 
+FlowTracker::hit($config, $funnel['slug'], 'product', 'product', FlowTracker::PAGE_STEPS['product']);
+
 $page = Page::load('product');
 $ctx  = [
     'answers'   => $record['answers'],

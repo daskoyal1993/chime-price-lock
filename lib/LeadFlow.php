@@ -59,6 +59,10 @@ final class LeadFlow
         // 3. GHL contact
         $status['ghl'] = self::ghl($config, $funnel, $record, $answers, $email, $phone);
 
+        // Progress tracking: this visitor's tracking row → the DB row and Vrio prospect
+        FlowTracker::link($config, (string) $funnel['slug'], isset($record['lead_id']) ? (int) $record['lead_id'] : null,
+            isset($record['vrio_prospect_id']) ? (string) $record['vrio_prospect_id'] : null);
+
         return $status;
     }
 

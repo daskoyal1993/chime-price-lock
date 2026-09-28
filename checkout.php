@@ -14,6 +14,8 @@ if (empty($record['product'])) {
     redirect_to($config['product_url']);
 }
 
+FlowTracker::hit($config, $funnel['slug'], 'checkout', 'checkout', FlowTracker::PAGE_STEPS['checkout']);
+
 $order   = $record['product'];
 $product = null;
 $variant = null;

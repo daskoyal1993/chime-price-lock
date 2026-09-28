@@ -90,7 +90,7 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `idcheck-callback.php` | Vouched's job callback (like `demo/idcheck-callback.php`): `idcheck_vouched_status` by job id. |
 | `process.php` | Order hand-off to the portal (like `demo/process/process.php`); verified in the session **or on the DB row**; success → portal `redirect_url`, failure → error page. |
 | `thank-you.php` | Order confirmation (not in the flow for now). |
-| `database/` | `001_create_dynamic_remedy.sql` (fresh install), `002_upgrade_dynamic_remedy.sql` (existing table). The Vouched / portal columns are already in 001. |
+| `database/` | `001_create_dynamic_remedy.sql` (fresh install), `002_upgrade_dynamic_remedy.sql` (existing table). The Vouched / portal columns are already in 001. `003_create_flow_tracking.sql`: progress tracking tables (`lib/FlowTracker.php`, see `README.md`). |
 | `tools/check-integrations.php` | CLI check: DB, GHL (read-only), Vrio settings, membership. Run it in cPanel → Terminal: `php tools/check-integrations.php`. |
 | `demo/` | Reference code from the live site. Not used at runtime; blocked from the web; not deployed. Files with hardcoded keys (`check-custom-field.php`, `identity_verify.php`, `idcheck*.php`, `process/`) are in `.gitignore`. |
 | `.github/workflows/deploy.yml` | Deploy: every push to `main` uploads the changed files to cPanel over FTPS (skips `.env`, `storage/logs`, `storage/cache`, `demo/`, `database/`, `*.md`). |
@@ -172,7 +172,7 @@ Full setup for a new developer (XAMPP, `.env`, database, safe local settings): `
    `FUNNEL_TENANT_SECRET_KEY` (Portal → Site Settings → Secret Key; signs the portal payload),
    `FUNNEL_PORTAL_API_KEY` (portal `X-API-Key`). Before real customers: `FUNNEL_TEST_CARD=''`.
    Don't copy the local `.env` to the server (its `FUNNEL_DB_USER=root` would override the live DB login).
-3. `storage/logs/` must be writable (755/775). The DB tables: import `database/001…` (and `002…`) in the server's phpMyAdmin.
+3. `storage/logs/` must be writable (755/775). The DB tables: import `database/001…` (and `002…`) in the server's phpMyAdmin, and `003_create_flow_tracking.sql` for progress tracking (until it is imported, tracking logs `[TRACK] FAILED` and the funnel carries on).
 
 ### 0.9 Still to do
 

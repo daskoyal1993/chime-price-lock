@@ -12,6 +12,7 @@ require __DIR__ . '/lib/VouchedClient.php';
 require __DIR__ . '/lib/PortalClient.php';
 require __DIR__ . '/lib/Payment.php';
 require __DIR__ . '/lib/LeadFlow.php';
+require __DIR__ . '/lib/FlowTracker.php';
 require __DIR__ . '/lib/view.php';
 require __DIR__ . '/lib/Page.php';
 
@@ -33,6 +34,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 if (empty($_SESSION['funnel_csrf'])) {
     $_SESSION['funnel_csrf'] = bin2hex(random_bytes(32));
 }
+
+// Progress tracking id (fid cookie), from the first page load on — see lib/FlowTracker.php.
+FlowTracker::boot($config);
 
 function funnel_json_response(array $body, int $status = 200): void
 {

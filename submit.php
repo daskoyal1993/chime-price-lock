@@ -9,6 +9,8 @@
  *       → 200 { success }   | 422 { success: false, errors: {email|phone: message} }  — xverify, cached per value
  *   ?action=intake    { answers: {key: value}, tracking: {...} }
  *       → 200 { success, disqualified: [], redirect }   | 422 { success: false, errors: {key: message} }
+ *   ?action=track     { step: "step7", key: "dob", index: 7, tracking: {...} }   (every quiz screen shown, lib/FlowTracker.php)
+ *       → 200 { success }
  *   ?action=product   { variant_id }
  *       → 200 { success, redirect }
  *   ?action=checkout  { shipping: {...}, billing_same: bool, billing: {...}, card: {number, month, year, cvv} }
@@ -101,6 +103,16 @@ function xverify_errors(array $config, array &$record, array $answers): array
     return $errors;
 }
 
+if ($action === 'track') {
+    // Quiz screen shown (funnel.js). Screens are numbered in index.json order: step1 … stepN.
+    $index = (int) ($input['index'] ?? 0);
+    $key   = (string) ($input['key'] ?? '');
+    if ($index >= 1 && $index < FlowTracker::PAGE_STEPS['product'] && preg_match('/^[A-Za-z0-9_-]{1,64}$/', $key)) {
+        FlowTracker::hit($config, $funnel['slug'], 'step' . $index, 'index', $index, $key, lead_tracking($input));
+    }
+    funnel_json_response(['success' => true]);
+}
+
 if ($action === 'verify') {
     $answers = is_array($input['answers'] ?? null) ? $input['answers'] : [];
     $errors  = xverify_errors($config, $record, $answers);
@@ -151,6 +163,7 @@ if ($action === 'intake') {
     save_lead($config, $funnel, $record, $result['answers'], lead_tracking($input), $hidden);
 
     if ($result['disqualified']) {
+        FlowTracker::status($config, $funnel['slug'], 'disqualified');
         funnel_json_response([
             'success'      => true,
             'disqualified' => $result['disqualified'],
@@ -307,6 +320,7 @@ if ($action === 'checkout') {
         'email'    => $email,
         'placed_at'=> gmdate('c'),
     ];
+    FlowTracker::status($config, $funnel['slug'], 'completed');   // payment approved: the funnel counts as completed
 
     // Vouched identity check (like demo/identity_verify.php): verified → verified_url, otherwise → the ID check page.
     try {
