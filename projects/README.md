@@ -127,3 +127,39 @@ Colors are CSS variables (`--brand`, `--button`, `--navy`…). The defaults are 
 `site.json → theme.colors` overrides them for the whole project, and `<page>.json → theme.colors` for one page.
 
 JSON, PHP and `.md` files under `projects/` and everything in `components/` are blocked from the web by `.htaccess` (Apache).
+
+## Design architecture roadmap (planned, not built yet)
+
+Goal: a new logo / full rebrand = JSON + CSS only; a new product or checkout design = templates only, with pricing,
+payment, CRM, Vouched, portal and DB code untouched. Reviewed 2026-09-28. Each phase must leave the `chime` pages
+unchanged — save the rendered HTML of every page before a phase and diff it after.
+
+```
+Content / Data   projects/<brand>/*.json               text, images, section order
+Configuration    projects/<brand>/site.json            brand, theme tokens, fonts
+                 config.php + .env                     keys, CRM, payment, portal
+Templates        projects/<brand>/components/…         per-brand overrides (phase 3)
+                 components/…                          defaults
+Design           assets/css/*.css + projects/<brand>/css/
+──────────── contract: $ctx view data + data-js hooks ────────────
+Logic            page controllers → lib/View/*          prices, plans, order summary (phase 5)
+                 assets/*.js                            behaviour, bound to data-js only (phase 4)
+                 submit.php, lib/*Client, Payment       API / DB / CRM / payment / Vouched / portal
+```
+
+| Phase | Change | Files |
+|---|---|---|
+| 1 | Document the contract: `$ctx` keys and JS hooks in each component header | `components/`, this file |
+| 2 | Tokens: replace raw hex values in the CSS with variables (defaults = current values); add button and heading/body font tokens to `site.json → theme` | `assets/css/*.css`, `lib/Page.php` (`page_open`), `lib/view.php` (Trustpilot colors) |
+| 3 | Per-brand overrides: `Page::component()` looks in `projects/<p>/components/` first, then `components/`; move brand images to `projects/<p>/img/` | `lib/Page.php`, `projects/chime/*.json` |
+| 4 | JS hooks: add `data-js="…"` next to the classes the JS uses, switch the selectors, keep the classes for styling; move validation messages to `checkout.json → text` | `components/product/*`, `components/checkout/*`, `assets/product.js`, `assets/checkout.js` |
+| 5 | View models: move plan / savings / banner / per-day math out of the templates | `lib/View/ProductView.php`, `lib/View/CheckoutView.php`, `product.php`, `checkout.php`, `components/product/plans.php`, `components/checkout/order-summary.php` |
+| 6 | Multi-brand per request (host or funnel slug → project, `FUNNEL_PROJECT` as fallback); `"extends"` in `site.json` with a deep merge | `config.php`, `bootstrap.php`, `lib/Page.php` |
+| 7 | New features if needed: tracking pixels from `site.json → tracking` + JS events (`funnel:plan-selected`, `funnel:checkout-success`); coupons (new `submit.php` action) | new |
+
+JS hooks that must survive any redesign today (until phase 4):
+`product.js` — `.product-card[data-product|data-name|data-image]`, `.treat-card[data-treatment]`, `.plan`, plan radios
+`[data-price|data-months|data-label]`, `[data-buy]`, `.form-error`, `#buy-bar`, `#buy-bar-img|-name|-plan|-btn`, `.faq-item button`.
+`checkout.js` — `#checkout-form`, `#complete-btn`, `#billing-fields`, `input[name=billing_same]`, `[data-field]` + `.fq-error`,
+`.form-error`, and every field id (`shipping_*`, `billing_*`, `card_number`, `card_month`, `card_year`, `card_cvv`).
+The quiz markup is built in `assets/funnel.js`; restyle it through CSS.

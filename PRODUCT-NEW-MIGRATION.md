@@ -1,6 +1,6 @@
 # Chime Health GLP-1 funnel (rnad-v2): project overview + product page migration
 
-**Last updated:** 2026-09-25 · **Snapshot:** `rnad-v2/23-09-2026` + `Dynamic script` (API-driven rebuild)
+**Last updated:** 2026-09-28 · **Snapshot:** `rnad-v2/23-09-2026` + `Dynamic script` (API-driven rebuild)
 
 This document explains how the whole funnel works (quiz → product → checkout → verification → fulfilment) and what was done to replace the product page with the new design. It is written for developers who haven't seen the code yet.
 
@@ -152,10 +152,13 @@ Card data is only held in memory for the request and is never stored or logged.
 
 ### 0.7 Running it locally
 
+Full setup for a new developer (XAMPP, `.env`, database, safe local settings): `README.md`.
+
 1. `.env`: local DB (`FUNNEL_DB_*`), and `FUNNEL_PAYMENT_DRIVER=test` to check out with the test card **4111 2222 3333 4444** (any future expiry, any CVV) without Vrio.
 2. `php tools/check-integrations.php` — every line should be OK (or SKIP for what isn't configured).
 3. Run the quiz at `http://localhost/dscript/`, then check `storage/logs/lead-flow.log` and phpMyAdmin → `amerilean_dynamicdb` → `dynamic_remedy`.
 4. xverify, GHL, Vouched and (with `vrio`) Vrio are the **live** services, also from localhost: use test emails.
+   To turn one off locally, set its key to an empty quoted value in `.env` (`FUNNEL_GHL_TOKEN=''`); a bare `KEY=` keeps the `config.php` default.
 5. Test data usually fails the Vouched crosscheck (→ ID check page). To test `process.php` anyway: on that row set
    `vouched_crosscheck_persent = '85'`, `vouched_dob_status = '1'`, `info_vouched_status = 'success'`, then open `process.php`
    in the same browser tab.

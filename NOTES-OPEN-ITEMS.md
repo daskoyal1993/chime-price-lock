@@ -1,6 +1,6 @@
 # Open items — to discuss
 
-Items parked for later (last updated 2026-09-25). Each one says where it lives in the code, so it can be changed in one place.
+Items parked for later (last updated 2026-09-28). Each one says where it lives in the code, so it can be changed in one place.
 Overview of the whole build: `PRODUCT-NEW-MIGRATION.md` §0. Editing pages: `projects/README.md`.
 (This file is blocked from the web by `.htaccess`, like every `*.md`, and not uploaded by the deploy.)
 
@@ -163,6 +163,10 @@ body `{"data": EncodeDecodeHelper::encodeWithToken(payload, FUNNEL_TENANT_SECRET
 - `product_category` = `["weightloss", "antiaging"]` (`config.php → portal.product_category`, from the demo).
 - `crm_customer_id`: the pre-auth reply, else Vrio `GET /orders/{id}` (the demo's guessed endpoint, not verified against Vrio's docs).
 - A failed hand-off shows an error page with the order number and "Try again"; the portal rejects a repeated `crm_order_id`.
+- **Logging (2026-09-28):** the full payload (before signing) and the portal's reply are written to `storage/logs/lead-flow.log`
+  as `[PORTAL] SENT row #… order … offer/process payload: {…}` / `[PORTAL] REPLY … (HTTP …): …`, and to the PHP error log.
+  The payload is also saved in `portal_processed_payload`. It holds personal and health data — decide whether to keep full
+  payload logging after go-live or trim it to ids only.
 
 ## 15. Funnel credentials and the tenant secret key
 

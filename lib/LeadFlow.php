@@ -264,9 +264,9 @@ final class LeadFlow
             self::log($config, 'DB', false, $e->getMessage());
         }
 
-        error_log('[process] offer/process payload: ' . $json);
+        self::log($config, 'PORTAL', null, 'row #' . $row['id'] . ' order ' . $orderId . ' offer/process payload: ' . $json, 'SENT');
         $result = $portal->process($payload);
-        error_log('[process] offer/process response (HTTP ' . $result['status'] . '): ' . $result['raw']);
+        self::log($config, 'PORTAL', $result['success'], 'row #' . $row['id'] . ' order ' . $orderId . ' offer/process response (HTTP ' . $result['status'] . '): ' . $result['raw'], 'REPLY');
         try {
             $repo->markProcessed((int) $row['id'], $result['success'], $result['raw']);
         } catch (Throwable $e) {
@@ -557,10 +557,13 @@ final class LeadFlow
         return $answers;
     }
 
-    /** One line per step: "2026-09-24 12:00:00 [GHL] OK contact abc created …". Also sent to the PHP error log on failure. */
-    public static function log(array $config, string $service, ?bool $ok, string $message): void
+    /**
+     * One line per step: "2026-09-24 12:00:00 [GHL] OK contact abc created …". Also sent to the PHP error log on failure.
+     * $label replaces the OK / FAILED / SKIP word (e.g. SENT for the process.php payload).
+     */
+    public static function log(array $config, string $service, ?bool $ok, string $message, ?string $label = null): void
     {
-        $line = gmdate('Y-m-d H:i:s') . ' UTC [' . $service . '] ' . ($ok === null ? 'SKIP' : ($ok ? 'OK' : 'FAILED')) . ' ' . $message;
+        $line = gmdate('Y-m-d H:i:s') . ' UTC [' . $service . '] ' . ($label ?? ($ok === null ? 'SKIP' : ($ok ? 'OK' : 'FAILED'))) . ' ' . $message;
         if ($ok === false || $service === 'PORTAL') {   // process.php results always go to the PHP error log too
             error_log('[lead-flow] ' . $line);
         }
