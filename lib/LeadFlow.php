@@ -226,7 +226,8 @@ final class LeadFlow
             'gender'            => (string) ($quiz['gender'] ?? ''),
             'height'            => is_array($height) && is_numeric($height['feet'] ?? null) ? (int) $height['feet'] * 12 + (int) ($height['inches'] ?? 0) : null,
             'weight'            => is_numeric($quiz['weight'] ?? null) ? $quiz['weight'] + 0 : null,
-            'bmi'               => is_numeric($quiz['bmi'] ?? null) ? $quiz['bmi'] + 0 : null,
+            'target_weight'     => is_numeric($quiz['target_weight'] ?? null) ? $quiz['target_weight'] + 0 : null,   // goal weight (lbs); also in answers
+            'bmi'            => is_numeric($quiz['bmi'] ?? null) ? $quiz['bmi'] + 0 : null,
             'offer_funnel_slug' => (string) ($funnel['slug'] ?? ''),
             'crm_campaign_id'   => (string) ($record['order']['crm_campaign_id'] ?? $product['crm_campaign_id'] ?? ''),   // the campaign charged (prepaid after a retry)
             'source'            => (string) ($cfg['source'] ?? ''),
@@ -320,7 +321,8 @@ final class LeadFlow
             foreach ($step['questions'] as $q) {
                 $key = $q['key'];
                 if (in_array($key, $topLevel, true) || !array_key_exists($key, $quiz)) continue;
-                $answers[$key] = $quiz[$key];
+                // Weight answers (target_weight) as a number, like the top-level weight.
+                $answers[$key] = $q['type'] === 'weight' && is_numeric($quiz[$key]) ? $quiz[$key] + 0 : $quiz[$key];
             }
         }
         foreach ($consentKeys as $key) {

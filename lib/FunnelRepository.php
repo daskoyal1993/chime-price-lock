@@ -295,7 +295,8 @@ final class FunnelRepository
             $condition = [
                 'key'        => (string) ($c['dependent_question_key'] ?? ''),
                 'operator'   => (string) ($c['operator'] ?? 'equal_to'),
-                'value'      => (string) ($c['value'] ?? ''),
+                // Some funnels leave "value" empty and put the answer in dependent_option_value (r4mf-v1: target_weight ← product_pick).
+                'value'      => (string) (($c['value'] ?? '') !== '' ? $c['value'] : ($c['dependent_option_value'] ?? '')),
                 'visibility' => (string) ($c['visibility'] ?? 'show'),
             ];
             $conditions[implode("\x1F", $condition)] = $condition;
