@@ -117,7 +117,10 @@ Live since 2026-09-25 (`HTTP 200 order_id=4450`). `lib/VrioClient.php → author
 - **Offers:** one offer per order (the chosen plan, quantity 1); the demo could send several. `offer_funnel_slug` is the funnel's `slug`
   (`chime-main`), the demo sent `"chime-main"` too.
 
-## 10. Checkout "As low as $x/day" uses `display_price`
+## 10. Checkout "As low as $x/day" — RESOLVED 2026-09-29
+
+Now the **charged price** ÷ (30 × months): monthly $299 → $9.97/day, 4M $747 → $6.23/day (`checkout.php`). The history below is kept
+for reference; `display_price` is no longer used on checkout.
 
 The order summary shows the variant's `display_price` (funnel JSON) ÷ (30 × months) (`checkout.php`). On most plans `display_price`
 differs from the charged price, so e.g. "Total Due Today $129 · Just $5.97/day" doesn't add up ($5.97 × 30 = $179):

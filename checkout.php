@@ -18,18 +18,15 @@ FlowTracker::hit($config, $funnel['slug'], 'checkout', 'checkout', FlowTracker::
 
 $order   = $record['product'];
 $product = null;
-$variant = null;
 foreach (offer_funnel($funnel, $record, $config)['products'] as $p) {
     if ($p['id'] === $order['product_id']) {
         $product = $p;
-        foreach ($p['variants'] as $v) {
-            if ($v['id'] === $order['variant_id']) $variant = $v;
-        }
     }
 }
-// "As low as $x/day": the variant's display_price (funnel JSON) over 30 days per month — 1M ÷ 30, 3M ÷ 90, 6M ÷ 180.
+// "As low as $x/day": the price charged for the chosen plan over 30 days per month — 1M ÷ 30, 2M ÷ 60, 3M ÷ 90, 6M ÷ 180
+// (e.g. monthly $299 → $9.97/day). Not the funnel's display_price, which is a different ("was") price.
 $days = 30 * max(1, (int) $order['months']);
-$shownPrice = $variant['display_price'] ?? $order['price'];
+$shownPrice = (float) $order['price'];
 
 $states = [];
 foreach ($funnel['steps'] as $step) {
