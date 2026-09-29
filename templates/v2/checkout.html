@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--
+  Sample designer template for the checkout (shaped like chime-project.github.io/Site/choose-treatment/checkout/).
+  Plain HTML/CSS. Form fields are found by their NAME; the order summary and brand parts by STANDARD CLASSES —
+  see docs/TEMPLATES.md → Checkout. Promo code, express checkout and the review carousel are left out on purpose
+  (they need functionality we don't have yet).
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout | Chime Health</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+
+<header class="v2-header">
+    <a class="link-home"><img class="site-logo" src="img/logo.png" alt="Chime Health"></a>
+    <p class="co2-help">Questions? Call us<br><a class="site-phone">1-XXX-XXX-XXXX</a></p>
+</header>
+
+<nav class="v2-steps" aria-label="Progress">
+    <span class="v2-step is-done">Quiz</span>
+    <span class="v2-step-line"></span>
+    <span class="v2-step is-done">Shipping</span>
+    <span class="v2-step-line"></span>
+    <span class="v2-step is-current">Payment</span>
+</nav>
+
+<main class="co2-layout">
+
+    <!-- ============ left: the form ============ -->
+    <form class="checkout-form co2-form">
+        <h2 class="co2-h">Shipping Information</h2>
+        <div class="co2-grid">
+            <div class="field"><label>First name</label><input name="shipping_first_name" autocomplete="given-name"></div>
+            <div class="field"><label>Last name</label><input name="shipping_last_name" autocomplete="family-name"></div>
+            <div class="field co2-full"><label>Address line 1</label><input name="shipping_address1" autocomplete="address-line1"></div>
+            <div class="field co2-full"><label>Address line 2</label><input name="shipping_address2" autocomplete="address-line2" placeholder="Apt., suite, unit number, etc. (optional)"></div>
+            <div class="field co2-full"><label>City</label><input name="shipping_city" autocomplete="address-level2"></div>
+            <div class="field"><label>State</label><select name="shipping_state" autocomplete="address-level1"><option value="">Select</option><option>FL</option></select></div>
+            <div class="field"><label>ZIP code</label><input name="shipping_zip" inputmode="numeric" autocomplete="postal-code" maxlength="5"></div>
+            <div class="field co2-full"><label>Phone number</label><div class="co2-phone"><span>🇺🇸 +1</span><input name="shipping_phone" type="tel" autocomplete="tel-national"></div></div>
+            <div class="field co2-full"><label>Email</label><input name="shipping_email" type="email" autocomplete="email"></div>
+        </div>
+
+        <h2 class="co2-h">Payment Method</h2>
+        <p class="co2-muted">All transactions are secure and encrypted.</p>
+        <div class="co2-card">
+            <div class="field co2-full"><label>Card number</label><input name="card_number" inputmode="numeric" autocomplete="cc-number" placeholder="1234 1234 1234 1234" maxlength="23"></div>
+            <div class="co2-grid">
+                <div class="field"><label>Expiration date</label><input name="card_expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7"></div>
+                <div class="field"><label>Security code</label><input name="card_cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="CVC" maxlength="4"></div>
+            </div>
+            <p class="co2-muted">By subscribing, you authorize <span class="site-name">Chime Health</span> to charge you according to the terms until you cancel.</p>
+        </div>
+
+        <ul class="co2-ticks">
+            <li>Provider review required before fulfillment</li>
+            <li>You won't be charged if not approved</li>
+            <li>Most orders move to shipping within 4-6 hours</li>
+        </ul>
+
+        <p class="checkout-error co2-error"></p>
+        <button class="checkout-cta co2-cta"><span class="checkout-cta-label">Complete Intake &amp; Checkout</span><small>Backed by Chime Health Weight Loss Warranty</small></button>
+
+        <p class="co2-legal">By continuing, you authorize a one-time charge today for your selected plan. You acknowledge and agree to
+            <span class="site-name">Chime Health</span>'s <a class="link-telehealth">Telehealth Consent</a>, <a class="link-privacy">Privacy Policy</a>,
+            and <a class="link-terms">Terms of Service</a>, and understand that services are provided via telehealth by licensed providers.</p>
+
+        <div class="co2-guarantee">
+            <p class="co2-guarantee-title"><span class="site-name">Chime Health</span> Care Guarantee</p>
+            <p>We're confident you'll reach your weight loss goals. If you don't, we'll refund you — no runaround.</p>
+        </div>
+    </form>
+
+    <!-- ============ right: the order summary ============ -->
+    <aside class="co2-side">
+        <p class="co2-crumbs"><a class="link-product">Choose</a> › <strong>Checkout</strong></p>
+        <h2 class="co2-h">Order Summary</h2>
+
+        <div class="co2-summary">
+            <p class="co2-fsa">✓ FSA/HSA eligible for reimbursement</p>
+            <div class="co2-product">
+                <div class="order-image"><img src="img/vial.png" alt=""></div>
+                <div>
+                    <p class="co2-product-name"><span class="order-name">Semaglutide</span> <span class="order-plan">3-Month Plan</span></p>
+                    <span class="co2-chip if-badge"><span class="order-badge">Most Affordable</span></span>
+                </div>
+                <p class="co2-day"><small>As low as</small><strong class="order-per-day">$3.97</strong><small>/day</small></p>
+            </div>
+
+            <ul class="co2-checks">
+                <li class="if-monthly">Flexible month-to-month</li>
+                <li>Clinically proven</li>
+                <li>Results or you don't pay</li>
+                <li>No long-term commitment</li>
+            </ul>
+            <p class="co2-note"><strong>Same price for the life of your plan</strong>, no month-2 increases or future price hikes.</p>
+
+            <dl class="co2-lines">
+                <div><dt><span class="order-plan">3-Month</span> Treatment Package<small class="if-multi-month">One-time payment · covers <span class="order-months">3</span> months of medication</small></dt><dd class="order-price">$357</dd></div>
+                <div class="if-bonus"><dt>Bonus: <span class="order-bonus-name">NAD+</span></dt><dd><s class="order-bonus-value">$299</s> FREE</dd></div>
+                <div><dt>Care Coordination Fee</dt><dd class="co2-free">FREE</dd></div>
+                <div><dt>Overnight Shipping</dt><dd><s>$19.99</s> <span class="co2-free">FREE</span></dd></div>
+                <div><dt>Protected by Weight Loss Warranty</dt><dd class="co2-free">Activated</dd></div>
+            </dl>
+
+            <div class="co2-total"><p>Total Due Today</p><p><strong class="order-total">$357</strong><small><span class="order-per-day">$3.97</span>/day</small></p></div>
+            <p class="co2-delivery"><strong>FedEx</strong> Est. Delivery: <strong>Within 48 Hours</strong></p>
+
+            <div class="co2-benefits">
+                <p class="co2-benefits-title">Your all-inclusive plan includes upgraded benefits:</p>
+                <ul>
+                    <li class="included-item"><span class="included-icon"><img src="img/icon.png" alt=""></span><span class="included-text">Unlimited Video Calls With Clinicians</span><span class="co2-value"><s class="included-value">$129</s> FREE</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <p class="co2-members">Join <strong class="site-members">200,000+</strong> weight loss members · Excellent <span class="site-rating">4.7</span></p>
+    </aside>
+</main>
+
+<footer class="v2-footer">
+    <p><a class="link-privacy">Privacy Policy</a> · <a class="link-terms">Terms</a> · <a class="link-refund">Refund Policy</a></p>
+    <p>© <span class="site-year">2026</span> <span class="site-name">Brand</span></p>
+</footer>
+</body>
+</html>

@@ -71,8 +71,8 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `lib/FunnelRules.php` | Server copy of the rules: age, BMI + rating, show/hide conditions, per-type validation (incl. **target weight** below the current weight and BMI ≥ 18.5), disqualifying options. |
 | `lib/Screens.php` | Splits the API steps into screens (plan in `index.json → screens`, the rest grouped automatically). |
 | `lib/view.php` | HTML helpers, `product_look()`, plan months, sellable/featured variants. |
-| `lib/Page.php` + `components/` | JSON-driven pages: head (styles, theme colors), header, sections, footer. `design_attrs()` = class + `data-design-id` for the design layer. |
-| `lib/Design.php` + `designs/` + `assets/design-manager.js` | Design layer: the active design (`site.json → design`, `FUNNEL_DESIGN`, `?design=` preview) adds body classes, classes per `data-design-id`, `design.css`, and component variants — without changing the HTML or any logic. Guide: `docs/NEW-DESIGN.md`. |
+| `lib/Page.php` + `components/` | JSON-driven pages: head (styles, theme colors), header, sections, footer. |
+| `lib/Template.php` + `templates/` | HTML templates: a designer's `templates/<name>/product.html` filled with live data by standard class (products, plans, prices, brand); `site.json → "template"` switches it on, `?template=` previews. Guide: `docs/TEMPLATES.md`. |
 | `lib/LeadRepository.php` | The `dynamic_remedy` row: insert/update, quiz JSON merge, Vrio ids, checkout (address, `purchased`, `vrio_order_id`), Vouched results, ID check, `customer_id`, portal payload / response / `processed`. |
 | `lib/LeadFlow.php` | The steps and their log: lead save (MEMBERSHIP → DB → VRIO prospect → GHL, consent timestamps, GHL custom fields incl. id lookup), `checkout()` (DB + GHL), `identity()` (Vouched), `process()` (portal payload + hand-off), `portalLink()` (GHL). |
 | `lib/Membership.php` + `sample-api/membership-check.php` | Membership check (placeholder: sample returns `false`). `sample-api/` is blocked on the live site. |
@@ -95,7 +95,7 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `legal.php` | Legal pages `legal.php?page=<key>`: list in `projects/<project>/legal.json`, content in `projects/<project>/legal/<key>.html`; linked from the footer and the checkout agreement text. |
 | `process.php` | Order hand-off to the portal (like `demo/process/process.php`); verified in the session **or on the DB row**; success → portal `redirect_url`, failure → error page. |
 | `thank-you.php` | Order confirmation (not in the flow for now). |
-| `database/` | `001_create_dynamic_remedy.sql` (fresh install), `002_upgrade_dynamic_remedy.sql` (existing table). The Vouched / portal columns are already in 001. `003_create_flow_tracking.sql`: progress tracking tables (`lib/FlowTracker.php`, see `README.md`). |
+| `database/` | `001_create_dynamic_remedy.sql`: one file for a fresh install **and** for upgrading an old demo-dump table (safe to run again; MySQL 8 + MariaDB). The Vouched / portal columns are in it. `004_create_error_logs.sql`: QA error log. `003_create_flow_tracking.sql`: progress tracking tables (`lib/FlowTracker.php`, see `README.md`). |
 | `tools/check-integrations.php` | CLI check: DB, GHL (read-only), Vrio settings, membership. Run it in cPanel → Terminal: `php tools/check-integrations.php`. |
 | `demo/` | Reference code from the live site. Not used at runtime; blocked from the web; not deployed. Files with hardcoded keys (`check-custom-field.php`, `identity_verify.php`, `idcheck*.php`, `process/`) are in `.gitignore`. |
 | `.github/workflows/deploy.yml` | Deploy: every push to `main` uploads the changed files to cPanel over FTPS (skips `.env`, `storage/logs`, `storage/cache`, `demo/`, `database/`, `*.md`). |
@@ -179,7 +179,7 @@ Full setup for a new developer (XAMPP, `.env`, database, safe local settings): `
    `FUNNEL_TENANT_SECRET_KEY` (Portal → Site Settings → Secret Key; signs the portal payload),
    `FUNNEL_PORTAL_API_KEY` (portal `X-API-Key`). Before real customers: `FUNNEL_TEST_CARD=''`.
    Don't copy the local `.env` to the server (its `FUNNEL_DB_USER=root` would override the live DB login).
-3. `storage/logs/` must be writable (755/775). The DB tables: import `database/001…` (and `002…`) in the server's phpMyAdmin, and `003_create_flow_tracking.sql` for progress tracking (until it is imported, tracking logs `[TRACK] FAILED` and the funnel carries on).
+3. `storage/logs/` must be writable (755/775). The DB tables: import `database/001_create_dynamic_remedy.sql` in the server's phpMyAdmin (creates or upgrades the lead table), `004_create_error_logs.sql` (QA error log), and `003_create_flow_tracking.sql` for progress tracking (until it is imported, tracking logs `[TRACK] FAILED` and the funnel carries on).
 
 ### 0.9 Still to do
 

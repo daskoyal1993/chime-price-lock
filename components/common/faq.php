@@ -1,6 +1,7 @@
 <?php defined('FUNNEL_APP') || exit; // rendered by Page::component()
 /**
  * FAQ accordion (opened/closed by product.js — any page using it must load that script or add its own).
+ * Standard classes: .faq-item → .faq-question (button, aria-controls = the answer's id) + .faq-answer
  * Settings: title, text, items[{q, a}].
  */
 ?>
@@ -11,7 +12,7 @@
         <div class="faq-list">
             <?php foreach ($s['items'] ?? [] as $i => $item): ?>
                 <div class="faq-item">
-                    <h3><button type="button" aria-expanded="false" aria-controls="faq-<?= $i ?>"><?= e($item['q']) ?><?= icon('plus') ?></button></h3>
+                    <h3><button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-<?= $i ?>"><?= e($item['q']) ?><?= icon('plus') ?></button></h3>
                     <div class="faq-answer" id="faq-<?= $i ?>" hidden><p><?= e($item['a']) ?></p></div>
                 </div>
             <?php endforeach; ?>

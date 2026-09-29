@@ -2,6 +2,7 @@
 /**
  * Product hero: "Today / With …" figures from the visitor's answers, stats, and the treatment picker.
  * Needs $ctx['answers'] and $ctx['products'] (sellable_products()).
+ * Treatment picker: .product-picker-item[data-product] (= the product card's data-product) — used by product.js.
  * Settings: title_plain, title_brand, subtitle_html, bonus_pill_html, figures{female,male}{start,end}, labels{…},
  *           projected_loss_pct, stats[], treatments_title, price_from_html, footnote.
  */
@@ -19,7 +20,7 @@ usort($treats, static function ($x, $y) {
     return (int) $y['look']['featured'] <=> (int) $x['look']['featured'];
 });
 ?>
-<section <?= design_attrs('product-hero', 'pp-hero', $s) ?>>
+<section class="<?= cls('pp-hero', $s) ?>">
     <div class="wrap">
         <h1 class="pp-hero-title"><?= e($s['title_plain'] ?? '') ?> <span class="brand"><?= e($s['title_brand'] ?? '') ?></span></h1>
         <p class="pp-hero-sub"><?= $s['subtitle_html'] ?? '' ?></p>
@@ -56,7 +57,7 @@ usort($treats, static function ($x, $y) {
                 <h2 class="treat-title"><?= e($s['treatments_title'] ?? '') ?></h2>
                 <div class="treat-list">
                     <?php foreach ($treats as $item): $look = $item['look']; ?>
-                        <button type="button" class="treat-card" data-treatment="<?= e($look['keyword']) ?>" aria-pressed="false">
+                        <button type="button" class="treat-card product-picker-item" data-product="<?= e($look['keyword']) ?>" aria-pressed="false">
                             <img src="<?= asset($look['image']) ?>" alt="">
                             <span class="treat-body">
                                 <span class="treat-name"><?= e($look['title']) ?></span>

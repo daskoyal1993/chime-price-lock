@@ -49,7 +49,7 @@ if (trim((string) $db['host']) === '' || trim((string) $db['name']) === '') {
         $need = ['id', 'firstName', 'lastName', 'email', 'phone', 'source', 'tags', 'quiz', 'address1', 'postalCode', 'city', 'state', 'prospectid', 'vrio_order_id', 'affid', 'c1', 'purchased', 'timing', 'updated_at'];
         $missing = array_diff($need, array_keys($cols));
         if ($missing) {
-            $line('DB', false, "table `{$table}` is missing: " . implode(', ', $missing) . ' → run database/002_upgrade_dynamic_remedy.sql');
+            $line('DB', false, "table `{$table}` is missing: " . implode(', ', $missing) . ' → run database/001_create_dynamic_remedy.sql (it upgrades an existing table)');
         } else {
             $isJson = strpos($cols['quiz'], 'json') !== false || strpos($cols['quiz'], 'longtext') !== false;
             $line('DB', $isJson ? true : false, "table `{$table}` has all columns; quiz is {$cols['quiz']}" . ($isJson ? '' : ' → should be json (run 002)'));

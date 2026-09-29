@@ -199,6 +199,8 @@
     "bar_plan": "{plan} · {price} today",
     "bar_buy": "Buy Now",
     "bar_choose": "Choose plan",
+    "price": "{price} due today",
+    "per_day": "· {per_day}/day",
     "error": "Something went wrong. Please try again.",
     "offline": "We could not reach the server. Check your connection and try again."
   }

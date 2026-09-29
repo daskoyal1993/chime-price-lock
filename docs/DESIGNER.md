@@ -10,7 +10,7 @@ Everything you need is in four places:
 | Styling | `assets/css/common.css` (all pages) and `quiz.css`, `product.css`, `checkout.css` |
 | Section HTML (layout of one block) | `components/<group>/<name>.php` — with the rules in "Don't break" below |
 | Images | `assets/img/` (shared) or `projects/chime/img/` (this brand only) |
-| **A new design** (extra classes + CSS, component variants) | `designs/<design>/config.json` + `design.css` — see "Design layer" |
+| **A whole new page design as plain HTML** (product and checkout pages) | `templates/<name>/product.html` + css/img — see **[`TEMPLATES.md`](TEMPLATES.md)** |
 | Legal pages (privacy, terms, …) | `projects/chime/legal/<page>.html` |
 
 Setup on your PC: follow `README.md` → "Local setup" once (XAMPP + clone). Then open `http://localhost/dscript/`.
@@ -34,67 +34,6 @@ The product and checkout pages need a finished quiz in the same browser; the ID 
 a test order (ask a developer for a test run, or use the test card from `README.md`).
 
 ---
-
-## Design layer (new designs without rewriting HTML) — `designs/`
-
-Step-by-step guide for a client's new design: **[`NEW-DESIGN.md`](NEW-DESIGN.md)**.
-
-A design only **adds** classes and CSS to the existing HTML, or swaps one component for a variant. Behaviour (plans, checkout,
-payments, CRM) is untouched.
-
-```
-designs/
-├── default/     config.json (adds nothing) + design.css (empty)
-└── chime-v2/    example: product page (hero, product section, product cards)
-    ├── config.json
-    └── design.css
-```
-
-**`config.json`**
-```json
-{
-  "extends": "default",
-  "bodyClass": "theme-v2",
-  "classes": { "product-card": "modern-card" },
-  "pages": {
-    "product": {
-      "bodyClass": "product-v2",
-      "classes": { "product-hero": "hero-v2 rounded-section", "product-plans": "plans-v2", "product-card": "modern-card" }
-    }
-  },
-  "components": { "product/hero": "product/hero-v2" }
-}
-```
-- `bodyClass` → `<body>` on every page; `pages.<page>.bodyClass` → one page (`product`, `checkout`, `index`, `idcheck`, …).
-  The body also gets `design-<name>`.
-- `classes` / `pages.<page>.classes` → added to the element with that **`data-design-id`**. The original classes stay.
-- `components` → render another template (level 2/3, below). A missing variant falls back to the original.
-- `design.css` is loaded after the page CSS. **Scope every rule** to the design's classes (`.product-v2 .modern-card { … }`),
-  so nothing leaks into other designs. CSS variables (`--brand`, `--radius`, …) can be changed under `.theme-v2`.
-
-**Elements with a `data-design-id`** (added with `design_attrs()` in the component):
-
-| data-design-id | Element | Component |
-|---|---|---|
-| `product-hero` | hero section | `components/product/hero.php` |
-| `product-plans` | products + plans section | `components/product/plans.php` |
-| `product-card` | each product card | `components/product/plans.php` |
-
-More ids are added as pages are migrated: `<section <?= design_attrs('checkout-form', 'co-main', $s) ?>>` instead of
-`<section class="<?= cls('co-main', $s) ?>">`. Ids are lowercase, `<page>-<part>`, and never change once used.
-
-**Choosing the design:** `site.json → "design": "chime-v2"`, or `FUNNEL_DESIGN=chime-v2` in `.env` (wins).
-**Preview** without switching: `product.php?design=chime-v2` (kept for your browser session; `?design=off` ends it; not on live).
-
-**Three levels — use the smallest that works:**
-1. **Styling change** → classes in `config.json` + `design.css`. No HTML change.
-2. **Component variation** (a block needs different markup) → copy the component to `components/<group>/<name>-v2.php`, change the
-   markup (keep ids / `data-*` / JS classes — "Don't break" above), map it in `"components"`.
-3. **Completely different layout** → new `-v2` components for the page, listed in `"components"` (or a page JSON that uses them).
-   No JavaScript that moves or rebuilds the page.
-
-`assets/design-manager.js` applies the same classes to HTML the browser creates later (quiz screens). PHP adds them on
-render, so there is no flash of the old design.
 
 ## Rebranding (logo, colors, fonts)
 
@@ -138,14 +77,48 @@ render, so there is no flash of the old design.
 
 ---
 
+## Product page: standard classes
+
+The product page's JavaScript (`assets/product.js`) finds everything by these class names — never by position in the HTML.
+**A new product page design can use any HTML/layout, as long as these classes (and the data-* on them) are there.**
+The old design classes (`pc-title`, `plan`, `btn-choose` …) sit next to them only for the current CSS; a new design may drop them.
+
+| Standard class | Element | Filled with (source) | Filled by |
+|---|---|---|---|
+| `.product-card` | one product (wrapper) | `data-product` = keyword, `data-name` = product name, `data-image` = image URL, `data-product-id` (funnel API + `site.json → products`) | PHP |
+| `.product-image` | product image | product image (`site.json → products.<keyword>.image`) | PHP |
+| `.product-details` | wrapper for name, content, options, action | — | PHP |
+| `.product-name` | product name | funnel API product `name` | PHP |
+| `.product-content` | description | `product.json → card.sub` / `sub_with_bonus` | PHP |
+| `.product-options` | the list of plans | — | PHP |
+| `.product-option` | one plan (gets `.is-checked` when chosen) | plan name, price, per month, banner (`product.json → plan`) | PHP; class by JS |
+| `.product-option-input` | the plan's radio input | `value` = variant id, `data-price`, `data-months`, `data-label`, `data-per-day` (price ÷ 30 × months) | PHP |
+| `.product-pricing` | price summary (hidden until a plan is picked) | — | JS shows it |
+| `.product-price` | chosen plan's price | `product.json → text.price` ("{price} due today") | JS |
+| `.product-price-per-day` | chosen plan's price per day | `product.json → text.per_day` ("· {per_day}/day") | JS |
+| `.product-action` | wrapper for the button + message | — | PHP |
+| `.product-cta` | "Choose a plan length" / "Continue with …" button (buys the chosen plan) | `product.json → text.choose_plan`, `continue` | JS |
+| `.product-error` | error message under the button | the server's message | JS |
+| `.product-info` | additional information (included list) | `site.json → included`, `bonus` | PHP |
+| `.product-picker-item` | treatment picker button in the hero (gets `.is-selected`) | `data-product` = the card's `data-product` | PHP; class by JS |
+| `.buy-bar` → `.buy-bar-image`, `.buy-bar-name`, `.buy-bar-plan`, `.buy-bar-cta` | sticky bar at the bottom | chosen product + plan (`text.bar_plan`, `bar_buy`, `bar_choose`) | JS |
+| `.faq-item` → `.faq-question` (button, `aria-controls` = answer id) + `.faq-answer` | FAQ | `product.json → faq.items` | PHP; open/close by JS |
+
+State classes the script sets (style them, don't rename them): `.product-card.is-active`, `.product-option.is-checked`,
+`.product-picker-item.is-selected`, `body.has-buy-bar`.
+
+Rules: one `.product-card` per product; inside it one `.product-option-input` per plan (radios with the same `name`); one
+`.product-cta`. Several `.product-cta` in a card are fine (each buys the card's chosen plan). Prices, plans and ids always
+come from PHP (the funnel API) — the HTML only decides where they appear. If a new design needs another piece of data on
+the page, ask a developer to add it to the component (and a `data-*` if JS needs it).
+
 ## Don't break (the funnel's JavaScript and forms depend on these)
 
 - **Keep ids, `data-*` attributes and these classes** when you change component HTML (each component's header comment lists what it needs):
-  - Product (`product.js`): `.product-card` + `data-product` / `data-name` / `data-image`, `.treat-card` + `data-treatment`,
-    `.plan`, the plan radio inputs with `data-price` / `data-months` / `data-label`, `[data-buy]`, `.form-error`,
-    `#buy-bar`, `#buy-bar-img`, `#buy-bar-name`, `#buy-bar-plan`, `#buy-bar-btn`, `.faq-item button`.
-  - Checkout (`checkout.js`): `#checkout-form`, `#complete-btn`, `#billing-fields`, `input[name=billing_same]`,
-    `[data-field]` + `.fq-error`, `.form-error`, and every field id (`shipping_*`, `billing_*`, `card_number`, `card_month`, `card_year`, `card_cvv`).
+  - Product (`product.js`): only the **standard classes** in "Product page: standard classes" below.
+  - Checkout (`checkout.js`): the form `.checkout-form`, every field's **name** (`shipping_*`, `billing_*`, `card_number`,
+    `card_month` + `card_year` or `card_expiry`, `card_cvv`, `billing_same`), `.field` + `.field-error`, `.billing-fields`,
+    `.checkout-cta` (+ `.checkout-cta-label`), `.checkout-error` — see `TEMPLATES.md` → Checkout.
   - ID check: `#vouched-element`, `#idcheck-failed`, `#idcheck-retry`.
 - The **quiz HTML is built by `assets/funnel.js`** — restyle it with `quiz.css` only.
 - **Don't edit:** `lib/`, `submit.php`, `config.php`, `.env`, `assets/*.js` (ask a developer), `data/` (funnel data), `database/`.

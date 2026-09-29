@@ -7,7 +7,7 @@ from the web by `.htaccess` and never uploaded by the deploy.
 |---|---|---|
 | **Developer** | [`DEVELOPER.md`](DEVELOPER.md) | architecture, flow, files, integrations, payments, tracking, logs, testing, deploy, Git workflow |
 | **Designer** | [`DESIGNER.md`](DESIGNER.md) | which files to edit for text, images, colors, fonts, layout; rules that keep the funnel working; your Git branch |
-| **Implementing a client's new design** | [`NEW-DESIGN.md`](NEW-DESIGN.md) | step by step: design folder, preview, classes + CSS, component variants, testing, going live, rollback |
+| **Uploading a new design as HTML** | [`TEMPLATES.md`](TEMPLATES.md) | template folder, preview / switch / roll back, the standard classes that get live data, example |
 | **Anyone setting up a PC** | [`../README.md`](../README.md) | install XAMPP, clone, `.env`, database, first run |
 | **QA** | QA test plan (shared as a PDF / doc outside the repo) | test cases per page |
 
@@ -23,5 +23,5 @@ Reference files (kept where they are):
 
 **Keeping docs current:** a change that alters behaviour updates the matching doc in the same commit
 (new setting → `README.md` + `DEVELOPER.md`; new page / section / CSS rule → `DESIGNER.md` + `projects/README.md`;
-new `data-design-id` → the table in `NEW-DESIGN.md` §10;
+new standard class → `TEMPLATES.md` (and `DESIGNER.md` for the normal pages);
 a decision still open → `NOTES-OPEN-ITEMS.md`).

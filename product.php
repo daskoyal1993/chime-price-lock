@@ -1,6 +1,7 @@
 <?php
 /**
- * Product page. Layout, text and images: projects/<project>/product.json (sections → components/).
+ * Product page. Layout, text and images: projects/<project>/product.json (sections → components/),
+ * or a designer's HTML template filled by lib/Template.php (templates/<name>/product.html, site.json → "template").
  * Product cards + plan rows come from the API; the hero uses the visitor's answers.
  */
 require __DIR__ . '/bootstrap.php';
@@ -21,4 +22,9 @@ $ctx  = [
 ];
 $boot = ['submitUrl' => 'submit.php', 'csrf' => $_SESSION['funnel_csrf'], 'text' => $page['text']];
 
+// A designer's HTML template (templates/<name>/product.html, site.json → "template") — else the normal page.
+if ($template = Template::active($config, 'product')) {
+    Template::product($template, $ctx, $page, $boot);
+    exit;
+}
 render_page($page, $ctx, ['assets/product.js'], $boot);

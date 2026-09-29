@@ -1,7 +1,9 @@
 <?php defined('FUNNEL_APP') || exit; // rendered by Page::component()
 /**
  * Checkout form: shipping (prefilled from the quiz), billing toggle, card fields, legal text, warranty.
- * Field ids / data-field names are used by checkout.js and submit.php — only the labels are configurable.
+ * Standard names (checkout.js uses ONLY these — keep them in any new HTML): the form .checkout-form; every input/select by
+ * its name (shipping_first_name … card_cvv, billing_same); each in a .field with a .field-error; .billing-fields;
+ * button .checkout-cta (text in .checkout-cta-label); .checkout-error. Full list: docs/TEMPLATES.md → Checkout.
  * Needs $ctx['answers'] and $ctx['states'].
  * Settings: headings{}, labels{field_id: label}, billing{}, card{}, button, legal_html, warranty{}.
  */
@@ -22,21 +24,21 @@ $field = static function (string $id, string $value = '', array $attrs = []) use
     foreach ($attrs as $k => $val) {
         $extra .= ' ' . $k . '="' . e($val) . '"';
     }
-    echo '<div class="co-field" data-field="' . e($id) . '"><label for="' . e($id) . '">' . e($label) . '</label>'
-        . '<input id="' . e($id) . '" class="co-input" value="' . $value . '" placeholder="' . e($label) . '"' . $extra . '>'
-        . '<p class="fq-error" hidden></p></div>';
+    echo '<div class="co-field field" data-field="' . e($id) . '"><label for="' . e($id) . '">' . e($label) . '</label>'
+        . '<input id="' . e($id) . '" name="' . e($id) . '" class="co-input" value="' . $value . '" placeholder="' . e($label) . '"' . $extra . '>'
+        . '<p class="fq-error field-error" hidden></p></div>';
 };
 $state = static function (string $id, string $selected) use ($states, $lbl): void {
-    echo '<div class="co-field" data-field="' . e($id) . '"><label for="' . e($id) . '">' . e($lbl['state'] ?? 'State') . '</label><div class="select-wrap">'
-        . '<select id="' . e($id) . '" class="co-input" autocomplete="address-level1"><option value="">' . e($lbl['state_placeholder'] ?? '') . '</option>';
+    echo '<div class="co-field field" data-field="' . e($id) . '"><label for="' . e($id) . '">' . e($lbl['state'] ?? 'State') . '</label><div class="select-wrap">'
+        . '<select id="' . e($id) . '" name="' . e($id) . '" class="co-input" autocomplete="address-level1"><option value="">' . e($lbl['state_placeholder'] ?? '') . '</option>';
     foreach ($states as $st) {
         echo '<option value="' . e($st) . '"' . ($st === $selected ? ' selected' : '') . '>' . e($st) . '</option>';
     }
-    echo '</select>' . select_arrow() . '</div><p class="fq-error" hidden></p></div>';
+    echo '</select>' . select_arrow() . '</div><p class="fq-error field-error" hidden></p></div>';
 };
 ?>
 <div class="<?= cls('co-main', $s) ?>">
-    <form id="checkout-form" class="co-form" novalidate>
+    <form id="checkout-form" class="co-form checkout-form" novalidate>
         <h1 class="co-h"><?= e($h['shipping'] ?? '') ?></h1>
         <div class="co-grid">
             <?php $field('shipping_first_name', $v('first_name'), ['autocomplete' => 'given-name']); ?>
@@ -57,7 +59,7 @@ $state = static function (string $id, string $selected) use ($states, $lbl): voi
             <label><input type="radio" name="billing_same" value="1" checked> <?= e($bill['yes'] ?? 'Yes') ?></label>
             <label><input type="radio" name="billing_same" value="0"> <?= e($bill['no'] ?? 'No') ?></label>
         </fieldset>
-        <div class="co-grid" id="billing-fields" hidden>
+        <div class="co-grid billing-fields" id="billing-fields" hidden>
             <?php $field('billing_first_name', '', ['autocomplete' => 'billing given-name']); ?>
             <?php $field('billing_last_name', '', ['autocomplete' => 'billing family-name']); ?>
             <?php $field('billing_address1', '', ['autocomplete' => 'billing address-line1']); ?>
@@ -68,27 +70,27 @@ $state = static function (string $id, string $selected) use ($states, $lbl): voi
 
         <h2 class="co-h"><?= e($h['payment'] ?? '') ?></h2>
         <p class="co-muted"><?= e($card['note'] ?? '') ?></p>
-        <div class="co-field" data-field="card_number">
+        <div class="co-field field" data-field="card_number">
             <label for="card_number"><?= e($card['number_label'] ?? '') ?></label>
-            <input id="card_number" class="co-input" inputmode="numeric" autocomplete="cc-number" placeholder="<?= e($card['number_placeholder'] ?? '') ?>" maxlength="23">
-            <p class="fq-error" hidden></p>
+            <input id="card_number" name="card_number" class="co-input" inputmode="numeric" autocomplete="cc-number" placeholder="<?= e($card['number_placeholder'] ?? '') ?>" maxlength="23">
+            <p class="fq-error field-error" hidden></p>
         </div>
         <div class="co-grid co-grid-3">
-            <div class="co-field" data-field="card_month"><label for="card_month"><?= e($card['expiry_label'] ?? '') ?></label><div class="select-wrap">
-                <select id="card_month" class="co-input" autocomplete="cc-exp-month"><option value=""><?= e($card['month_placeholder'] ?? '') ?></option>
+            <div class="co-field field" data-field="card_month"><label for="card_month"><?= e($card['expiry_label'] ?? '') ?></label><div class="select-wrap">
+                <select id="card_month" name="card_month" class="co-input" autocomplete="cc-exp-month"><option value=""><?= e($card['month_placeholder'] ?? '') ?></option>
                     <?php for ($m = 1; $m <= 12; $m++): ?><option value="<?= $m ?>">(<?= sprintf('%02d', $m) ?>) <?= date('F', mktime(0, 0, 0, $m, 1)) ?></option><?php endfor; ?>
-                </select><?= select_arrow() ?></div><p class="fq-error" hidden></p></div>
-            <div class="co-field" data-field="card_year"><label for="card_year" class="sr-only"><?= e($card['year_label'] ?? '') ?></label><span class="co-label-spacer" aria-hidden="true">&nbsp;</span><div class="select-wrap">
-                <select id="card_year" class="co-input" autocomplete="cc-exp-year"><option value=""><?= e($card['year_placeholder'] ?? '') ?></option>
+                </select><?= select_arrow() ?></div><p class="fq-error field-error" hidden></p></div>
+            <div class="co-field field" data-field="card_year"><label for="card_year" class="sr-only"><?= e($card['year_label'] ?? '') ?></label><span class="co-label-spacer" aria-hidden="true">&nbsp;</span><div class="select-wrap">
+                <select id="card_year" name="card_year" class="co-input" autocomplete="cc-exp-year"><option value=""><?= e($card['year_placeholder'] ?? '') ?></option>
                     <?php for ($y = (int) date('Y'); $y <= (int) date('Y') + 19; $y++): ?><option value="<?= $y ?>"><?= $y ?></option><?php endfor; ?>
-                </select><?= select_arrow() ?></div><p class="fq-error" hidden></p></div>
-            <div class="co-field" data-field="card_cvv"><label for="card_cvv"><?= e($card['cvv_label'] ?? '') ?></label>
-                <input id="card_cvv" class="co-input co-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="<?= e($card['cvv_placeholder'] ?? '') ?>" maxlength="4" style="background-image:url('<?= asset($card['cvv_image'] ?? '') ?>')">
-                <p class="fq-error" hidden></p></div>
+                </select><?= select_arrow() ?></div><p class="fq-error field-error" hidden></p></div>
+            <div class="co-field field" data-field="card_cvv"><label for="card_cvv"><?= e($card['cvv_label'] ?? '') ?></label>
+                <input id="card_cvv" name="card_cvv" class="co-input co-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="<?= e($card['cvv_placeholder'] ?? '') ?>" maxlength="4" style="background-image:url('<?= asset($card['cvv_image'] ?? '') ?>')">
+                <p class="fq-error field-error" hidden></p></div>
         </div>
 
-        <p class="form-error" role="alert" hidden></p>
-        <button type="submit" class="btn-complete" id="complete-btn"><?= icon('shield') ?><span><?= e($s['button'] ?? '') ?></span></button>
+        <p class="form-error checkout-error" role="alert" hidden></p>
+        <button type="submit" class="btn-complete checkout-cta" id="complete-btn"><?= icon('shield') ?><span class="checkout-cta-label"><?= e($s['button'] ?? '') ?></span></button>
         <?php if (!empty($s['legal_html'])): ?><p class="co-legal"><?= $s['legal_html'] ?></p><?php endif; ?>
 
         <?php if ($w && ($w['visible'] ?? true) !== false): ?>

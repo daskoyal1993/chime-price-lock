@@ -1,6 +1,7 @@
 <?php
 /**
- * Checkout. Layout, text and images: projects/<project>/checkout.json (sections → components/).
+ * Checkout. Layout, text and images: projects/<project>/checkout.json (sections → components/),
+ * or a designer's HTML template filled by lib/Template.php (templates/<name>/checkout.html, site.json → "template").
  * Order summary comes from the plan chosen on product.php (session).
  */
 require __DIR__ . '/bootstrap.php';
@@ -55,4 +56,9 @@ $boot = [
     'text'       => $page['text'],
 ];
 
+// A designer's HTML template (templates/<name>/checkout.html, site.json → "template") — else the normal page.
+if ($template = Template::active($config, 'checkout')) {
+    Template::checkout($template, $ctx, $boot);
+    exit;
+}
 render_page($page, $ctx, ['assets/checkout.js'], $boot);

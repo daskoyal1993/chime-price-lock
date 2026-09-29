@@ -48,11 +48,10 @@ and `<!-- comments -->` are left out of the page. The `.html` files can't be ope
 - **Add a page:** add `"<key>": { "title": "…" }` to `legal.json → pages`, create `legal/<key>.html`, link `legal.php?page=<key>`.
 - An unknown key shows a 404 page listing the existing ones.
 
-## Design layer (`designs/`)
+## HTML templates (`templates/`)
 
-A design adds classes and CSS to these pages without editing them: `designs/<design>/config.json` (body classes, classes per
-`data-design-id`, component variants) + `design.css`. Active design: `site.json → "design"` (or `FUNNEL_DESIGN`); preview
-with `?design=<name>`. Step by step: `docs/NEW-DESIGN.md`.
+Instead of these JSON pages, a page can use a designer's plain HTML: `templates/<name>/product.html`, switched on with
+`site.json → "template"` (preview `?template=<name>`). The JSON pages stay as they are. Guide: `docs/TEMPLATES.md`.
 
 ## Page JSON keys
 
@@ -152,9 +151,8 @@ JSON, PHP and `.md` files under `projects/` and everything in `components/` are 
 
 ## Design architecture roadmap (planned, not built yet)
 
-**Built since (2026-09-29): the design layer** — `designs/<design>/config.json` + `design.css`, `data-design-id` via
-`design_attrs()`, component variants (`"components"`), `?design=` preview. It covers per-design styling and templates
-(phases 1 and 3 below, for the elements that have a `data-design-id`). How to use it: `docs/NEW-DESIGN.md`.
+**Since 2026-09-29:** the product page uses standard classes that `product.js` depends on (phase 4 below, product page), and
+designer HTML templates can replace the product page (`templates/`, `docs/TEMPLATES.md`).
 
 Goal: a new logo / full rebrand = JSON + CSS only; a new product or checkout design = templates only, with pricing,
 payment, CRM, Vouched, portal and DB code untouched. Reviewed 2026-09-28. Each phase must leave the `chime` pages

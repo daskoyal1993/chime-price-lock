@@ -1,0 +1,71 @@
+/* templates/v2/css/checkout.css — sample checkout design (with style.css for the header, steps and footer). */
+.co2-help { margin: 0; text-align: right; font-size: 12px; color: #64748b; }
+.co2-help a { color: #1f2937; font-weight: 600; text-decoration: none; }
+
+.co2-layout { max-width: 1100px; margin: 0 auto; padding: 28px 16px 56px; display: grid; grid-template-columns: 1fr; gap: 32px; }
+@media (min-width: 900px) { .co2-layout { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+.co2-h { margin: 22px 0 12px; font-size: 20px; font-weight: 500; }
+.co2-muted { margin: -6px 0 12px; font-size: 13px; color: #64748b; }
+.co2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.co2-full { grid-column: 1 / -1; }
+
+.field { margin-bottom: 12px; }
+.field label { display: block; margin-bottom: 4px; font-size: 13px; }
+.field input, .field select { width: 100%; padding: 10px 12px; border: 1px solid #d6dbe1; border-radius: 8px; background: #fff; font: inherit; font-size: 15px; }
+.field input:focus, .field select:focus { outline: none; border-color: #7a93aa; box-shadow: 0 0 0 3px rgba(122, 147, 170, .2); }
+.field.fq-invalid input, .field.fq-invalid select { border-color: #dc2626; }
+.field-error { margin: 4px 0 0; font-size: 12px; color: #dc2626; }
+.co2-phone { display: flex; border: 1px solid #d6dbe1; border-radius: 8px; background: #fff; overflow: hidden; }
+.co2-phone span { padding: 10px 10px; border-right: 1px solid #eef0f3; font-size: 14px; white-space: nowrap; }
+.co2-phone input { border: 0; border-radius: 0; }
+
+.co2-card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
+.co2-card .co2-muted { margin: 4px 0 0; font-size: 12px; }
+.co2-ticks { margin: 16px 0; padding: 0; list-style: none; font-size: 13px; color: #475569; }
+.co2-ticks li::before { content: "✓ "; color: #16a34a; }
+
+.co2-error { margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; background: #fef2f2; color: #b91c1c; font-size: 14px; }
+.co2-cta { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px; border: 0; border-radius: 999px; background: #7a93aa; color: #fff; font: 600 17px/1.2 inherit; cursor: pointer; }
+.co2-cta small { font-size: 11px; font-weight: 400; opacity: .85; }
+.co2-cta:disabled { opacity: .7; cursor: default; }
+.co2-legal { margin: 16px 0; font-size: 11px; color: #64748b; line-height: 1.6; }
+.co2-legal a { color: #b8912f; }
+.co2-guarantee { padding: 16px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; font-size: 13px; color: #475569; }
+.co2-guarantee-title { margin: 0 0 4px; color: #1f2937; font-weight: 600; font-size: 15px; }
+
+.co2-crumbs { margin: 0; font-size: 12px; color: #94a3b8; }
+.co2-crumbs a { color: #94a3b8; text-decoration: none; }
+.co2-crumbs strong { color: #b8912f; font-weight: 500; }
+.co2-summary { border: 1px solid #e5e7eb; border-radius: 14px; background: #fff; overflow: hidden; }
+.co2-fsa { margin: 0; padding: 10px; background: #22a55a; color: #fff; text-align: center; font-size: 13px; font-weight: 500; }
+.co2-product { display: flex; gap: 12px; align-items: center; padding: 16px; border-bottom: 1px solid #f1f5f9; }
+.co2-product .order-image img { width: 60px; height: 60px; object-fit: contain; border-radius: 10px; background: #eef2ff; padding: 4px; }
+.co2-product > div:nth-child(2) { flex: 1; }
+.co2-product-name { margin: 0 0 4px; color: #b8912f; font-size: 16px; }
+.co2-chip { display: inline-block; padding: 2px 8px; border-radius: 6px; background: #ecfdf5; color: #15803d; font-size: 11px; }
+.co2-day { margin: 0; text-align: right; font-size: 12px; color: #64748b; }
+.co2-day strong { display: block; color: #1f2937; font-size: 18px; }
+.co2-checks { margin: 12px 16px 6px; padding: 0; list-style: none; font-size: 13px; }
+.co2-checks li::before { content: "✓ "; color: #16a34a; }
+.co2-note { margin: 0 16px 12px; font-size: 13px; }
+.co2-lines { margin: 0; padding: 0 16px; }
+.co2-lines div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #f1f5f9; font-size: 13px; }
+.co2-lines dt small { display: block; color: #94a3b8; font-size: 11px; }
+.co2-lines dd { margin: 0; white-space: nowrap; }
+.co2-free { color: #16a34a; }
+.co2-total { display: flex; justify-content: space-between; align-items: center; margin: 0 16px; padding: 14px 0; border-top: 1px solid #e5e7eb; }
+.co2-total p { margin: 0; color: #b8912f; font-size: 18px; }
+.co2-total p:last-child { text-align: right; color: #1f2937; }
+.co2-total strong { font-size: 22px; }
+.co2-total small { display: block; font-size: 11px; color: #64748b; }
+.co2-delivery { margin: 0; padding: 10px 16px; text-align: center; font-size: 13px; color: #475569; }
+.co2-benefits { margin: 12px; padding: 14px; border-radius: 12px; background: linear-gradient(135deg, #fff7e6, #f6d9a3); }
+.co2-benefits-title { margin: 0 0 8px; font-size: 14px; font-weight: 500; }
+.co2-benefits ul { margin: 0; padding: 0; list-style: none; }
+.co2-benefits li { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
+.co2-benefits .included-icon img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; }
+.co2-benefits .included-text { flex: 1; }
+.co2-value { color: #16a34a; font-weight: 600; font-size: 12px; text-align: right; }
+.co2-value s { display: block; color: #94a3b8; font-weight: 400; }
+.co2-members { margin: 16px 0 0; text-align: center; font-size: 14px; }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+  Sample designer template for the product page (shaped like chime-project.github.io/Site/choose-treatment/v2.html).
+  Everything here is plain HTML/CSS. Elements with a STANDARD CLASS are filled with live data by lib/Template.php —
+  see docs/TEMPLATES.md. Write ONE product card and ONE plan: they are repeated for every product / plan.
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Choose Your Treatment | Chime Health</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="v2-header">
+    <a class="link-home"><img class="site-logo" src="img/logo.png" alt="Chime Health"></a>
+    <span class="v2-secure">🔒 Secure Checkout</span>
+</header>
+
+<nav class="v2-steps" aria-label="Progress">
+    <span class="v2-step is-done">Quiz</span>
+    <span class="v2-step-line"></span>
+    <span class="v2-step is-done">Shipping</span>
+    <span class="v2-step-line"></span>
+    <span class="v2-step is-current">Payment</span>
+</nav>
+
+<main class="v2-main">
+    <h1 class="v2-title">Choose Your Treatment</h1>
+    <p class="v2-sub">Select your medication and billing plan</p>
+
+    <p class="v2-empty if-no-products">No plans are available right now. Please check back soon.</p>
+
+    <div class="v2-grid">
+
+        <!-- ONE product card: repeated for every product from the funnel -->
+        <article class="product-card v2-card">
+            <div class="v2-media">
+                <div class="product-image"><img src="img/vial.png" alt=""></div>
+                <div class="v2-press"><img src="img/forbes.webp" alt="Forbes"><img src="img/usa-today.webp" alt="USA Today"></div>
+            </div>
+
+            <div class="product-details v2-body">
+                <h2 class="product-name">Microdose Tirzepatide</h2>
+                <p class="v2-rating"><span class="v2-stars">★★★★★</span> <span class="site-rating">4.7</span></p>
+                <p class="product-content v2-tagline">Stronger appetite control. Preferred for faster weight loss.</p>
+                <p class="v2-badge if-badge">★ <span class="product-badge">Recommended for most patients</span></p>
+
+                <!-- Plans, longest first. ONE plan: repeated for every plan of this product -->
+                <div class="product-options v2-plans" data-order="longest-first">
+                    <div class="product-option v2-plan">
+                        <span class="v2-best if-featured">★ BEST VALUE</span>
+                        <div class="v2-plan-head">
+                            <h3 class="product-option-name">12-Month Plan</h3>
+                            <span class="v2-save-chip if-save">Save <span class="product-option-save">$360</span></span>
+                        </div>
+                        <p class="v2-price"><span class="product-option-price-month">$119</span><small>/month</small></p>
+                        <p class="v2-billed if-multi-month"><strong class="product-option-price">$1,428</strong> billed today for <span class="product-option-months">12</span> months — no monthly billing</p>
+                        <p class="v2-billed if-monthly"><strong class="product-option-price">$149</strong> due today and forever — your price never goes up</p>
+                        <p class="v2-save if-save if-featured">You save <span class="product-option-save">$360</span> over month to month pricing.</p>
+                        <p class="v2-per-day">Just <span class="product-option-per-day">$3.92</span>/day</p>
+
+                        <ul class="v2-points">
+                            <li class="if-featured">Maximum savings</li>
+                            <li class="if-featured">Best long-term weight loss results</li>
+                            <li class="if-multi-month">Price stays the same regardless of dosage</li>
+                            <li class="if-months-4">Fewer shipments, better consistency</li>
+                            <li class="if-monthly">Same price every month — no increases ever</li>
+                            <li class="if-monthly">Physician-guided dosing, adjusted as needed</li>
+                        </ul>
+                        <p class="v2-popular if-featured">★ Most patients choose this plan</p>
+
+                        <button class="product-cta v2-select">Select →</button>
+                    </div>
+                </div>
+
+                <p class="product-error v2-error"></p>
+
+                <div class="v2-next">
+                    <p class="v2-next-title">What happens next?</p>
+                    <ol>
+                        <li><strong>Clinician Review</strong><span>Within 24 hours</span></li>
+                        <li><strong>Medication Ships</strong><span>Free delivery</span></li>
+                        <li><strong>Ongoing Support</strong><span>We're here for you</span></li>
+                    </ol>
+                </div>
+            </div>
+        </article>
+
+        <!-- A second example card the designer used for the mock-up: removed automatically -->
+        <article class="product-card v2-card"><h2 class="product-name">Microdose Semaglutide</h2></article>
+    </div>
+</main>
+
+<footer class="v2-footer">
+    <p>Questions? <a class="site-phone">+1 (000) 000-0000</a> · <a class="site-email">hello@example.com</a></p>
+    <p><a class="link-privacy">Privacy Policy</a> · <a class="link-terms">Terms</a> · <a class="link-telehealth">Telehealth Consent</a></p>
+    <p>© <span class="site-year">2026</span> <span class="site-name">Brand</span></p>
+</footer>
+
+<script src="js/mockup-only.js"></script>
+</body>
+</html>

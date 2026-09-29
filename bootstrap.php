@@ -16,7 +16,7 @@ require __DIR__ . '/lib/LeadFlow.php';
 require __DIR__ . '/lib/FlowTracker.php';
 require __DIR__ . '/lib/view.php';
 require __DIR__ . '/lib/Page.php';
-require __DIR__ . '/lib/Design.php';
+require __DIR__ . '/lib/Template.php';
 
 define('FUNNEL_APP', true);   // components/ refuse to run when requested directly
 
@@ -39,9 +39,6 @@ if (empty($_SESSION['funnel_csrf'])) {
 
 // QA error log: PHP warnings, exceptions, fatal errors, ?qa_test=start|end — see lib/ErrorLogger.php.
 ErrorLogger::register($config);
-
-// Design layer: designs/<design>/config.json + design.css (site.json → design, FUNNEL_DESIGN, ?design= preview) — see lib/Design.php.
-Design::boot($config);
 
 // Progress tracking id (fid cookie), from the first page load on — see lib/FlowTracker.php.
 FlowTracker::boot($config);

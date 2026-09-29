@@ -54,7 +54,7 @@ DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-
    FUNNEL_API_URL=                   # empty = data/updated-sample-funnel.json
    ```
 4. Database (optional — without it leads are just not saved): create a database in phpMyAdmin, import
-   `database/001_create_dynamic_remedy.sql` (an existing old table: run `002_upgrade_dynamic_remedy.sql` step by step) and
+   `database/001_create_dynamic_remedy.sql` (creates the lead table, or upgrades an old one — safe to run again) and
    `database/003_create_flow_tracking.sql` (progress tracking) and `database/004_create_error_logs.sql` (QA error log), then:
    ```bash
    FUNNEL_DB_HOST=localhost
@@ -94,7 +94,7 @@ All settings are in `config.php`; each server overrides them with its own `.env`
 |---|---|
 | Logo, brand name, colors, fonts, footer, product images | `projects/<brand>/site.json` |
 | Page text, images, section order / visibility | `projects/<brand>/<page>.json` |
-| A new design (extra classes, design CSS, component variants — HTML and logic unchanged) | `designs/<design>/config.json` + `design.css`; active: `site.json → "design"` or `FUNNEL_DESIGN`; preview `?design=<name>`. Guide: `docs/NEW-DESIGN.md` |
+| A new page design as plain HTML (product and checkout pages) | `templates/<name>/product.html` + css/img; switch: `site.json → "template"`; preview `product.php?template=<name>`. Guide: `docs/TEMPLATES.md` |
 | Privacy, terms, telehealth consent, HIPAA, refund, shipping pages | `projects/<brand>/legal/<key>.html` (list: `legal.json`; URL `legal.php?page=<key>`) |
 | Section markup | `components/<group>/*.php` — keep the ids, classes and `data-*` the JS uses (listed in each header comment) |
 | Styling | `assets/css/*.css`, or `projects/<brand>/css/*.css` for one brand |

@@ -1,6 +1,13 @@
 <?php defined('FUNNEL_APP') || exit; // rendered by Page::component()
 /**
- * Product cards with the plan lengths from the API. product.js relies on the classes and data-* attributes here.
+ * Product cards with the plan lengths from the API.
+ * Standard classes (product.js uses ONLY these — keep them in any new HTML; the layout around them may change freely):
+ *   .product-card[data-product][data-name][data-image]   one product          .product-image    its image
+ *   .product-details  .product-name  .product-content (description)           .product-info     extra info (included list)
+ *   .product-options  → .product-option (one plan) → input.product-option-input[data-price][data-months][data-label][data-per-day]
+ *   .product-pricing (hidden until a plan is picked) → .product-price  .product-price-per-day   (filled by product.js)
+ *   .product-action → button.product-cta    .product-error (message)
+ * Full list: docs/DESIGNER.md → "Product page: standard classes".
  * Needs $ctx['products'] (sellable_products()) and $ctx['chosen_id']. Product names come from the funnel JSON;
  * the add-on (NAD+) image is only shown when the product name includes it (product_look() → has_bonus).
  * Settings: id, title_plain, title_brand, title_end, text, features[{title, text_html}], empty_text, card{…}, plan{…}, included{…}.
@@ -16,7 +23,7 @@ $label    = static function (int $months) use ($pl): string {
     return $months === 1 ? ($pl['monthly_name'] ?? '') : fill($pl['kicker'] ?? '', ['months' => $months]);
 };
 ?>
-<section <?= design_attrs('product-plans', 'pp-products', $s) ?> id="<?= e($s['id'] ?? 'products') ?>">
+<section class="<?= cls('pp-products', $s) ?>" id="<?= e($s['id'] ?? 'products') ?>">
     <div class="wrap">
         <h2 class="section-title"><?= e($s['title_plain'] ?? '') ?> <span class="brand"><?= e($s['title_brand'] ?? '') ?></span> <?= e($s['title_end'] ?? '') ?></h2>
         <p class="section-sub"><?= e($s['text'] ?? '') ?></p>
@@ -43,12 +50,12 @@ $label    = static function (int $months) use ($pl): string {
                 foreach ($variants as $v) { if (plan_months($v) === 1) { $monthly = $v; break; } }
                 $form = $variants[0]['form'] ?? '';
             ?>
-            <article <?= design_attrs('product-card', 'product-card') ?> id="product-<?= e($look['keyword']) ?>" data-product="<?= e($look['keyword']) ?>" data-name="<?= e($look['title']) ?>" data-image="<?= asset($look['image']) ?>">
+            <article class="product-card" id="product-<?= e($look['keyword']) ?>" data-product="<?= e($look['keyword']) ?>" data-name="<?= e($look['title']) ?>" data-image="<?= asset($look['image']) ?>" data-product-id="<?= e($p['id']) ?>">
                 <div class="pc-media">
                     <?php if (!empty($c['award_image'])): ?><img class="pc-award" src="<?= asset($c['award_image']) ?>" alt="<?= e($c['award_alt'] ?? '') ?>"><?php endif; ?>
                     <?php if (!empty($c['stock_label'])): ?><span class="pc-stock"><span class="dot"></span><?= e($c['stock_label']) ?></span><?php endif; ?>
                     <div class="pc-vials">
-                        <figure><img src="<?= asset($look['image']) ?>" alt=""><figcaption><?= e($look['short']) ?></figcaption></figure>
+                        <figure class="product-image"><img src="<?= asset($look['image']) ?>" alt=""><figcaption><?= e($look['short']) ?></figcaption></figure>
                         <?php if ($bonus && $look['has_bonus']): // add-on image only when the product (funnel JSON name) includes it ?>
                             <span class="pc-plus" aria-hidden="true"><?= icon('plus') ?></span>
                             <figure><img src="<?= asset($bonus['image']) ?>" alt=""><figcaption><?= e($bonus['name']) ?> <b><?= e($free) ?></b></figcaption></figure>
@@ -66,9 +73,9 @@ $label    = static function (int $months) use ($pl): string {
                     <div class="pc-press"><?php foreach ($c['press'] as $logo): ?><img src="<?= asset($logo['image']) ?>" alt="<?= e($logo['alt']) ?>"><?php endforeach; ?></div>
                 <?php endif; ?>
 
-                <div class="pc-body">
-                    <h3 class="pc-title"><?= e($look['combo']) ?></h3>
-                    <p class="pc-sub"><?= e(fill($bonus ? ($c['sub_with_bonus'] ?? '') : ($c['sub'] ?? ''), ['bonus' => $bonus['name'] ?? '', 'form' => $form])) ?></p>
+                <div class="pc-body product-details">
+                    <h3 class="pc-title product-name"><?= e($look['combo']) ?></h3>
+                    <p class="pc-sub product-content"><?= e(fill($bonus ? ($c['sub_with_bonus'] ?? '') : ($c['sub'] ?? ''), ['bonus' => $bonus['name'] ?? '', 'form' => $form])) ?></p>
                     <p class="pc-rating"><?= fill($c['rating_html'] ?? '', ['rating' => $rating], true) ?></p>
 
                     <?php if ($bonus && !empty($c['bonus_box'])): $bb = $c['bonus_box']; ?>
@@ -78,7 +85,7 @@ $label    = static function (int $months) use ($pl): string {
                         </div>
                     <?php endif; ?>
 
-                    <fieldset class="plans">
+                    <fieldset class="plans product-options">
                         <legend><?= e($pl['legend'] ?? '') ?></legend>
                         <?php foreach ($variants as $v):
                             $months     = plan_months($v);
@@ -88,16 +95,17 @@ $label    = static function (int $months) use ($pl): string {
                             $freeType   = (bool) preg_match('/free/i', $v['name']);
                             $save       = $monthly && $months > 1 ? round((1 - $perMonth / $monthly['offer']['price']) * 100) : 0;
                             $vars       = ['months' => $months, 'months_minus_1' => $months - 1, 'save' => $save, 'price' => money($price, false)];
+                            $perDay     = round($price / (30 * $months), 2);   // same rule as the checkout: price ÷ (30 × months)
                             $banner     = $freeType ? ($pl['banner_free_html'] ?? '') : ($save > 0 ? ($pl['banner_save_html'] ?? '') : ($pl['banner_best_html'] ?? ''));
                         ?>
-                            <label class="plan<?= $isFeatured ? ' plan-featured' : '' ?>">
+                            <label class="plan product-option<?= $isFeatured ? ' plan-featured' : '' ?>">
                                 <?php if ($isFeatured): ?>
                                     <span class="plan-banner"><?= icon('gift') ?>
                                         <span><?= fill($banner, $vars, true) ?></span>
                                     </span>
                                 <?php endif; ?>
                                 <span class="plan-row">
-                                    <input type="radio" name="plan-<?= e($p['id']) ?>" value="<?= e($v['id']) ?>" data-price="<?= e($price) ?>" data-months="<?= $months ?>" data-label="<?= e($label($months)) ?>"<?= $ctx['chosen_id'] === $v['id'] ? ' checked' : '' ?>>
+                                    <input type="radio" class="product-option-input" name="plan-<?= e($p['id']) ?>" value="<?= e($v['id']) ?>" data-price="<?= e($price) ?>" data-months="<?= $months ?>" data-label="<?= e($label($months)) ?>" data-per-day="<?= e($perDay) ?>"<?= $ctx['chosen_id'] === $v['id'] ? ' checked' : '' ?>>
                                     <?php if ($months === 1): ?>
                                         <span class="plan-main"><span class="plan-name"><?= e($pl['monthly_name'] ?? '') ?></span><span class="plan-note"><?= e($pl['monthly_note'] ?? '') ?></span></span>
                                         <span class="plan-price"><?= money_big($price) ?><small><?= e($pl['per_month'] ?? '/mo') ?></small></span>
@@ -114,11 +122,14 @@ $label    = static function (int $months) use ($pl): string {
                         <?php endforeach; ?>
                     </fieldset>
 
-                    <button type="button" class="btn-choose" data-buy disabled><?= e($pl['button'] ?? '') ?></button>
-                    <p class="form-error" role="alert" hidden></p>
+                    <div class="product-action">
+                        <p class="product-pricing" hidden><strong class="product-price"></strong> <span class="product-price-per-day"></span></p>
+                        <button type="button" class="btn-choose product-cta" disabled><?= e($pl['button'] ?? '') ?></button>
+                        <p class="form-error product-error" role="alert" hidden></p>
+                    </div>
 
                     <?php if (($inc['visible'] ?? true) !== false): ?>
-                        <div class="included">
+                        <div class="included product-info">
                             <p class="included-title"><?= e($inc['title'] ?? '') ?></p>
                             <ul>
                                 <?php if ($bonus && !empty($inc['bonus_line'])): ?>

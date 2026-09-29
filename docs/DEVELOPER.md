@@ -35,7 +35,7 @@ Every step is logged to `storage/logs/lead-flow.log`. Slow CRM calls run **after
 | Integrations | `lib/VrioClient.php`, `lib/Payment.php`, `lib/GhlClient.php`, `lib/VouchedClient.php`, `lib/PortalClient.php`, `lib/XverifyClient.php`, `lib/Membership.php`, `lib/EncodeDecodeHelper.php`, `lib/Http.php` |
 | Database | `lib/LeadRepository.php` (`dynamic_remedy`), `lib/FlowTracker.php` (`flow_tracking`, `flow_tracking_events`); SQL in `database/001…003` |
 | Rendering | `lib/Page.php` + `lib/view.php` + `components/` + `projects/<brand>/*.json` (see `../projects/README.md`) |
-| Design layer | `lib/Design.php` (active design, classes, component variants), `design_attrs()` in `lib/Page.php`, `assets/design-manager.js`, `designs/<design>/` — see `DESIGNER.md` → "Design layer" |
+| HTML templates | `lib/Template.php` fills `templates/<name>/<page>.html` by standard class (`site.json → template`, `?template=` preview); `product.php` → `Template::product()`. See `TEMPLATES.md` |
 | QA error log | `lib/ErrorLogger.php`, `assets/qa-errors.js`, `qa-log.php` (JS reports), `qa-errors.php` (viewer), `tools/qa-errors.php` (CLI), `database/004_create_error_logs.sql` |
 | Pages | `index.php`, `product.php`, `checkout.php`, `idcheck.php`, `idcheck-callback.php` (Vouched server callback), `process.php`, `usernotverified.php`, `legal.php`, `thank-you.php` (not in the flow) |
 | Reference | `demo/` — the original live-site scripts this was ported from (not deployed; files with keys are git-ignored) |

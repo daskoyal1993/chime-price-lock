@@ -1,6 +1,9 @@
 {
   "_help": "Settings shared by every page of this project. Each page has its own file next to this one (index.json, product.json, checkout.json, thank-you.json). Keys ending in _html may contain HTML; {placeholders} are filled in by the page. See projects/README.md.",
 
+  "_template_help": "Designer HTML templates: templates/<name>/product.html (checkout.html next). \"\" = the normal pages. Preview without switching: product.php?template=<name> (?template=off ends it; not on live). See docs/TEMPLATES.md.",
+  "template": "v2",
+
   "brand": {
     "name": "Chime Health",
     "logo": "assets/img/logo.png",

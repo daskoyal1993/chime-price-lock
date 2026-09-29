@@ -101,6 +101,8 @@
 .plan-big small { font-size: 16px; font-weight: 400; color: #4b5563; }
 .plan-due { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-soft); font-size: 13px; color: #4b5563; }
 .plan-due strong { color: var(--ink-strong); font-size: 14px; }
+.product-pricing { margin: 12px 0 0; text-align: center; font-size: 14px; color: var(--ink-soft); }
+.product-pricing .product-price { color: var(--ink-strong); }
 .btn-choose { width: 100%; margin-top: 12px; padding: 14px 18px; border: 0; border-radius: 999px; background: var(--button); color: #fff; font-size: 16px; font-weight: 500; cursor: pointer; }
 .btn-choose:disabled { background: #e5e7eb; color: #6b7280; cursor: default; }
 .included { margin-top: 20px; }
