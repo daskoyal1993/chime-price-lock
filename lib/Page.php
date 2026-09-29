@@ -141,6 +141,10 @@ function page_open(array $page, string $title = ''): void
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e(site('brand.name') . ' | ' . $title) ?></title>
+<?php if ($qa = ErrorLogger::clientConfig()): // QA error log: JS errors + failed fetch calls → qa-log.php (first, so it sees every error) ?>
+    <script id="qa-errors-config" type="application/json"><?= json_encode($qa, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES) ?></script>
+    <script src="<?= asset('assets/qa-errors.js') ?>"></script>
+<?php endif; ?>
     <link rel="icon" href="<?= asset(site('brand.favicon', '')) ?>">
 <?php if ($font !== ''): ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">

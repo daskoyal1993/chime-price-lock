@@ -396,6 +396,7 @@ final class LeadRepository
         $data = json_decode($json, true);
         if (!is_array($data)) {
             error_log('dynamic_remedy #' . $id . ': stored quiz is not a JSON object, it will be replaced.');
+            if (class_exists('ErrorLogger', false)) ErrorLogger::jsonError('dynamic_remedy #' . $id . ' quiz column', json_last_error_msg());
             return [];
         }
         return $data;

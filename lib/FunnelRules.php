@@ -134,6 +134,7 @@ final class FunnelRules
             case 'less_than_or_equal_to': return $numeric && $a <= $b;
             default:
                 error_log('Funnel: unknown condition operator "' . $condition['operator'] . '"');
+                if (class_exists('ErrorLogger', false)) ErrorLogger::jsonError('Funnel condition', 'unknown operator "' . $condition['operator'] . '" on ' . $condition['key']);
                 return false;
         }
     }

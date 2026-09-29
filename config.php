@@ -76,6 +76,18 @@ return [
         'timeout'        => 10,
     ],
 
+    // QA error log (lib/ErrorLogger.php): every PHP / API / DB / JS error in storage/logs/qa-errors.log and the error_logs table
+    // (database/004_create_error_logs.sql, optional). Test runs: ?qa_test=start … ?qa_test=end. Read: php tools/qa-errors.php, or qa-errors.php?key=…
+    'qa_errors' => [
+        'enabled'        => Env::get('FUNNEL_QA_ERRORS', '1') !== '0',
+        'env'            => Env::get('FUNNEL_ENV', 'local'),   // local | staging | live
+        'key'            => Env::get('FUNNEL_QA_KEY', ''),     // needed for the web viewer, and for ?qa_test=start on live
+        'viewer_on_live' => Env::get('FUNNEL_QA_VIEWER_ON_LIVE', '0') === '1',
+        'file'           => __DIR__ . '/storage/logs/qa-errors.log',
+        'table'          => 'error_logs',
+        'max_bytes'      => 5 * 1024 * 1024,   // then renamed to qa-errors-1.log
+    ],
+
     // Progress tracking (lib/FlowTracker.php, tables from database/003_create_flow_tracking.sql), in the db above.
     // The last step each visitor reached; completed = checkout payment approved. Needs no DB of its own.
     'tracking' => [

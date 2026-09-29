@@ -35,6 +35,10 @@ final class Http
         }
         $raw = $raw === false ? '' : (string) $raw;
         $body = json_decode($raw, true);
+        if (class_exists('ErrorLogger', false)) {
+            // cURL error / HTTP >= 400 / reply that isn't JSON → the QA error log (the caller's file and line)
+            ErrorLogger::httpFailure($method, $url, $status, $error, $raw, is_array($body) ? $body : null);
+        }
 
         return [$status, is_array($body) ? $body : null, $raw, $error];
     }

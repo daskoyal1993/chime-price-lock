@@ -64,6 +64,7 @@ function save_lead(array $config, array $funnel, array &$record, array $answers,
         $status = LeadFlow::submit($config, $funnel, $record, $answers, $tracking, $remove);
     } catch (Throwable $e) {
         error_log('[lead-flow] unexpected error: ' . $e->getMessage());
+        ErrorLogger::log($e, 'EXCEPTION', ['where' => 'save_lead']);
         return false;
     }
     return $status['db'] === true;
@@ -359,6 +360,7 @@ if ($action === 'checkout') {
         ]);
     } catch (Throwable $e) {
         error_log('[lead-flow] identity check failed: ' . $e->getMessage());
+        ErrorLogger::log($e, 'IDENTITY_ERROR', ['where' => 'Vouched check after payment']);
         $verified = false;
     }
     $record['identity_verified'] = $verified;

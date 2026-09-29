@@ -58,6 +58,7 @@ final class FunnelRepository
         } catch (RuntimeException $e) {
             if (is_file($cacheFile)) {
                 error_log('Funnel API failed, using stale cache: ' . $e->getMessage());
+                if (class_exists('ErrorLogger', false)) ErrorLogger::log($e, 'FUNNEL_ERROR', ['note' => 'using the stale cached copy']);
                 return self::decode((string) file_get_contents($cacheFile));
             }
             throw $e;
@@ -106,6 +107,7 @@ final class FunnelRepository
     {
         $data = json_decode($json, true);
         if (!is_array($data)) {
+            if (class_exists('ErrorLogger', false)) ErrorLogger::jsonError('Funnel data (API or sample file)', json_last_error_msg(), $json);
             throw new RuntimeException('Funnel API returned invalid JSON.');
         }
         return $data;
@@ -212,6 +214,9 @@ final class FunnelRepository
         if ($data === false) {
             if (is_string($token) && $token !== '') {
                 error_log('Funnel credentials ignored: ' . ($secretKey === '' ? 'not a valid token' : 'signature does not match FUNNEL_TENANT_SECRET_KEY'));
+                if (class_exists('ErrorLogger', false)) {
+                    ErrorLogger::apiError('Funnel credentials', 0, 'Credentials in the funnel JSON ignored: ' . ($secretKey === '' ? 'not a valid token' : 'signature does not match FUNNEL_TENANT_SECRET_KEY'));
+                }
             }
             return [];
         }

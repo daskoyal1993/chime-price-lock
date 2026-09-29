@@ -35,6 +35,7 @@ Every step is logged to `storage/logs/lead-flow.log`. Slow CRM calls run **after
 | Integrations | `lib/VrioClient.php`, `lib/Payment.php`, `lib/GhlClient.php`, `lib/VouchedClient.php`, `lib/PortalClient.php`, `lib/XverifyClient.php`, `lib/Membership.php`, `lib/EncodeDecodeHelper.php`, `lib/Http.php` |
 | Database | `lib/LeadRepository.php` (`dynamic_remedy`), `lib/FlowTracker.php` (`flow_tracking`, `flow_tracking_events`); SQL in `database/001…003` |
 | Rendering | `lib/Page.php` + `lib/view.php` + `components/` + `projects/<brand>/*.json` (see `../projects/README.md`) |
+| QA error log | `lib/ErrorLogger.php`, `assets/qa-errors.js`, `qa-log.php` (JS reports), `qa-errors.php` (viewer), `tools/qa-errors.php` (CLI), `database/004_create_error_logs.sql` |
 | Pages | `index.php`, `product.php`, `checkout.php`, `idcheck.php`, `idcheck-callback.php` (Vouched server callback), `process.php`, `usernotverified.php`, `legal.php`, `thank-you.php` (not in the flow) |
 | Reference | `demo/` — the original live-site scripts this was ported from (not deployed; files with keys are git-ignored) |
 
@@ -66,6 +67,32 @@ Every step is logged to `storage/logs/lead-flow.log`. Slow CRM calls run **after
 `status()` = `disqualified` / `completed` (payment approved). Never throws; `config.php → tracking.enabled`.
 Reports: end of `database/003_create_flow_tracking.sql`.
 
+## QA error log (all errors in one place)
+
+`lib/ErrorLogger.php` collects **every error** — no page tracking — in `storage/logs/qa-errors.log` (one JSON line each) and in
+the `error_logs` table when it exists (`database/004_create_error_logs.sql`).
+
+| Captured | How |
+|---|---|
+| PHP warnings / notices / deprecations, uncaught exceptions, fatal errors | `set_error_handler`, `set_exception_handler`, `register_shutdown_function` (registered in `bootstrap.php`); `@`-silenced calls are skipped |
+| API / cURL failures (GHL, Vrio, Vouched, Portal, xverify, membership, funnel API) | `Http::json()`: cURL error, HTTP >= 400, reply that isn't JSON. GHL "duplicate contact" and Vrio "prepaid not allowed" = `WARNING` (handled by the code) |
+| Every FAILED step (DB, pre-auth, Vouched, portal, GHL tag, tracking…) | `LeadFlow::log(…, false, …)` → typed `DATABASE_ERROR`, `PAYMENT_ERROR`, `PORTAL_ERROR`, `IDENTITY_ERROR`, `INTEGRATION_ERROR`; declines = `PAYMENT_DECLINED` (WARNING), "not verified" = `IDENTITY_RESULT` (INFO) |
+| Error replies of `submit.php` (400, 405, 409 = `MISSING_DATA`, 419, 402, 503) | `funnel_json_response()`; 422 form validation is not logged |
+| JSON that can't be parsed | funnel data, stored quiz JSON, unknown condition operators → `JSON_ERROR` |
+| JavaScript errors, failed / non-JSON `fetch` calls | `assets/qa-errors.js` (loaded first on every page) → `qa-log.php` (CSRF-checked, max 20 per page) → `JS_ERROR`, `AJAX_ERROR` |
+
+**A QA run:** open any page with `?qa_test=start` → id `TEST-YYYYMMDD-NNN` (cookie, 12 h; a small badge shows it on every page),
+test the flow, then `?qa_test=end`. On `FUNNEL_ENV=live` add `&key=<FUNNEL_QA_KEY>`. Errors outside a run get `no-test`.
+
+**Read it:**
+- `php tools/qa-errors.php` (runs + counts) · `php tools/qa-errors.php TEST-20260929-001` · `… today` · `--errors-only` · `--details`
+- Browser: `qa-errors.php?key=<FUNNEL_QA_KEY>` (no key needed on `FUNNEL_ENV=local`; off on live unless `FUNNEL_QA_VIEWER_ON_LIVE=1`)
+- DB: `SELECT … FROM error_logs WHERE test_id = 'TEST-…'` (more queries at the end of `004_create_error_logs.sql`)
+
+**Safe by design:** passwords, keys, tokens, `Authorization`, CVV removed; card numbers → last 4; emails `t***@domain`; phones
+`******2452`; responses cut at 1,000 characters; request bodies and quiz answers never stored. The logger never throws; if the
+file or DB write fails the app carries on. Settings: `config.php → qa_errors` (`FUNNEL_QA_ERRORS=0` turns it off).
+
 ## Logs
 
 `storage/logs/lead-flow.log` (one line per step: `[MEMBERSHIP] [XVERIFY] [DB] [VRIO] [GHL] [VRIO-PREAUTH] [VOUCHED]
@@ -83,7 +110,7 @@ Reports: end of `database/003_create_flow_tracking.sql`.
 
 ## Checks before a PR
 
-1. `php -l` on changed files; `php tools/check-integrations.php`.
+1. `php -l` on changed files; `php tools/check-integrations.php`; after a test run `php tools/qa-errors.php today --errors-only` is empty.
 2. A full local run with `FUNNEL_PAYMENT_DRIVER=test` (and `vrio` + the prepaid card if payments changed); read `lead-flow.log`.
 3. Private files still 404: `/config.php`, `/.env`, `/lib/`, `/storage/logs/lead-flow.log`, `/projects/chime/site.json`.
 4. New table/column → a new `database/00N_….sql` (run by hand on the server; the deploy skips `database/`).

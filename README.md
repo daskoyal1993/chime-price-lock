@@ -55,7 +55,7 @@ DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-
    ```
 4. Database (optional — without it leads are just not saved): create a database in phpMyAdmin, import
    `database/001_create_dynamic_remedy.sql` (an existing old table: run `002_upgrade_dynamic_remedy.sql` step by step) and
-   `database/003_create_flow_tracking.sql` (progress tracking), then:
+   `database/003_create_flow_tracking.sql` (progress tracking) and `database/004_create_error_logs.sql` (QA error log), then:
    ```bash
    FUNNEL_DB_HOST=localhost
    FUNNEL_DB_NAME=dscript_local
@@ -116,6 +116,9 @@ change in `flow_tracking_events`. Tables: `database/003_create_flow_tracking.sql
 - Turn off with `config.php → tracking.enabled = false`. DB problems are logged as `[TRACK] FAILED` and never stop the funnel.
 
 ## Logs and troubleshooting
+
+- **QA error log** — every error of a test in one place: start with `?qa_test=start`, test, `?qa_test=end`, then
+  `php tools/qa-errors.php` or `qa-errors.php?key=<FUNNEL_QA_KEY>`. Details: `docs/DEVELOPER.md` → "QA error log".
 
 - `storage/logs/lead-flow.log`: one line per step (`[DB]`, `[VRIO]`, `[GHL]`, `[VOUCHED]`, `[PORTAL]` …, `OK` / `FAILED` / `SKIP`).
   The portal payload and reply are logged in full (`[PORTAL] SENT …` / `[PORTAL] REPLY …`), and so is every Vrio pre-auth call

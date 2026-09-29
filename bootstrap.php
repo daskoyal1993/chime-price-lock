@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/lib/ErrorLogger.php';   // first, so every class below can report to it
 require __DIR__ . '/lib/FunnelRepository.php';
 require __DIR__ . '/lib/FunnelRules.php';
 require __DIR__ . '/lib/Screens.php';
@@ -35,11 +36,15 @@ if (empty($_SESSION['funnel_csrf'])) {
     $_SESSION['funnel_csrf'] = bin2hex(random_bytes(32));
 }
 
+// QA error log: PHP warnings, exceptions, fatal errors, ?qa_test=start|end — see lib/ErrorLogger.php.
+ErrorLogger::register($config);
+
 // Progress tracking id (fid cookie), from the first page load on — see lib/FlowTracker.php.
 FlowTracker::boot($config);
 
 function funnel_json_response(array $body, int $status = 200): void
 {
+    ErrorLogger::requestError($status, (string) ($body['message'] ?? ''));   // 4xx / 5xx replies (not 422) go to the QA error log
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
@@ -54,6 +59,7 @@ function funnel_json_response(array $body, int $status = 200): void
  */
 function funnel_json_response_then(array $body, int $status, callable $after): void
 {
+    ErrorLogger::requestError($status, (string) ($body['message'] ?? ''));
     $json = json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
@@ -92,6 +98,7 @@ function finish_request_then(callable $after): void
         $after();
     } catch (Throwable $e) {
         error_log('[lead-flow] after-response work failed: ' . $e->getMessage());
+        ErrorLogger::log($e, 'EXCEPTION', ['where' => 'after-response work']);
     }
     exit;
 }
@@ -103,6 +110,7 @@ function load_funnel_or_fail(array $config): array
         return (new FunnelRepository($config))->load();
     } catch (RuntimeException $e) {
         error_log('Funnel load failed: ' . $e->getMessage());
+        ErrorLogger::log($e, 'FUNNEL_ERROR');
         http_response_code(503);
         $page = Page::load('index');
         page_open($page, $page['text']['unavailable_title'] ?? 'Unavailable');

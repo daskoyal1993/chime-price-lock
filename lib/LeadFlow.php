@@ -588,6 +588,9 @@ final class LeadFlow
     public static function log(array $config, string $service, ?bool $ok, string $message, ?string $label = null): void
     {
         $line = gmdate('Y-m-d H:i:s') . ' UTC [' . $service . '] ' . ($label ?? ($ok === null ? 'SKIP' : ($ok ? 'OK' : 'FAILED'))) . ' ' . $message;
+        if ($ok === false && $label === null && class_exists('ErrorLogger', false)) {
+            ErrorLogger::fromLeadFlow($service, $message);   // every FAILED step also goes to the QA error log
+        }
         if ($ok === false || $service === 'PORTAL') {   // process.php results always go to the PHP error log too
             error_log('[lead-flow] ' . $line);
         }
