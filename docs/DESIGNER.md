@@ -10,6 +10,7 @@ Everything you need is in four places:
 | Styling | `assets/css/common.css` (all pages) and `quiz.css`, `product.css`, `checkout.css` |
 | Section HTML (layout of one block) | `components/<group>/<name>.php` — with the rules in "Don't break" below |
 | Images | `assets/img/` (shared) or `projects/chime/img/` (this brand only) |
+| **A new design** (extra classes + CSS, component variants) | `designs/<design>/config.json` + `design.css` — see "Design layer" |
 | Legal pages (privacy, terms, …) | `projects/chime/legal/<page>.html` |
 
 Setup on your PC: follow `README.md` → "Local setup" once (XAMPP + clone). Then open `http://localhost/dscript/`.
@@ -33,6 +34,67 @@ The product and checkout pages need a finished quiz in the same browser; the ID 
 a test order (ask a developer for a test run, or use the test card from `README.md`).
 
 ---
+
+## Design layer (new designs without rewriting HTML) — `designs/`
+
+Step-by-step guide for a client's new design: **[`NEW-DESIGN.md`](NEW-DESIGN.md)**.
+
+A design only **adds** classes and CSS to the existing HTML, or swaps one component for a variant. Behaviour (plans, checkout,
+payments, CRM) is untouched.
+
+```
+designs/
+├── default/     config.json (adds nothing) + design.css (empty)
+└── chime-v2/    example: product page (hero, product section, product cards)
+    ├── config.json
+    └── design.css
+```
+
+**`config.json`**
+```json
+{
+  "extends": "default",
+  "bodyClass": "theme-v2",
+  "classes": { "product-card": "modern-card" },
+  "pages": {
+    "product": {
+      "bodyClass": "product-v2",
+      "classes": { "product-hero": "hero-v2 rounded-section", "product-plans": "plans-v2", "product-card": "modern-card" }
+    }
+  },
+  "components": { "product/hero": "product/hero-v2" }
+}
+```
+- `bodyClass` → `<body>` on every page; `pages.<page>.bodyClass` → one page (`product`, `checkout`, `index`, `idcheck`, …).
+  The body also gets `design-<name>`.
+- `classes` / `pages.<page>.classes` → added to the element with that **`data-design-id`**. The original classes stay.
+- `components` → render another template (level 2/3, below). A missing variant falls back to the original.
+- `design.css` is loaded after the page CSS. **Scope every rule** to the design's classes (`.product-v2 .modern-card { … }`),
+  so nothing leaks into other designs. CSS variables (`--brand`, `--radius`, …) can be changed under `.theme-v2`.
+
+**Elements with a `data-design-id`** (added with `design_attrs()` in the component):
+
+| data-design-id | Element | Component |
+|---|---|---|
+| `product-hero` | hero section | `components/product/hero.php` |
+| `product-plans` | products + plans section | `components/product/plans.php` |
+| `product-card` | each product card | `components/product/plans.php` |
+
+More ids are added as pages are migrated: `<section <?= design_attrs('checkout-form', 'co-main', $s) ?>>` instead of
+`<section class="<?= cls('co-main', $s) ?>">`. Ids are lowercase, `<page>-<part>`, and never change once used.
+
+**Choosing the design:** `site.json → "design": "chime-v2"`, or `FUNNEL_DESIGN=chime-v2` in `.env` (wins).
+**Preview** without switching: `product.php?design=chime-v2` (kept for your browser session; `?design=off` ends it; not on live).
+
+**Three levels — use the smallest that works:**
+1. **Styling change** → classes in `config.json` + `design.css`. No HTML change.
+2. **Component variation** (a block needs different markup) → copy the component to `components/<group>/<name>-v2.php`, change the
+   markup (keep ids / `data-*` / JS classes — "Don't break" above), map it in `"components"`.
+3. **Completely different layout** → new `-v2` components for the page, listed in `"components"` (or a page JSON that uses them).
+   No JavaScript that moves or rebuilds the page.
+
+`assets/design-manager.js` applies the same classes to HTML the browser creates later (quiz screens). PHP adds them on
+render, so there is no flash of the old design.
 
 ## Rebranding (logo, colors, fonts)
 

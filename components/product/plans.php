@@ -16,7 +16,7 @@ $label    = static function (int $months) use ($pl): string {
     return $months === 1 ? ($pl['monthly_name'] ?? '') : fill($pl['kicker'] ?? '', ['months' => $months]);
 };
 ?>
-<section class="<?= cls('pp-products', $s) ?>" id="<?= e($s['id'] ?? 'products') ?>">
+<section <?= design_attrs('product-plans', 'pp-products', $s) ?> id="<?= e($s['id'] ?? 'products') ?>">
     <div class="wrap">
         <h2 class="section-title"><?= e($s['title_plain'] ?? '') ?> <span class="brand"><?= e($s['title_brand'] ?? '') ?></span> <?= e($s['title_end'] ?? '') ?></h2>
         <p class="section-sub"><?= e($s['text'] ?? '') ?></p>
@@ -43,7 +43,7 @@ $label    = static function (int $months) use ($pl): string {
                 foreach ($variants as $v) { if (plan_months($v) === 1) { $monthly = $v; break; } }
                 $form = $variants[0]['form'] ?? '';
             ?>
-            <article class="product-card" id="product-<?= e($look['keyword']) ?>" data-product="<?= e($look['keyword']) ?>" data-name="<?= e($look['title']) ?>" data-image="<?= asset($look['image']) ?>">
+            <article <?= design_attrs('product-card', 'product-card') ?> id="product-<?= e($look['keyword']) ?>" data-product="<?= e($look['keyword']) ?>" data-name="<?= e($look['title']) ?>" data-image="<?= asset($look['image']) ?>">
                 <div class="pc-media">
                     <?php if (!empty($c['award_image'])): ?><img class="pc-award" src="<?= asset($c['award_image']) ?>" alt="<?= e($c['award_alt'] ?? '') ?>"><?php endif; ?>
                     <?php if (!empty($c['stock_label'])): ?><span class="pc-stock"><span class="dot"></span><?= e($c['stock_label']) ?></span><?php endif; ?>

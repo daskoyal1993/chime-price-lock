@@ -5,5 +5,6 @@ DirectoryIndex index.php
 RedirectMatch 404 ^/(.*/)?(config|bootstrap)\.php$
 RedirectMatch 404 ^/(.*/)?(lib|data|storage|components|database|demo|tools|sample-api)(/.*)?$
 RedirectMatch 404 ^/(.*/)?projects/.*\.(json|php|html)$
+RedirectMatch 404 ^/(.*/)?designs/.*\.(json|php)$
 RedirectMatch 404 ^/(.*/)?[^/]+\.md$
 RedirectMatch 404 ^/(.*/)?\.env(\..*)?$

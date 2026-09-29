@@ -1,0 +1,19 @@
+{
+  "_help": "Example design (product page only so far). Preview: product.php?design=chime-v2 (not on live), end with ?design=off. Activate: site.json → \"design\": \"chime-v2\" or FUNNEL_DESIGN=chime-v2.",
+  "extends": "default",
+
+  "bodyClass": "theme-v2",
+
+  "pages": {
+    "product": {
+      "bodyClass": "product-v2",
+      "classes": {
+        "product-hero":  "hero-v2 rounded-section",
+        "product-plans": "plans-v2",
+        "product-card":  "modern-card"
+      }
+    }
+  },
+
+  "components": {}
+}

@@ -71,7 +71,8 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `lib/FunnelRules.php` | Server copy of the rules: age, BMI + rating, show/hide conditions, per-type validation (incl. **target weight** below the current weight and BMI ≥ 18.5), disqualifying options. |
 | `lib/Screens.php` | Splits the API steps into screens (plan in `index.json → screens`, the rest grouped automatically). |
 | `lib/view.php` | HTML helpers, `product_look()`, plan months, sellable/featured variants. |
-| `lib/Page.php` + `components/` | JSON-driven pages: head (styles, theme colors), header, sections, footer. |
+| `lib/Page.php` + `components/` | JSON-driven pages: head (styles, theme colors), header, sections, footer. `design_attrs()` = class + `data-design-id` for the design layer. |
+| `lib/Design.php` + `designs/` + `assets/design-manager.js` | Design layer: the active design (`site.json → design`, `FUNNEL_DESIGN`, `?design=` preview) adds body classes, classes per `data-design-id`, `design.css`, and component variants — without changing the HTML or any logic. Guide: `docs/NEW-DESIGN.md`. |
 | `lib/LeadRepository.php` | The `dynamic_remedy` row: insert/update, quiz JSON merge, Vrio ids, checkout (address, `purchased`, `vrio_order_id`), Vouched results, ID check, `customer_id`, portal payload / response / `processed`. |
 | `lib/LeadFlow.php` | The steps and their log: lead save (MEMBERSHIP → DB → VRIO prospect → GHL, consent timestamps, GHL custom fields incl. id lookup), `checkout()` (DB + GHL), `identity()` (Vouched), `process()` (portal payload + hand-off), `portalLink()` (GHL). |
 | `lib/Membership.php` + `sample-api/membership-check.php` | Membership check (placeholder: sample returns `false`). `sample-api/` is blocked on the live site. |

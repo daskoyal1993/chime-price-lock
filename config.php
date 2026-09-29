@@ -11,6 +11,10 @@ return [
     // Which design/content project to use: projects/<project>/ (site.json + one JSON per page).
     'project' => Env::get('FUNNEL_PROJECT', 'chime'),
 
+    // Design layer: designs/<design>/ (extra classes, design.css, component variants — lib/Design.php).
+    // Empty = projects/<project>/site.json → "design", else "default". Preview another one with ?design=<name> (not on live).
+    'design' => Env::get('FUNNEL_DESIGN', ''),
+
     // Endpoint that returns the funnel definition ({ "success": true, "data": { ... } }).
     // Leave empty to use the local sample in data/updated-sample-funnel.json.
     'api_url'     => Env::get('FUNNEL_API_URL', ''),

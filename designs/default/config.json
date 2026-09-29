@@ -1,0 +1,7 @@
+{
+  "_help": "Base design: adds nothing, so the site looks exactly as its components and assets/css define it. Other designs \"extends\": \"default\". Keys: bodyClass (every page), classes {data-design-id: classes} (every page), pages.<page>.bodyClass / .classes (one page), components {\"group/name\": \"group/name-v2\"} (swap a template). See docs/DESIGNER.md → Design layer.",
+  "bodyClass": "",
+  "classes": {},
+  "pages": {},
+  "components": {}
+}

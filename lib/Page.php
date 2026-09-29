@@ -16,6 +16,8 @@ final class Page
     private static $dir = '';
     /** @var array */
     private static $site = [];
+    /** @var string the page being rendered (page_open()), for the design classes of its sections */
+    private static $current = '';
 
     /** Point at projects/<project>/ and load site.json. */
     public static function boot(string $projectDir): void
@@ -32,10 +34,22 @@ final class Page
         return self::$site;
     }
 
+    /** The page being rendered ("product", "checkout", …). */
+    public static function current(): string
+    {
+        return self::$current;
+    }
+
+    public static function setCurrent(string $name): void
+    {
+        self::$current = $name;
+    }
+
     /** A page's JSON (projects/<project>/<name>.json). */
     public static function load(string $name): array
     {
         return self::read($name) + [
+            'name'       => $name,
             'title'      => '',
             'body_class' => '',
             'styles'     => [],
@@ -76,7 +90,7 @@ final class Page
         if (($section['visible'] ?? true) === false) {
             return;
         }
-        $name = (string) ($section['component'] ?? '');
+        $name = Design::component((string) ($section['component'] ?? ''));   // a design may swap in a variant (designs/<design>/config.json → components)
         $file = __DIR__ . '/../components/' . $name . '.php';
         if (!preg_match('~^[a-z0-9-]+(/[a-z0-9-]+)*$~', $name) || !is_file($file)) {
             throw new RuntimeException('Unknown component "' . $name . '" (expected components/' . $name . '.php)');
@@ -122,6 +136,18 @@ function cls(string $base, array $s): string
     return e(trim($base . ' ' . ($s['class'] ?? '')));
 }
 
+/**
+ * class + data-design-id attributes for an element the design layer can style (lib/Design.php):
+ *   <section <?= design_attrs('product-hero', 'pp-hero', $s) ?>>
+ *   → class="pp-hero [section "class"] [design classes]" data-design-id="product-hero"
+ * The component's own classes always stay first; the active design only adds classes.
+ */
+function design_attrs(string $id, string $base, array $s = []): string
+{
+    $extra = Design::classes($id, Page::current());
+    return 'class="' . cls(trim($base . ' ' . $extra), $s) . '" data-design-id="' . e($id) . '"';
+}
+
 /** Page head, opening <body> and the page header. */
 function page_open(array $page, string $title = ''): void
 {
@@ -134,6 +160,11 @@ function page_open(array $page, string $title = ''): void
     }
     $styles = array_merge(site('styles', []), $page['styles']);
     $title  = $title !== '' ? $title : $page['title'];
+    $name   = (string) ($page['name'] ?? '');
+    Page::setCurrent($name);
+    $body   = implode(' ', array_filter([(string) ($page['body_class'] ?? ''), Design::bodyClass($name), 'design-' . Design::name()], 'strlen'));
+    $designCss     = Design::stylesheet();
+    $designClasses = Design::clientClasses($name);
     ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -155,10 +186,17 @@ function page_open(array $page, string $title = ''): void
     <link rel="stylesheet" href="<?= asset($css) ?>">
 <?php endforeach; ?>
 <?php if ($colors): ?>
-    <style>:root {<?php foreach ($colors as $name => $value): ?> --<?= preg_replace('/[^a-z0-9-]/i', '', $name) ?>: <?= str_replace(['<', '>', '{', '}', ';'], '', (string) $value) ?>;<?php endforeach; ?> }</style>
+    <style>:root {<?php foreach ($colors as $var => $value): ?> --<?= preg_replace('/[^a-z0-9-]/i', '', $var) ?>: <?= str_replace(['<', '>', '{', '}', ';'], '', (string) $value) ?>;<?php endforeach; ?> }</style>
+<?php endif; ?>
+<?php if ($designCss): // active design (lib/Design.php): after the page CSS and theme colors, so it can override both ?>
+    <link rel="stylesheet" href="<?= asset($designCss) ?>">
+<?php endif; ?>
+<?php if ($designClasses): // the same classes for HTML the browser creates later (assets/design-manager.js) ?>
+    <script id="design-config" type="application/json"><?= json_encode(['classes' => $designClasses], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES) ?></script>
+    <script src="<?= asset('assets/design-manager.js') ?>" defer></script>
 <?php endif; ?>
 </head>
-<body class="<?= e($page['body_class']) ?>">
+<body class="<?= e($body) ?>">
 <?php
     if ($page['header']) {
         Page::component(array_merge(site('header', []), $page['header']), []);

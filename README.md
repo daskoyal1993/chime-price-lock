@@ -94,6 +94,7 @@ All settings are in `config.php`; each server overrides them with its own `.env`
 |---|---|
 | Logo, brand name, colors, fonts, footer, product images | `projects/<brand>/site.json` |
 | Page text, images, section order / visibility | `projects/<brand>/<page>.json` |
+| A new design (extra classes, design CSS, component variants — HTML and logic unchanged) | `designs/<design>/config.json` + `design.css`; active: `site.json → "design"` or `FUNNEL_DESIGN`; preview `?design=<name>`. Guide: `docs/NEW-DESIGN.md` |
 | Privacy, terms, telehealth consent, HIPAA, refund, shipping pages | `projects/<brand>/legal/<key>.html` (list: `legal.json`; URL `legal.php?page=<key>`) |
 | Section markup | `components/<group>/*.php` — keep the ids, classes and `data-*` the JS uses (listed in each header comment) |
 | Styling | `assets/css/*.css`, or `projects/<brand>/css/*.css` for one brand |

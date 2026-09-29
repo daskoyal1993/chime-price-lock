@@ -19,7 +19,7 @@ usort($treats, static function ($x, $y) {
     return (int) $y['look']['featured'] <=> (int) $x['look']['featured'];
 });
 ?>
-<section class="<?= cls('pp-hero', $s) ?>">
+<section <?= design_attrs('product-hero', 'pp-hero', $s) ?>>
     <div class="wrap">
         <h1 class="pp-hero-title"><?= e($s['title_plain'] ?? '') ?> <span class="brand"><?= e($s['title_brand'] ?? '') ?></span></h1>
         <p class="pp-hero-sub"><?= $s['subtitle_html'] ?? '' ?></p>
