@@ -51,7 +51,7 @@ DB, Vrio, GHL, Vouched and portal steps and logs each one to `storage/logs/lead-
    FUNNEL_GHL_TOKEN=''               # no GHL contacts
    FUNNEL_XVERIFY_API_KEY=''         # no email / phone checks
    FUNNEL_PORTAL_API_KEY=''          # no portal orders
-   FUNNEL_API_URL=                   # empty = data/updated-sample-funnel.json
+   FUNNEL_API_URL=                   # empty = the local sample file (config.php → sample_file, now data/r4mf-v1-funnel.json)
    ```
 4. Database (optional — without it leads are just not saved): create a database in phpMyAdmin, import
    `database/001_create_dynamic_remedy.sql` (creates the lead table, or upgrades an old one — safe to run again) and

@@ -104,7 +104,12 @@ A standalone PHP + plain JavaScript version of the funnel (no framework, no Blad
 | `NOTES-OPEN-ITEMS.md` | Decisions still to make. |
 | `docs/` | Team guides: `docs/README.md` (index), `docs/DEVELOPER.md`, `docs/DESIGNER.md`. |
 
-### 0.3 Funnel data (`data/updated-sample-funnel.json`)
+### 0.3 Funnel data (sample files in `data/`)
+
+Which file is used locally: `config.php → sample_file` (when `FUNNEL_API_URL` is empty). **Now `data/r4mf-v1-funnel.json`**
+(funnel `r4mf-v1`): `campaign_set` main campaign CRM **65** + prepaid campaign CRM **66** (prepaid retry, NOTES item 9),
+`membership_campaign_set: null` (everyone gets `campaign_set`), products Semaglutide / Tirzepatide with 1M and 4M plans.
+The description below is of the older `data/updated-sample-funnel.json`:
 
 Funnel **"Chime Main"** (`chime-main`), questionnaire `offer-intake` (6 steps, 50 questions; 26 of them carry a GHL custom field).
 `tenant.ghl.credentials` (GHL token + location) and `tenant.vouched` (Vouched `app_id` + `app_secret`) are **signed tokens**

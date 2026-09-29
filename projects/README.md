@@ -181,9 +181,7 @@ Logic            page controllers → lib/View/*          prices, plans, order s
 | 6 | Multi-brand per request (host or funnel slug → project, `FUNNEL_PROJECT` as fallback); `"extends"` in `site.json` with a deep merge | `config.php`, `bootstrap.php`, `lib/Page.php` |
 | 7 | New features if needed: tracking pixels from `site.json → tracking` + JS events (`funnel:plan-selected`, `funnel:checkout-success`); coupons (new `submit.php` action) | new |
 
-JS hooks that must survive any redesign today (until phase 4):
-`product.js` — `.product-card[data-product|data-name|data-image]`, `.treat-card[data-treatment]`, `.plan`, plan radios
-`[data-price|data-months|data-label]`, `[data-buy]`, `.form-error`, `#buy-bar`, `#buy-bar-img|-name|-plan|-btn`, `.faq-item button`.
-`checkout.js` — `#checkout-form`, `#complete-btn`, `#billing-fields`, `input[name=billing_same]`, `[data-field]` + `.fq-error`,
-`.form-error`, and every field id (`shipping_*`, `billing_*`, `card_number`, `card_month`, `card_year`, `card_cvv`).
+JS hooks that must survive any redesign (phase 4 is done for product and checkout): `product.js` and `checkout.js` use only
+standard class names and field names — each has one `SEL` map at the top. The full lists: `docs/DESIGNER.md` → "Product page:
+standard classes" and `docs/TEMPLATES.md` (product + checkout, also used by designer HTML templates).
 The quiz markup is built in `assets/funnel.js`; restyle it through CSS.

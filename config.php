@@ -12,7 +12,7 @@ return [
     'project' => Env::get('FUNNEL_PROJECT', 'chime'),
 
     // Endpoint that returns the funnel definition ({ "success": true, "data": { ... } }).
-    // Leave empty to use the local sample in data/updated-sample-funnel.json.
+    // Leave empty to use the local sample file below (sample_file).
     'api_url'     => Env::get('FUNNEL_API_URL', ''),
     'api_token'   => Env::get('FUNNEL_API_TOKEN', ''),   // sent as "Authorization: Bearer <token>" when set
     'api_timeout' => 10,                                  // seconds
